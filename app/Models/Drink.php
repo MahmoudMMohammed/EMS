@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Drink extends Model
+{
+    use HasFactory;
+    protected $table = 'drinks';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string, double>
+     */
+
+    protected $fillable = [
+        'name',
+        'price',
+        'drink_category_id',
+        'picture',
+        'description',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+    public function drinkCategory()
+    {
+        return $this->belongsTo(DrinkCategory::class ,'drink_category_id' , 'id');
+    }
+}

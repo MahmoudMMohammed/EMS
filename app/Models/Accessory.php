@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Accessory extends Model
+{
+    use HasFactory;
+    protected $table = 'accessories';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string, double>
+     */
+
+    protected $fillable = [
+        'name',
+        'price',
+        'picture',
+        'accessory_category_id',
+        'description',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+    public function accessoriesCatrgory()
+    {
+        return $this->belongsTo(AccessoryCategory::class ,'accessory_category_id' , 'id');
+    }
+    public function warehouseAccessories()
+    {
+        return $this->hasMany(WarehouseAccessory::class ,'accessory_id' , 'id');
+    }
+}
