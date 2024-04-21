@@ -19,7 +19,6 @@ class Host extends Model
         'name',
         'picture',
         'recommended_for',
-        'recommended_picture',
     ];
 
     /**

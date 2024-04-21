@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('picture');
             $table->string('recommended_for');
-            $table->string('recommended_picture');
             $table->timestamps();
         });
     }
