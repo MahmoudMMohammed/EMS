@@ -66,3 +66,5 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 //test
 //Route::get('/notification/user/{user_id}' ,[AuthController::class, 'testNotifications']);
 //Route::get('/translate' ,[AuthController::class, 'testTranslation']);
+
+////test
