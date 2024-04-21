@@ -6,5 +6,8 @@ use Illuminate\Http\Request;
 
 class AccessoryController extends Controller
 {
-    //
+    public function test()
+    {
+
+    }
 }
