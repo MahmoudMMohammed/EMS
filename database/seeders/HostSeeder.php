@@ -22,7 +22,6 @@ class HostSeeder extends Seeder
                 'name' => $name[$i] ,
                 'picture' => $picture[$i] ,
                 'recommended_for' => $recommended_for[$i],
-                'recommended_picture' => 'Hosts/8.png'
             ]);
         }
     }
