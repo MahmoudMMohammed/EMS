@@ -27,6 +27,7 @@ class Location extends Model
         'reservation_price',
         'x_position',
         'y_position',
+        'logo',
     ];
 
     /**

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->double('reservation_price');
             $table->double('x_position');
             $table->double('y_position');
+            $table->string('logo');
             $table->timestamps();
         });
     }
