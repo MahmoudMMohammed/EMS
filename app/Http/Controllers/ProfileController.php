@@ -6,15 +6,15 @@ use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password as password_rule;
 
 class ProfileController extends Controller
 {
     public function updateProfileGeneralInfo(Request $request)
     {
-        $profile = $this->getUserProfile();
-
         $validator = Validator::make($request->all(),[
             'about_me' => 'nullable | string',
             'birth_date' => 'nullable | date_format:Y-m-d',
@@ -29,6 +29,8 @@ class ProfileController extends Controller
             ], 422);
         }
 
+        $profile = $this->getUserProfile();
+
         $profile->about_me = $request->about_me;
         $profile->birth_date = $request->birth_date;
         $profile->place_of_residence = $request->place_of_residence;
@@ -36,7 +38,7 @@ class ProfileController extends Controller
         $profile->save();
 
         return response()->json([
-            'message' => 'Profile updated successfully',
+            'message' => 'General info updated successfully',
             'status_code' => 200
         ],200);
 
@@ -59,8 +61,6 @@ class ProfileController extends Controller
 
     public function updateProfilePicture(Request $request)
     {
-        $profile = $this->getUserProfile();
-
         $validator = Validator::make($request->all(),[
             'profile_picture' => 'required | image'
         ]);
@@ -70,6 +70,8 @@ class ProfileController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        $profile = $this->getUserProfile();
 
         if($request->hasFile('profile_picture')){
             $image = $request->file('profile_picture');
@@ -109,7 +111,62 @@ class ProfileController extends Controller
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    //method to authenticate user and get its profile
+    public function updateProfilePrivacyInfo(Request $request)
+    {
+        $profile = $this->getUserProfile();
+
+        $user = User::find($profile->user_id);
+
+        $validator = Validator::make($request->all(),[
+            "name" => 'required | min:2 | max:30 | regex:/^[A-Za-z\s]+$/ ',
+            "email" => ['required', 'email' , Rule::unique('users')->ignore($user)],
+            'phone_number' => ['nullable', 'regex:/^09[0-9]{8}$/', Rule::unique('profiles')->ignore($profile)],
+            "password" => ['nullable' , password_rule::min(6)->numbers()->letters()->mixedCase() ],
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->has('password')){
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        $profile->phone_number = $request->phone_number;
+        $profile->save();
+
+        return response()->json([
+            'message' => 'Privacy updated successfully',
+            'status_code' => 200
+        ], 200);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    public function getPrivacyInfo()
+    {
+        $profile = $this->getUserProfile();
+
+        $user = User::find($profile->user_id);
+
+        return response()->json([
+            'name'=> $user->name,
+            'email' => $user->email,
+            'phone_number' => $profile->phone_number,
+            'status_code' => 200
+        ],200);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    //method to get user and with profile
     private function getUserProfile(){
         $user = Auth::user();
 

@@ -51,15 +51,26 @@ Route::get('/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICa
 
 Route::middleware([UserMiddleware::class])->group(function () {
 
+    //logout user
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    //getting user general info
     Route::get('/user/profile/general', [ProfileController::class, 'getGeneralInfo']);
 
+    //updating user general info
     Route::post('/user/profile/general', [ProfileController::class , 'updateProfileGeneralInfo']);
 
+    //getting user profile picture
     Route::get('/user/profile/picture', [ProfileController::class, 'getProfilePicture']);
 
+    //updating user profile picture
     Route::post('/user/profile/picture', [ProfileController::class , 'updateProfilePicture']);
+
+    //getting user privacy info
+    Route::get('/user/profile/privacy', [ProfileController::class, 'getPrivacyInfo']);
+
+    //updating user privacy info
+    Route::post('/user/profile/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
 
 });
 
