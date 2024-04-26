@@ -6,6 +6,7 @@ use App\Helpers\TranslateTextHelper;
 use App\Mail\SendCodeResetPassword;
 use App\Mail\SendEmailVerificationCode;
 use App\Models\EmailVerification;
+use App\Models\Profile;
 use App\Models\ResetCodePassword;
 use App\Models\User;
 use Carbon\Carbon;
@@ -44,6 +45,9 @@ class AuthController extends Controller
             "name" => $request->name,
             "email" => $request->email,
             "password" => Hash::make($request->password),
+        ]);
+        Profile::create([
+            'user_id' => $user->id,
         ]);
 
         // Generate and store verification code

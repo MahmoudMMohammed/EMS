@@ -18,12 +18,14 @@ class OwnerMiddleware
     {
         $user = Auth::user();
 
-        if ($user && $user->role == 'Owner') {
+        // Check if user's role is allowed
+        $allowedRoles = ['Owner'];
+        if ($user && in_array($user->role, $allowedRoles)) {
             return $next($request);
         }
 
         return response()->json([
-            'error' => 'Unauthorized , You are not owner to access this page!'
+            'error' => 'Unauthorized, You are not Owner to access this page!'
         ], 403);
     }
 }

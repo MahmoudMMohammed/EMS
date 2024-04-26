@@ -23,6 +23,9 @@ class Profile extends Model
         'birth_date',
         'profile_picture',
         'preferred_language',
+        'about_me',
+        'place_of_residence',
+        'gender',
     ];
 
     /**

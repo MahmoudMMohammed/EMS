@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
@@ -52,8 +53,20 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/user/profile/general', [ProfileController::class, 'getGeneralInfo']);
+
+    Route::post('/user/profile/general', [ProfileController::class , 'updateProfileGeneralInfo']);
+
+    Route::get('/user/profile/picture', [ProfileController::class, 'getProfilePicture']);
+
+    Route::post('/user/profile/picture', [ProfileController::class , 'updateProfilePicture']);
 
 });
+
+
+
+
+
 
 Route::middleware([AdminMiddleware::class])->group(function () {
 

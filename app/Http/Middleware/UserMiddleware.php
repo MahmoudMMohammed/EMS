@@ -18,12 +18,15 @@ class UserMiddleware
     {
         $user = Auth::user();
 
-        if ($user && $user->role == 'User' || $user->role == 'Admin' ||$user->role == 'Owner') {
+        // Check if user's role is allowed
+        $allowedRoles = ['User', 'Admin', 'Owner'];
+        if ($user && in_array($user->role, $allowedRoles)) {
             return $next($request);
         }
 
         return response()->json([
-            'error' => 'Unauthorized , You are not user to access this page!'
+            'error' => 'Unauthorized, You are not User to access this page!'
         ], 403);
     }
+
 }

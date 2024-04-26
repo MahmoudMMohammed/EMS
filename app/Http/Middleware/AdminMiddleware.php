@@ -18,12 +18,14 @@ class AdminMiddleware
     {
         $user = Auth::user();
 
-        if ($user && $user->role == 'Admin' || $user->role == 'Owner' ) {
+        // Check if user's role is allowed
+        $allowedRoles = ['Admin', 'Owner'];
+        if ($user && in_array($user->role, $allowedRoles)) {
             return $next($request);
         }
 
         return response()->json([
-            'error' => 'Unauthorized , You are not admin to access this page!'
+            'error' => 'Unauthorized, You are not Admin to access this page!'
         ], 403);
     }
 }
