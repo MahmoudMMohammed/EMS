@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Illuminate\Validation\Rules\Password as password_rule;
 
 class ProfileController extends Controller
 {
-    public function updateProfileGeneralInfo(Request $request)
+    public function updateProfileGeneralInfo(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'about_me' => 'nullable | string',
@@ -45,7 +46,7 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function getGeneralInfo()
+    public function getGeneralInfo(): JsonResponse
     {
         $profile = $this->getUserProfile();
 
@@ -59,7 +60,7 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function updateProfilePicture(Request $request)
+    public function updateProfilePicture(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'profile_picture' => 'required | image'
@@ -80,7 +81,7 @@ class ProfileController extends Controller
         }else {
             // Handle the case when no image is uploaded
             return response()->json([
-                'message' => 'No image uploaded.',
+                'error' => 'No image uploaded.',
                 'status_code' => 400
             ], 400);
         }
@@ -94,12 +95,12 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function getProfilePicture()
+    public function getProfilePicture(): JsonResponse
     {
         $profile = $this->getUserProfile();
         if(is_null($profile->profile_picture)){
             return response()->json([
-                'message' => 'You have not added your picture yet!',
+                'error' => 'You have not added your picture yet!',
                 'status_code' => 404
             ], 404);
         }
@@ -111,7 +112,7 @@ class ProfileController extends Controller
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function updateProfilePrivacyInfo(Request $request)
+    public function updateProfilePrivacyInfo(Request $request): JsonResponse
     {
         $profile = $this->getUserProfile();
 
@@ -150,7 +151,7 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function getPrivacyInfo()
+    public function getPrivacyInfo(): JsonResponse
     {
         $profile = $this->getUserProfile();
 
@@ -166,14 +167,14 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    //method to get user and with profile
+    //method to get user with profile
     private function getUserProfile(){
         $user = Auth::user();
 
         $profile = Profile::whereUserId($user->id)->first();
         if (!$profile){
             return response()->json([
-                'message' => 'Profile not found!',
+                'error' => 'Profile not found!',
                 'status_code' => 404
             ],404);
         }

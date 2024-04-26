@@ -15,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -24,7 +23,7 @@ use Illuminate\Validation\Rules\Password as password_rule;
 class AuthController extends Controller
 {
 
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             "name" => 'required | min:2 | max:30 | regex:/^[A-Za-z\s]+$/ ',
@@ -68,20 +67,20 @@ class AuthController extends Controller
                 } else {
                     // Email sending failed
                     return response()->json([
-                        "message" => "Registration failed: Unable to send verification email.",
+                        "error" => "Registration failed: Unable to send verification email.",
                         'status_code' => 400,
                     ], 400);
                 }
             } catch (Exception $e) {
                 // Handle any other exceptions during email sending
                 return response()->json([
-                    "message" => "Registration failed: An error occurred while sending verification email.",
+                    "error" => "Registration failed: An error occurred while sending verification email.",
                     'status_code' => 500,
                 ], 500);
             }
         }else{
             return response()->json([
-                "message" => "Registration failed!",
+                "error" => "Registration failed!",
                 'status_code' => 400,
             ], 400);
         }
@@ -89,7 +88,7 @@ class AuthController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function verifyEmail(Request $request)
+    public function verifyEmail(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'code' => 'required | string | exists:email_verifications'
@@ -104,11 +103,11 @@ class AuthController extends Controller
 
         $emailVerification = EmailVerification::whereCode($request->code)->first();
 
-        // Check if it's not expired: the time is 10 minutes
-        if ($emailVerification->created_at < Carbon::now()->subMinutes(10)) {
+        // Check if it's not expired: the time is 1 hour
+        if ($emailVerification->created_at < Carbon::now()->subHour()) {
             $emailVerification->delete();
             return response()->json([
-                'message' => 'Verification code has expired!',
+                'error' => 'Verification code has expired!',
                 'status_code'=>422,
                 ], 422);
         }
@@ -127,7 +126,7 @@ class AuthController extends Controller
             ],200);
         }else{
             return response()->json([
-                'message' => 'User not found!',
+                'error' => 'User not found!',
                 'status_code' => 404,
             ],404);
         }
@@ -152,7 +151,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
-                'message' => 'Invalid email or password.',
+                'error' => 'Invalid email or password.',
                 'status_code' => 422
             ], 422);
         }
@@ -165,7 +164,7 @@ class AuthController extends Controller
 
         if(!$token){
             return response()->json([
-                'message' => 'failed log in !',
+                'error' => 'failed to log in !',
                 'status_code' => 400,
                 ] , 400);
         }
@@ -177,7 +176,8 @@ class AuthController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function logout(Request $request){
+    public function logout(Request $request): JsonResponse
+    {
         try{
             if (Auth::user()){
                 JWTAuth::invalidate(JWTAuth::getToken());
@@ -187,20 +187,20 @@ class AuthController extends Controller
                 ],200);
             }else{
                 return response()->json([
-                    'message'=>'Already logged out!',
+                    'error'=>'Already logged out!',
                     'status_code' => 400,
                 ],400);
             }
 
         }catch (JWTException $e){
             return response()->json([
-                'message'=>'Logout failed!',
+                'error'=>'Logout failed!',
                 'status_code' => 401,
             ],401);
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function forgotPassword(Request $request)
+    public function forgotPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'email' => 'required|email|exists:users'
@@ -235,7 +235,7 @@ class AuthController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function checkCode(Request $request)
+    public function checkCode(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'code' => 'required|string|exists:reset_code_passwords'
@@ -255,7 +255,7 @@ class AuthController extends Controller
         if ($passwordReset->created_at < now()->subHour()){
             $passwordReset->delete();
             return response()->json([
-                'message' => 'Password code has expired!',
+                'error' => 'Password code has expired!',
                 'status_code' => 422,
             ], 422);
         }
@@ -268,7 +268,7 @@ class AuthController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),[
             'code' => 'required|string|exists:reset_code_passwords',
@@ -289,7 +289,7 @@ class AuthController extends Controller
         if ($passwordReset->created_at < now()->subHour()){
             $passwordReset->delete();
             return response()->json([
-                'message' => 'Password code has expired!',
+                'error' => 'Password code has expired!',
                 'status_code' => 422,
                 ], 422);
         }
@@ -300,7 +300,7 @@ class AuthController extends Controller
         // check if the new password is the same as the old password
         if (Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'New password cannot be the same as the old!',
+                'error' => 'New password cannot be the same as the old!',
                 'status_code' => 422,
                 ], 422);
         }
@@ -344,6 +344,5 @@ class AuthController extends Controller
         echo $translatedText;
 
     }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

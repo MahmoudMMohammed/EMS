@@ -48,7 +48,7 @@
                                         <span style="font-size: 24px; font-weight: bold; color: #20e277;">{{ $code }}</span>
                                     </div>
                                     <p style="color:#455056; font-size:15px;line-height:24px; margin:10px 0;">
-                                        This code is valid for 10 minutes.
+                                        This code is valid for 1 Hour.
                                     </p>
                                 </td>
                             </tr>
