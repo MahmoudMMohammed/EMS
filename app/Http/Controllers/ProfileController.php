@@ -167,7 +167,7 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function deleteAccount()
+    public function deleteAccount(): JsonResponse
     {
         $user = Auth::user();
 
@@ -178,11 +178,11 @@ class ProfileController extends Controller
             'status_code' => 200
         ], 200);
     }
-
     ///////////////////////////////////////////////////////////////////////////////////////
 
     //method to get user with profile
-    private function getUserProfile(){
+    private function getUserProfile()
+    {
         $user = Auth::user();
 
         $profile = Profile::whereUserId($user->id)->first();
