@@ -70,9 +70,6 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //updating user general info
     Route::post('/user/profile/general', [ProfileController::class , 'updateProfileGeneralInfo']);
 
-    //getting user profile picture
-    Route::get('/user/profile/picture', [ProfileController::class, 'getProfilePicture']);
-
     //updating user profile picture
     Route::post('/user/profile/picture', [ProfileController::class , 'updateProfilePicture']);
 

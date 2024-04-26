@@ -55,6 +55,7 @@ class ProfileController extends Controller
             'birth_date' => $profile->birth_date,
             'place_of_residence' => $profile->place_of_residence,
             'gender' => $profile->gender,
+            'profile_picture' => $profile->profile_picture,
             'status_code' => 200
         ],200);
     }
@@ -93,23 +94,6 @@ class ProfileController extends Controller
             'status_code' => 200
         ], 200);
     }
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    public function getProfilePicture(): JsonResponse
-    {
-        $profile = $this->getUserProfile();
-        if(is_null($profile->profile_picture)){
-            return response()->json([
-                'error' => 'You have not added your picture yet!',
-                'status_code' => 404
-            ], 404);
-        }
-        return response()->json([
-            'profile_picture' => $profile->profile_picture,
-            'status_code' => 200
-        ], 200);
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////
 
     public function updateProfilePrivacyInfo(Request $request): JsonResponse
