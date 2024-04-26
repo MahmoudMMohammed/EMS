@@ -147,7 +147,23 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::withTrashed()->where('email', $request->email)->first();
+
+        // Check if the account has been soft deleted
+        if ($user->deleted_at) {
+            $deletionTime = Carbon::parse($user->deleted_at);
+            if ($deletionTime->diffInDays(now()) >= 30) {
+                // If it's been more than 30 days since deletion, permanently delete the account
+                $user->forceDelete();
+                return response()->json([
+                    'error' => 'Your account has been permanently deleted due to inactivity.',
+                    'status_code' => 422
+                ], 422);
+            } else {
+                // Reactivate the account
+                $user->restore();
+            }
+        }
 
         if (!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
@@ -156,7 +172,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-
+        // Proceed with login
         $token = JWTAuth::attempt([
             'email' => $request->email ,
             'password' => $request->password
@@ -164,7 +180,7 @@ class AuthController extends Controller
 
         if(!$token){
             return response()->json([
-                'error' => 'failed to log in !',
+                'error' => 'failed to login!',
                 'status_code' => 400,
                 ] , 400);
         }

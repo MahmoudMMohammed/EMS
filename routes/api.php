@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Middleware\AdminMiddleware;
@@ -71,6 +72,17 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //updating user privacy info
     Route::post('/user/profile/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
+
+    //add location to user favorites
+    Route::post('/user/profile/favorites', [FavoriteController::class , 'addLocationToFavorites']);
+
+    //remove location from user favorites
+    Route::delete('/user/profile/favorites/{location_id}', [FavoriteController::class , 'removeFromFavorites']);
+
+    //delete user account
+    Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
+
+
 
 });
 

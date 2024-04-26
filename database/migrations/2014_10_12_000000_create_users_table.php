@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('google_id')->unique()->nullable();
             $table->boolean('verified')->default(false);
             $table->string('role')->default('User');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

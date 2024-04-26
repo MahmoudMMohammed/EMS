@@ -167,6 +167,20 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Account deletion requested. You have 30 days to reactivate your account by logging in or it will be permanently deleted.',
+            'status_code' => 200
+        ], 200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+
     //method to get user with profile
     private function getUserProfile(){
         $user = Auth::user();
