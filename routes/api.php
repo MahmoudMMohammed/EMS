@@ -70,9 +70,6 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //updating user general info
     Route::post('/user/profile/general', [ProfileController::class , 'updateProfileGeneralInfo']);
 
-    //getting user profile picture
-    Route::get('/user/profile/picture', [ProfileController::class, 'getProfilePicture']);
-
     //updating user profile picture
     Route::post('/user/profile/picture', [ProfileController::class , 'updateProfilePicture']);
 
@@ -81,6 +78,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //updating user privacy info
     Route::post('/user/profile/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
+
+    //get user favorites
+    Route::get('/user/profile/favorites', [FavoriteController::class, 'getUserFavorites']);
 
     //add location to user favorites
     Route::post('/user/profile/favorites', [FavoriteController::class , 'addLocationToFavorites']);
