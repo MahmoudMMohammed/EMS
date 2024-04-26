@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\MainEvent;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MainEventController extends Controller
 {
-    public function GetEvents()
+    public function GetEvents() :JsonResponse
     {
         $events = MainEvent::query()->get();
         if(!$events)
