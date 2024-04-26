@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FoodController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MainEventController;
+use App\Http\Controllers\MainEventHostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Middleware\AdminMiddleware;
@@ -20,6 +26,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+
+/*...................................<Mahmoud>...................................*/
 
 //register new user
 Route::post('/register', [AuthController::class, 'register']);
@@ -83,13 +92,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
 
 
-
 });
-
-
-
-
-
 
 Route::middleware([AdminMiddleware::class])->group(function () {
 
@@ -98,6 +101,40 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
+
+
+
+
+/*...................................<Mansour>...................................*/
+Route::middleware([UserMiddleware::class])->group(function () {
+
+});
+
+Route::middleware([AdminMiddleware::class])->group(function () {
+
+});
+
+Route::middleware([OwnerMiddleware::class])->group(function () {
+
+});
+
+//get hosts related each event
+Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
+
+//get all events
+Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
+
+//get count of (location - food - drink - accessory)
+Route::get('/home/count/location' , [LocationController::class , 'CountLocation']);
+Route::get('/home/count/food' , [FoodController::class , 'CountFood']);
+Route::get('/home/count/drink' , [DrinkController::class , 'CountDrink']);
+Route::get('/home/count/accessory' , [AccessoryController::class , 'CountAccessory']);
+
+
+
+
+
+
 
 //test
 //Route::get('/notification/user/{user_id}' ,[AuthController::class, 'testNotifications']);

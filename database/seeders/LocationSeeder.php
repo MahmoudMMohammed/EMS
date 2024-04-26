@@ -161,7 +161,7 @@ class LocationSeeder extends Seeder
                 'reservation_price' => $reservation_price[$i] ,
                 'x_position' => $x_position[$i] ,
                 'y_position' => $y_position[$i] ,
-                'logo' => $logo
+                'logo' => $logo[$i]
             ]);
         }
     }
