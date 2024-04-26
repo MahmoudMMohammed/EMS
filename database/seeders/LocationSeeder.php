@@ -117,6 +117,36 @@ class LocationSeeder extends Seeder
             36.253769 , 36.688874 ,
         ];
 
+        $logo = [
+            'Location/4.jpg' ,
+            'Location/5.jpg' ,
+            'Location/9.jpg' ,
+            'Location/13.jpg' ,
+            'Location/17.jpg' ,
+            'Location/21.jpg' ,
+            'Location/25.jpg' ,
+            'Location/29.jpg' ,
+            'Location/33.jpg' ,
+            'Location/37.jpg' ,
+            'Location/41.jpg' ,
+            'Location/45.jpg' ,
+            'Location/49.jpg' ,
+            'Location/53.jpg' ,
+            'Location/60.jpg' ,
+            'Location/61.jpg' ,
+            'Location/65.jpg' ,
+            'Location/69.jpg' ,
+            'Location/73.jpg' ,
+            'Location/77.jpg' ,
+            'Location/81.jpg' ,
+            'Location/88.jpg' ,
+            'Location/92.jpg' ,
+            'Location/96.jpg' ,
+            'Location/100.jpg' ,
+            'Location/104.jpg' ,
+
+        ];
+
         for($i = 0 ; $i < count($name) ; $i++)
         {
             Location::query()->create([
@@ -130,7 +160,8 @@ class LocationSeeder extends Seeder
                 'close_time' => $close_time[$i] ,
                 'reservation_price' => $reservation_price[$i] ,
                 'x_position' => $x_position[$i] ,
-                'y_position' => $y_position[$i]
+                'y_position' => $y_position[$i] ,
+                'logo' => $logo
             ]);
         }
     }
