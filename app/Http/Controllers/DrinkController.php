@@ -14,12 +14,12 @@ class DrinkController extends Controller
 
         if(!$Drink){
             return response()->json([
-                'message' => 'Something went wrong , try again later' ,
-                'status' => 400
+                'error' => 'Something went wrong , try again later' ,
+                'status_code' => 400
             ] , 400);
         }
 
-        return response()->json(['Drink_Count' => $Drink , 'status' => 200] , 200);
+        return response()->json(['drink_count' => $Drink , 'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 

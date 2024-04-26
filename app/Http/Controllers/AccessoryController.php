@@ -14,12 +14,12 @@ class AccessoryController extends Controller
 
         if(!$Accessory){
             return response()->json([
-                'message' => 'Something went wrong , try again later' ,
-                'status' => 400
+                'error' => 'Something went wrong , try again later' ,
+                'status_code' => 400
             ] , 400);
         }
 
-        return response()->json(['Accessory_Count' => $Accessory , 'status' => 200] , 200);
+        return response()->json(['accessory_count' => $Accessory , 'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 

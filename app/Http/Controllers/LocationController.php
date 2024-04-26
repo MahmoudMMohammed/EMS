@@ -15,12 +15,12 @@ class LocationController extends Controller
 
         if(!$location){
             return response()->json([
-                'message' => 'Something went wrong , try again later' ,
-                'status' => 400
+                'error' => 'Something went wrong , try again later' ,
+                'status_code' => 400
             ] , 400);
         }
 
-        return response()->json(['Location_Count' => $location , 'status' => 200] , 200);
+        return response()->json(['location_count' => $location , 'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
