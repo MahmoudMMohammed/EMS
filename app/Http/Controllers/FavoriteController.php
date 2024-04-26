@@ -60,7 +60,7 @@ class FavoriteController extends Controller
 
         $favorites = Favorite::whereUserId($user->id)->get();
 
-        if (!$favorites->count > 0){
+        if ($favorites->count() == 0){
             return response()->json([
                 "error" => 'You have not added anything to favorites yet!',
                 "status_code" => 404,

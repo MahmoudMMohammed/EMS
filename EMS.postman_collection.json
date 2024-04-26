@@ -518,7 +518,7 @@
 							"formdata": [
 								{
 									"key": "code",
-									"value": "848364",
+									"value": "393169",
 									"type": "text"
 								}
 							]
@@ -1183,7 +1183,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MTM1NTQ1LCJleHAiOjE3MTQxMzkxNDUsIm5iZiI6MTcxNDEzNTU0NSwianRpIjoib0Zra2h5RkVQR1lDVm1WMSIsInN1YiI6IjI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.4GgO-hqRbO1kP8GsNGL5c4NnVeSt4vWK5_SYbe90So0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
 											"type": "string"
 										}
 									]
@@ -1250,11 +1250,11 @@
 										},
 										{
 											"key": "Date",
-											"value": "Fri, 26 Apr 2024 08:22:57 GMT"
+											"value": "Fri, 26 Apr 2024 19:55:30 GMT"
 										},
 										{
 											"key": "Date",
-											"value": "Fri, 26 Apr 2024 08:22:57 GMT"
+											"value": "Fri, 26 Apr 2024 19:55:30 GMT"
 										},
 										{
 											"key": "Connection",
@@ -1278,7 +1278,7 @@
 										},
 										{
 											"key": "X-RateLimit-Remaining",
-											"value": "59"
+											"value": "58"
 										},
 										{
 											"key": "Access-Control-Allow-Origin",
@@ -1286,7 +1286,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n    \"about_me\": \"test\",\n    \"birth_date\": \"2002-07-08\",\n    \"place_of_residence\": \"Somewhere\",\n    \"gender\": \"Male\",\n    \"status_code\": 200\n}"
+									"body": "{\n    \"about_me\": \"test\",\n    \"birth_date\": \"2002-07-08\",\n    \"place_of_residence\": \"Somewhere\",\n    \"gender\": \"Male\",\n    \"profile_picture\": \"Profile Pictures/1714161320 user 27\",\n    \"status_code\": 200\n}"
 								}
 							]
 						},
@@ -1298,7 +1298,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDExODgxOSwiZXhwIjoxNzE0MTIyNDE5LCJuYmYiOjE3MTQxMTg4MTksImp0aSI6InVsTk5rOHJDWE1Ea1pQaUgiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.rrCoUumPosTzlDjVHqG_9vQ2hVOIqhdfl72e3-nNevA",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
 											"type": "string"
 										}
 									]
@@ -2202,184 +2202,6 @@
 					"name": "Profile pircture",
 					"item": [
 						{
-							"name": "get profile picture",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MTE2ODY5LCJleHAiOjE3MTQxMjA0NjksIm5iZiI6MTcxNDExNjg2OSwianRpIjoiVE05dktLbnFkN3hocXF0ZSIsInN1YiI6IjI4IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.1VwMXyGIT3BifhszBGW0C9-gsTaSJ-NMHRBqunpBqa4",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/user/profile/picture",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"user",
-										"profile",
-										"picture"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "no picture",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "http://127.0.0.1:8000/api/user/profile/picture",
-											"protocol": "http",
-											"host": [
-												"127",
-												"0",
-												"0",
-												"1"
-											],
-											"port": "8000",
-											"path": [
-												"api",
-												"user",
-												"profile",
-												"picture"
-											]
-										}
-									},
-									"status": "Not Found",
-									"code": 404,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Host",
-											"value": "127.0.0.1:8000"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 26 Apr 2024 07:40:10 GMT"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 26 Apr 2024 07:40:10 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "close"
-										},
-										{
-											"key": "X-Powered-By",
-											"value": "PHP/8.2.4"
-										},
-										{
-											"key": "Cache-Control",
-											"value": "no-cache, private"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json"
-										},
-										{
-											"key": "X-RateLimit-Limit",
-											"value": "60"
-										},
-										{
-											"key": "X-RateLimit-Remaining",
-											"value": "59"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"message\": \"You have not added yet\",\n    \"status_code\": 404\n}"
-								},
-								{
-									"name": "success",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "http://127.0.0.1:8000/api/user/profile/picture",
-											"protocol": "http",
-											"host": [
-												"127",
-												"0",
-												"0",
-												"1"
-											],
-											"port": "8000",
-											"path": [
-												"api",
-												"user",
-												"profile",
-												"picture"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Host",
-											"value": "127.0.0.1:8000"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 26 Apr 2024 07:54:19 GMT"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 26 Apr 2024 07:54:19 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "close"
-										},
-										{
-											"key": "X-Powered-By",
-											"value": "PHP/8.2.4"
-										},
-										{
-											"key": "Cache-Control",
-											"value": "no-cache, private"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json"
-										},
-										{
-											"key": "X-RateLimit-Limit",
-											"value": "60"
-										},
-										{
-											"key": "X-RateLimit-Remaining",
-											"value": "58"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"profile_picture\": \"Profile Pictures/1714118055 user 28\",\n    \"status_code\": 200\n}"
-								}
-							]
-						},
-						{
 							"name": "update profile picture",
 							"request": {
 								"auth": {
@@ -2387,7 +2209,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MTE2ODY5LCJleHAiOjE3MTQxMjA0NjksIm5iZiI6MTcxNDExNjg2OSwianRpIjoiVE05dktLbnFkN3hocXF0ZSIsInN1YiI6IjI4IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.1VwMXyGIT3BifhszBGW0C9-gsTaSJ-NMHRBqunpBqa4",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
 											"type": "string"
 										}
 									]
@@ -2600,7 +2422,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MTQzMDE4LCJleHAiOjE3MTQxNDY2MTgsIm5iZiI6MTcxNDE0MzAxOCwianRpIjoiY3o4SEFmd1VZaGE1VjQ2ZCIsInN1YiI6IjI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.TWSXrqyZLQfyq0ulZ-xMVYfoNwa72l0ewwZaJqMQ9wU",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
 											"type": "string"
 										}
 									]
@@ -2612,7 +2434,7 @@
 									"formdata": [
 										{
 											"key": "location_id",
-											"value": "4",
+											"value": "1",
 											"type": "text"
 										}
 									]
@@ -3147,6 +2969,184 @@
 									],
 									"cookie": [],
 									"body": "{\n    \"message\": \"Location removed from your favorites successfully\",\n    \"status_code\": 200\n}"
+								}
+							]
+						},
+						{
+							"name": "get user favorites",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/profile/favorites",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"profile",
+										"favorites"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "user has no favorites",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/user/profile/favorites",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"user",
+												"profile",
+												"favorites"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 26 Apr 2024 20:04:30 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 26 Apr 2024 20:04:30 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"error\": \"You have not added anything to favorites yet!\",\n    \"status_code\": 404\n}"
+								},
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/user/profile/favorites",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"user",
+												"profile",
+												"favorites"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 26 Apr 2024 20:05:40 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 26 Apr 2024 20:05:40 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "58"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"These are your favorites:\",\n    \"data\": [\n        {\n            \"name\": \"Beroea Restaurant\",\n            \"governorate\": \"Aleppo\",\n            \"open_time\": \"9:00 AM\",\n            \"close_time\": \"12:00 PM\",\n            \"logo\": \"Location/13.jpg\"\n        },\n        {\n            \"name\": \"Bla Bla Cafe\",\n            \"governorate\": \"Tartus\",\n            \"open_time\": \"10:00 AM\",\n            \"close_time\": \"12:00 PM\",\n            \"logo\": \"Location/29.jpg\"\n        },\n        {\n            \"name\": \"Oriental Restaurant\",\n            \"governorate\": \"Damascus\",\n            \"open_time\": \"9:00 AM\",\n            \"close_time\": \"12:00 PM\",\n            \"logo\": \"Location/4.jpg\"\n        }\n    ],\n    \"status_code\": 200\n}"
 								}
 							]
 						}
