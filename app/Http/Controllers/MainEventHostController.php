@@ -14,7 +14,7 @@ class MainEventHostController extends Controller
             ->join('hosts', 'main_event_hosts.host_id', '=', 'hosts.id')
             ->join('main_events', 'main_event_hosts.main_event_id', '=', 'main_events.id')
             ->where('main_event_id' , $id)
-            ->select('main_events.name as event_name' , 'hosts.name as host_name' , 'hosts.picture' , 'hosts.recommended_for')
+            ->select('hosts.id as host_id' , 'main_events.name as event_name' , 'hosts.name as host_name' , 'hosts.picture' , 'hosts.recommended_for')
             ->get();
 
         if(!$event)
