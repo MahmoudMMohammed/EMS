@@ -48,4 +48,29 @@ class TranslateTextHelper
 
         return $translatedText;
     }
+    public static function batchTranslate(array $texts): array
+    {
+        $translatedTexts = [];
+
+        // Initialize GoogleTranslate instance
+        $translator = new GoogleTranslate();
+
+        // Set source and target languages
+        $translator->setSource(self::$source);
+        $translator->setTarget(self::$target);
+
+        // Translate each text in the batch
+        foreach ($texts as $text) {
+            try {
+                // Translate text
+                $translatedText = $translator->translate($text);
+                $translatedTexts[$text] = $translatedText;
+            } catch (\Exception $e) {
+                // Handle translation errors
+                $translatedTexts[$text] = 'Translation error';
+            }
+        }
+
+        return $translatedTexts;
+    }
 }

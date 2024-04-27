@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Favorite;
 use App\Models\Location;
 use Illuminate\Http\JsonResponse;
@@ -54,13 +55,16 @@ class FavoriteController extends Controller
     }
     ////////////////////////////////////////////////////////////////////////////////////
 
+
+
     public function getUserFavorites(): JsonResponse
     {
         $user = Auth::user();
 
-        $favorites = Favorite::whereUserId($user->id)->get();
+        // Eager load favorites with locations to avoid N+1 query problem
+        $favorites = Favorite::with('location')->whereUserId($user->id)->get();
 
-        if ($favorites->count() == 0){
+        if ($favorites->isEmpty()) {
             return response()->json([
                 "error" => 'You have not added anything to favorites yet!',
                 "status_code" => 404,
@@ -68,11 +72,29 @@ class FavoriteController extends Controller
         }
 
         $favoritesData = [];
-        foreach ($favorites as $favorite){
-            $location = Location::find($favorite->location_id);
+
+        // Batch translation requests for location names and governorates
+        $locationNames = [];
+        $governorates = [];
+        foreach ($favorites as $favorite) {
+            $location = $favorite->location;
+            $locationNames[$location->id] = $location->name;
+            $governorates[$location->id] = $location->governorate;
+        }
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $translatedLocationNames = TranslateTextHelper::batchTranslate(array_values($locationNames));
+        $translatedGovernorates = TranslateTextHelper::batchTranslate(array_values($governorates));
+
+        TranslateTextHelper::setTarget('en');
+
+        foreach ($favorites as $favorite) {
+            $location = $favorite->location;
             $locationData = [];
-            $locationData['name'] = $location->name;
-            $locationData['governorate'] = $location->governorate;
+
+            // Retrieve translated texts from cache or perform translation
+            $locationData['name'] = $translatedLocationNames[$location->name];
+            $locationData['governorate'] = $translatedGovernorates[$location->governorate];
             $locationData['open_time'] = $location->open_time;
             $locationData['close_time'] = $location->close_time;
             $locationData['logo'] = $location->logo;
@@ -86,6 +108,7 @@ class FavoriteController extends Controller
             "status_code" => 200,
         ], 200);
     }
+
     ////////////////////////////////////////////////////////////////////////////////////
 
     public function removeFromFavorites(Request $request , $location_id): JsonResponse
