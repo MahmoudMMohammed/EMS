@@ -124,10 +124,8 @@ Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHost
 Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
 
 //get count of (location - food - drink - accessory)
-Route::get('/home/count/location' , [LocationController::class , 'CountLocation']);
-Route::get('/home/count/food' , [FoodController::class , 'CountFood']);
-Route::get('/home/count/drink' , [DrinkController::class , 'CountDrink']);
-Route::get('/home/count/accessory' , [AccessoryController::class , 'CountAccessory']);
+Route::get('/home/count' , [LocationController::class , 'HomeCount']);
+
 
 
 

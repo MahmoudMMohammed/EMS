@@ -86,8 +86,6 @@ class FavoriteController extends Controller
         $translatedLocationNames = TranslateTextHelper::batchTranslate(array_values($locationNames));
         $translatedGovernorates = TranslateTextHelper::batchTranslate(array_values($governorates));
 
-        TranslateTextHelper::setTarget('en');
-
         foreach ($favorites as $favorite) {
             $location = $favorite->location;
             $locationData = [];
