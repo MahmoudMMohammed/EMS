@@ -171,6 +171,21 @@ class AuthController extends Controller
                 'status_code' => 422
             ], 422);
         }
+        // Check if admin or owner is trying to access user app
+        if ($user->role != "User" && $request->path() === 'api/login'){
+            return response()->json([
+                'error' => "Sorry you are $user->role, you cannot login to user app!",
+                'status_code' => 422
+            ], 422);
+        }
+
+        // Check if user is trying to access admin dashboard
+        if ($user->role == "User" && $request->path() === 'api/login/admin') {
+            return response()->json([
+                'error' => "Sorry, you are not authorized to access the admin dashboard.",
+                'status_code' => 403
+            ], 403);
+        }
 
         // Proceed with login
         $token = JWTAuth::attempt([
@@ -190,7 +205,6 @@ class AuthController extends Controller
             'status_code'=>200
         ] , 200);
     }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function logout(Request $request): JsonResponse
     {

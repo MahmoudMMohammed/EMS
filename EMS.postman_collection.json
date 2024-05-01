@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "0ccf2381-0da3-4a4a-88b2-cd9e32cc190c",
+		"_postman_id": "0dc79adc-9426-427f-92e6-2a21a03a046f",
 		"name": "EMS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27289012"
+		"_exporter_id": "34561903",
+		"_collection_link": "https://winter-firefly-375473.postman.co/workspace/EMS-APIs-~bcd99af8-4926-4726-9842-21c4f210a3a0/collection/34561903-0dc79adc-9426-427f-92e6-2a21a03a046f?action=share&source=collection_link&creator=34561903"
 	},
 	"item": [
 		{
@@ -356,6 +357,91 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"error\": \"Your account has been permanently deleted due to inactivity.\",\n    \"status_code\": 422\n}"
+						},
+						{
+							"name": "not admin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "mahmoudmohammad932@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "Mahmoud8",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/login/admin",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"login",
+										"admin"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:36:44 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:36:44 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "56"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Sorry, you are not authorized to access the admin dashboard.\",\n    \"status_code\": 403\n}"
 						}
 					]
 				},
@@ -618,6 +704,215 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"message\": \"Code verified\",\n    \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxMTY1Mzc0NywiZXhwIjoxNzExNjU3MzQ3LCJuYmYiOjE3MTE2NTM3NDcsImp0aSI6ImN4NXBINlNucktreFg2ZXQiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.ZaihScbSfvtp7GbRGUXwbUcC8pg-eDsiAuUmtjkeJM8\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "admin login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "ijohnson@example.net",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "ite2003H",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/login/admin",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login",
+								"admin"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "ijohnson@example.net",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "ite2003H",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/login/admin",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"login",
+										"admin"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:41:11 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:41:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "57"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luL2FkbWluIiwiaWF0IjoxNzE0NTYwMDcxLCJleHAiOjE3MTQ1NjM2NzEsIm5iZiI6MTcxNDU2MDA3MSwianRpIjoiMWJkamlNS1R5YkN3U2Y1eSIsInN1YiI6IjI2IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.9wA0hjTcg4ajHUxAQIYnfAOIJXFXX8pnop_MBP7H7YM\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "not user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "ijohnson@example.net",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "ite2003H",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:41:43 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 01 May 2024 10:41:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Sorry you are Admin, you cannot login to user app!\",\n    \"status_code\": 422\n}"
 						}
 					]
 				}
@@ -1218,10 +1513,6 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"body": {
-											"mode": "formdata",
-											"formdata": []
-										},
 										"url": {
 											"raw": "http://127.0.0.1:8000/api/user/profile/general",
 											"protocol": "http",
@@ -2422,7 +2713,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MjIwNDc0LCJleHAiOjE3MTQyMjQwNzQsIm5iZiI6MTcxNDIyMDQ3NCwianRpIjoidTJGNWFVQ2R1YmNuU3RhbSIsInN1YiI6IjI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.F_KKFZ0NmJqrLYLErCFBSN-F9uH0nCooELdIUc6HnyQ",
 											"type": "string"
 										}
 									]
@@ -2434,7 +2725,7 @@
 									"formdata": [
 										{
 											"key": "location_id",
-											"value": "1",
+											"value": "10",
 											"type": "text"
 										}
 									]
@@ -2980,7 +3271,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxNDE2MTE0NSwiZXhwIjoxNzE0MTY0NzQ1LCJuYmYiOjE3MTQxNjExNDUsImp0aSI6Iml1YzJCTjZYUm5qaTlocHEiLCJzdWIiOiIyNyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.gTtvQo0jj5a4KbggfS3gxgF45_M5VlDW6qAF-EkE5f0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE0MjI0MDk5LCJleHAiOjE3MTQyMjc2OTksIm5iZiI6MTcxNDIyNDA5OSwianRpIjoibldkNnBFdUh4TGVtTXZ5eSIsInN1YiI6IjI3IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.WHJvhyFyIQvhZf160jFsAoTEkC8MaUgnFz29B3zUG6I",
 											"type": "string"
 										}
 									]
@@ -3309,6 +3600,307 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Home",
+			"item": [
+				{
+					"name": "Mobile Home",
+					"item": [
+						{
+							"name": "Home Count",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/home/count",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"home",
+										"count"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/home/count",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"home",
+												"count"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:10:36 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:10:36 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"location_count\": 26,\n    \"food_count\": 127,\n    \"drink_count\": 48,\n    \"accessory_count\": 71,\n    \"status_code\": 200\n}"
+								}
+							]
+						},
+						{
+							"name": "Home Events",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/home/events",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"home",
+										"events"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/home/events",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"home",
+												"events"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:11:37 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:11:37 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Wedding\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Engagement\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Graduation\"\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Birthday\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Condolences\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Dining Invitation\"\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Sports Event\"\n    },\n    {\n        \"id\": 8,\n        \"name\": \"Custom\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Home Hosts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/home/hosts/4",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"home",
+										"hosts",
+										"4"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/home/hosts/4",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"home",
+												"hosts",
+												"4"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:14:07 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Apr 2024 18:14:07 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "58"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"host_id\": 1,\n        \"event_name\": \"Birthday\",\n        \"host_name\": \"Restaurant\",\n        \"picture\": \"Hosts/1.jpg\",\n        \"recommended_for\": \"For food determination\"\n    },\n    {\n        \"host_id\": 2,\n        \"event_name\": \"Birthday\",\n        \"host_name\": \"Cafe\",\n        \"picture\": \"Hosts/2.jpg\",\n        \"recommended_for\": \"For small gatherings\"\n    },\n    {\n        \"host_id\": 3,\n        \"event_name\": \"Birthday\",\n        \"host_name\": \"Bar\",\n        \"picture\": \"Hosts/3.jpg\",\n        \"recommended_for\": \"For parties with friends\"\n    },\n    {\n        \"host_id\": 4,\n        \"event_name\": \"Birthday\",\n        \"host_name\": \"Lounge\",\n        \"picture\": \"Hosts/4.jpg\",\n        \"recommended_for\": \"For large meetings\"\n    }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Web Home",
+					"item": []
 				}
 			]
 		}

@@ -35,8 +35,11 @@ Route::post('/register', [AuthController::class, 'register']);
 //verify user email to continue to the app
 Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 
-//login existing user
-Route::post('/login', [AuthController::class, 'login']);
+//login for user
+Route::post('login', [AuthController::class, 'login']);
+
+//login for admin
+Route::post('login/admin', [AuthController::class, 'login']);
 
 
 
