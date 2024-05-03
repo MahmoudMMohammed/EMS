@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             HostFoodCategorySeeder::class ,
             WarehouseAccessorSeeder::class ,
             MehacsSeeder::class ,
+            ProfileSeeder::class
         ]);
     }
 }
