@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\AccessoryController;
+
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\FoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;

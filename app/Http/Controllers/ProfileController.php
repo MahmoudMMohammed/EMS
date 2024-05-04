@@ -73,13 +73,21 @@ class ProfileController extends Controller
             ], 422);
         }
 
+        $user = Auth::user();
         $profile = $this->getUserProfile();
 
-        if($request->hasFile('profile_picture')){
+        if($request->hasFile('profile_picture') && $user->role == "User"){
             $image = $request->file('profile_picture');
-            $destination = 'Profile Pictures/' . time() . ' user ' . $profile->user_id ;
-            $image->move(public_path('Profile Pictures'),$destination);
-        }else {
+            $destination = 'Profile Pictures/Users/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
+            $image->move(public_path('Profile Pictures/Users'),$destination);
+        }
+
+        elseif($request->hasFile('profile_picture') && $user->role != "User"){
+            $image = $request->file('profile_picture');
+            $destination = 'Profile Pictures/Owners & Admins/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
+            $image->move(public_path('Profile Pictures/Owners & Admins'),$destination);
+        }
+        else {
             // Handle the case when no image is uploaded
             return response()->json([
                 'error' => 'No image uploaded.',
