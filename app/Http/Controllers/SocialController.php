@@ -133,8 +133,7 @@ class SocialController extends Controller
 
         $token = JWTAuth::fromUser($authenticatedUser);
 
-        $authenticatedUser->token = $token;
-        $authenticatedUser->save();
+
 
         return response()->json(['token' => $token]);
     }
