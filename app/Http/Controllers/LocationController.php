@@ -8,7 +8,7 @@ use App\Models\Food;
 use App\Models\Location;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\Constraint\IsEmpty;
+use Illuminate\Support\Facades\Validator;
 
 class LocationController extends Controller
 {
@@ -55,5 +55,85 @@ class LocationController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
+    public function GetAllLocation (Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "host_id" => 'required|exists:locations,host_id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+        $locations = Location::query()->where('host_id', $request->host_id)->select( 'id' , 'name' , 'governorate' , 'open_time' , 'close_time' , 'logo')->get();
+
+        if (!$locations)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later" ,
+                "status_code" => 422,
+            ], 422);
+        }
+
+        foreach ($locations as $location)
+        {
+            $location->logo = 'http://localhost:8000/' . $location->logo;
+        }
+
+        return response()->json($locations ,200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+    public function SortLocation(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "host_id" => 'required|exists:locations,host_id',
+            "governorate" => 'required|exists:locations,governorate'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $locations = Location::query()
+            ->where('governorate', $request->governorate)
+            ->where('host_id', $request->host_id)
+            ->select('id', 'name', 'governorate', 'open_time', 'close_time', 'logo')
+            ->get();
+
+        if (!$locations) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        foreach ($locations as $location) {
+            $location->logo = 'http://localhost:8000/' . $location->logo;
+        }
+
+        return response()->json($locations , 200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function GetAllGovernorate(): JsonResponse
+    {
+        $governorate = Location::distinct()->pluck('governorate');
+
+        if(!$governorate)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        return response()->json($governorate , 200);
+    }
 
 }
