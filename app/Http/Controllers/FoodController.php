@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use App\Models\FoodCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FoodController extends Controller
 {
-    public function getFood(): JsonResponse
+    public function getFoodByCategory($category_id): JsonResponse
     {
-        $food = Food::select('id','name','price','picture')->get();
+        $foodCategory = FoodCategory::find($category_id);
+        if (!$foodCategory){
+            return response()->json([
+                "error" => "Category not found!",
+                "status_code" => "404"
+            ],404);
+        }
+        $food = Food::select('id','name','price','picture')->whereFoodCategoryId($category_id)->get();
 
         if (!$food->count() > 0){
             return response()->json([
@@ -45,6 +53,19 @@ class FoodController extends Controller
             "picture" => "http://localhost:8000/$food->picture",
         ];
         return response()->json($foodData, 200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    public function getFoodCategories(): JsonResponse
+    {
+        $foodCategories = FoodCategory::all();
+        if (!$foodCategories){
+            return response()->json([
+                "error" => "No food categories to show!",
+                "status_code" => "404"
+            ],404);
+        }
+        return response()->json($foodCategories,200);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -3,14 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Drink;
+use App\Models\DrinkCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DrinkController extends Controller
 {
-    public function getDrinks(): JsonResponse
+    public function getDrinksByCategory($category_id): JsonResponse
     {
-        $drinks = Drink::select('id','name','price','picture')->get();
+        $drinkCategory = DrinkCategory::find($category_id);
+        if (!$drinkCategory){
+            return response()->json([
+                "error" => "Category not found!",
+                "status_code" => "404"
+            ],404);
+        }
+
+        $drinks = Drink::select('id','name','price','picture')->whereDrinkCategoryId($category_id)->get();
 
         if (!$drinks->count() > 0){
             return response()->json([
@@ -47,6 +56,18 @@ class DrinkController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    public function getDrinksCategories(): JsonResponse
+    {
+        $drinksCategories = DrinkCategory::all();
+        if (!$drinksCategories){
+            return response()->json([
+                "error" => "No drinks categories to show!",
+                "status_code" => "404"
+            ],404);
+        }
+        return response()->json($drinksCategories,200);
+    }
 
+    ////////////////////////////////////////////////////////////////////////////////
 
 }

@@ -3,14 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accessory;
+use App\Models\AccessoryCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AccessoryController extends Controller
 {
-    public function getAccessories(): JsonResponse
+    public function getAccessoriesByCategory($category_id): JsonResponse
     {
-        $accessories = Accessory::select('id','name','price','picture')->get();
+        $accessoryCategory = AccessoryCategory::find($category_id);
+        if (!$accessoryCategory){
+            return response()->json([
+                "error" => "Category not found!",
+                "status_code" => "404"
+            ],404);
+        }
+
+        $accessories = Accessory::select('id','name','price','picture')->whereAccessoryCategoryId($category_id)->get();
 
         if (!$accessories->count() > 0){
             return response()->json([
@@ -44,6 +53,18 @@ class AccessoryController extends Controller
             "picture" => "http://localhost:8000/$accessory->picture",
         ];
         return response()->json($accessoryData, 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function getAccessoriesCategories(): JsonResponse
+    {
+        $accessoriesCategories = AccessoryCategory::all();
+        if (!$accessoriesCategories){
+            return response()->json([
+                "error" => "No accessories categories to show!",
+                "status_code" => "404"
+            ],404);
+        }
+        return response()->json($accessoriesCategories,200);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

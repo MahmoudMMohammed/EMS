@@ -113,20 +113,36 @@ Route::get('/locations', [LocationController::class, 'getLocations']);
 //find location by its id
 Route::get('/locations/{location_id}', [LocationController::class, 'getLocationById']);
 
-//explore all food available
-Route::get('/food', [FoodController::class, 'getFood']);
+
+
+//explore all available food categories
+Route::get('/food/categories', [FoodController::class, 'getFoodCategories']);
+
+//explore all food for specific category
+Route::get('/food/category/{category_id}', [FoodController::class, 'getFoodByCategory']);
 
 //find food by its id
 Route::get('/food/{food_id}', [FoodController::class, 'getFoodById']);
 
-//explore all drinks available
-Route::get('/drinks', [DrinkController::class, 'getDrinks']);
+
+
+//explore all available drinks categories
+Route::get('/drinks/categories', [DrinkController::class, 'getDrinksCategories']);
+
+//explore all drinks for specific category
+Route::get('/drinks/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
 
 //find food by its id
 Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
 
-//explore all accessories available
-Route::get('/accessories', [AccessoryController::class, 'getAccessories']);
+
+
+
+//explore all available drinks categories
+Route::get('/accessories/categories', [AccessoryController::class, 'getAccessoriesCategories']);
+
+//explore all accessories for specific category
+Route::get('/accessories/category/{category_id}', [AccessoryController::class, 'getAccessoriesByCategory']);
 
 //find accessory by its id
 Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
