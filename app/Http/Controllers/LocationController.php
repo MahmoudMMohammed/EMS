@@ -69,7 +69,7 @@ class LocationController extends Controller
         }
         $locations = Location::query()->where('host_id', $request->host_id)->select( 'id' , 'name' , 'governorate' , 'open_time' , 'close_time' , 'capacity' , 'logo')->get();
 
-        if (!$locations)
+        if (!$locations->count() > 0)
         {
             return response()->json([
                 "error" => "Something went wrong , try again later" ,
@@ -106,7 +106,7 @@ class LocationController extends Controller
             ->select('id', 'name', 'governorate', 'open_time', 'close_time', 'logo')
             ->get();
 
-        if (!$locations) {
+        if (!$locations->count() > 0) {
             return response()->json([
                 "error" => "Something went wrong , try again later",
                 "status_code" => 422,
@@ -125,7 +125,7 @@ class LocationController extends Controller
     {
         $governorate = Location::distinct()->pluck('governorate');
 
-        if(!$governorate)
+        if(!$governorate->count() > 0)
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",

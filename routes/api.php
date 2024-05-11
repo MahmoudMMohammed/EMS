@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
@@ -135,6 +136,9 @@ Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']
 
 //Get all governorate
 Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
+
+//
+Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
 
 
 

@@ -17,7 +17,7 @@ class MainEventHostController extends Controller
             ->select('hosts.id as host_id' , 'main_events.name as event_name' , 'hosts.name as host_name' , 'hosts.picture' , 'hosts.recommended_for')
             ->get();
 
-        if(!$events)
+        if(!$events->count() > 0)
         {
             return response()->json([
                 'error' => 'Something went wrong , try again later' ,

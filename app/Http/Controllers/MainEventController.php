@@ -11,7 +11,7 @@ class MainEventController extends Controller
     public function GetEvents() :JsonResponse
     {
         $events = MainEvent::query()->get();
-        if(!$events)
+        if(!$events->count() > 0)
         {
             return response()->json([
                 'message' => 'Something went wrong , try again later' ,
