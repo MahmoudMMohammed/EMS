@@ -67,7 +67,7 @@ class LocationController extends Controller
                 "status_code" => 422,
             ], 422);
         }
-        $locations = Location::query()->where('host_id', $request->host_id)->select( 'id' , 'name' , 'governorate' , 'open_time' , 'close_time' , 'logo')->get();
+        $locations = Location::query()->where('host_id', $request->host_id)->select( 'id' , 'name' , 'governorate' , 'open_time' , 'close_time' , 'capacity' , 'logo')->get();
 
         if (!$locations)
         {
@@ -135,5 +135,7 @@ class LocationController extends Controller
 
         return response()->json($governorate , 200);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
 
 }
