@@ -32,7 +32,7 @@ class Accessory extends Model
         'created_at',
         'updated_at',
     ];
-    public function accessoriesCatrgory()
+    public function accessoriesCategory()
     {
         return $this->belongsTo(AccessoryCategory::class ,'accessory_category_id' , 'id');
     }
