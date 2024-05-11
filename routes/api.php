@@ -1,8 +1,11 @@
 <?php
 
 
+use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
@@ -101,6 +104,32 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
+
+/*..................APIs for guests.....................*/
+
+//explore all locations available
+Route::get('/locations', [LocationController::class, 'getLocations']);
+
+//find location by its id
+Route::get('/locations/{location_id}', [LocationController::class, 'getLocationById']);
+
+//explore all food available
+Route::get('/food', [FoodController::class, 'getFood']);
+
+//find food by its id
+Route::get('/food/{food_id}', [FoodController::class, 'getFoodById']);
+
+//explore all drinks available
+Route::get('/drinks', [DrinkController::class, 'getDrinks']);
+
+//find food by its id
+Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
+
+//explore all accessories available
+Route::get('/accessories', [AccessoryController::class, 'getAccessories']);
+
+//find accessory by its id
+Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
 
 
 

@@ -55,7 +55,7 @@ class ProfileController extends Controller
             'birth_date' => $profile->birth_date,
             'place_of_residence' => $profile->place_of_residence,
             'gender' => $profile->gender,
-            'profile_picture' => $profile->profile_picture,
+            'profile_picture' => "http://localhost:8000/$profile->profile_picture",
             'status_code' => 200
         ],200);
     }

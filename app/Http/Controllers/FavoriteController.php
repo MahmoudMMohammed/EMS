@@ -95,7 +95,7 @@ class FavoriteController extends Controller
             $locationData['governorate'] = $translatedGovernorates[$location->governorate];
             $locationData['open_time'] = $location->open_time;
             $locationData['close_time'] = $location->close_time;
-            $locationData['logo'] = $location->logo;
+            $locationData['logo'] = "http://localhost:8000/$location->logo";
 
             $favoritesData[] = $locationData;
         }
