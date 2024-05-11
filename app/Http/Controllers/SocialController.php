@@ -72,8 +72,6 @@ class SocialController extends Controller
                 ]);
             }
             $token = JWTAuth::fromUser($user);
-            $user->token = $token;
-            $user->save();
             return response()->json(['token' => $token]);
         } catch (\Exception $e) {
             // Handle exceptions, log errors, or return an error response
