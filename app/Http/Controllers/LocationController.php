@@ -6,6 +6,8 @@ use App\Models\Accessory;
 use App\Models\Drink;
 use App\Models\Food;
 use App\Models\Location;
+use App\Models\LocationPicture;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Constraint\IsEmpty;
@@ -54,6 +56,62 @@ class LocationController extends Controller
                                  'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
+    public function getLocations(): JsonResponse
+    {
+        $locations = Location::select('id','name','governorate','open_time','close_time','logo')->get();
+
+        if (!$locations->count() > 0){
+            return response()->json([
+                "error" => "No locations to show!",
+                "status_code" => "404"
+            ],404);
+        }
+        foreach ($locations as $location){
+            $location->logo = "http://localhost:8000/$location->logo";
+        }
+        return response()->json($locations,200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    public function getLocationById($location_id): JsonResponse
+    {
+        $location = Location::find($location_id);
+        if (!$location){
+            return response()->json([
+                "error" => "Location not found!",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $admin = User::with('profile')->find($location->user_id);
+
+        $locationPictures = LocationPicture::whereLocationId($location_id)->pluck('picture');
+
+        $locationData = [
+            "id" => $location->id,
+            "name" => $location->name,
+            "governorate" => $location->governorate,
+            "address" => $location->address,
+            "capacity" => $location->capacity,
+            "open_time" => $location->open_time,
+            "close_time" => $location->close_time,
+            "reservation_price" => $location->reservation_price,
+            "x_position" => $location->x_position,
+            "y_position" => $location->y_position,
+            "logo" => "http://localhost:8000/$location->logo",
+            "picture1" => "http://localhost:8000/$locationPictures[0]",
+            "picture2" => "http://localhost:8000/$locationPictures[1]",
+            "picture3" => "http://localhost:8000/$locationPictures[2]",
+            "admin_name" => $admin->name,
+            "admin_email" => $admin->email,
+            "admin_phone_number" => $admin->profile->phone_number,
+        ];
+        return response()->json($locationData, 200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+
 
 
 }
