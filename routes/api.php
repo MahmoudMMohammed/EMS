@@ -156,6 +156,14 @@ Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
 //get count of (location - food - drink - accessory)
 Route::get('/home/count' , [LocationController::class , 'HomeCount']);
 
+//Get all location related hosts
+Route::post('/home/all/location' , [LocationController::class , 'GetAllLocation']);
+
+//Get Location by governorate
+Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']);
+
+//Get all governorate
+Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
 
 
 
