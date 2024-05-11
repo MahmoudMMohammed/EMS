@@ -23,7 +23,7 @@ class FeedbackController extends Controller
         $validator = Validator::make( $request->all() , [
             "location_id" => 'required|exists:locations,id',
             "comment" => 'required_without:rate' ,
-            "rate" => 'required_without:comment|regex:/^[1-9][0-9]*$/"|between:1,5'
+            "rate" => 'required_without:comment|int|between:1,5'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -39,6 +39,15 @@ class FeedbackController extends Controller
                 "error" => "Something went wrong , try again later",
                 "status_code" => 422,
             ], 422);
+        }
+
+        $existingFeedBack = Feedback::where('user_id' , $user['id'])->first();
+
+        if($existingFeedBack)
+        {
+            return response()->json([
+                'message' => 'You can not create a new feedback , you already have one !' ,
+                'status_code'=> 400] , 400);
         }
 
         $feedback = Feedback::query()->create([
@@ -60,6 +69,35 @@ class FeedbackController extends Controller
             'message' => 'Your feedback add successfully , Thank you !' ,
             'status_code' => 201
         ] , 201);
-
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function GetUserFeedBack(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $existingFeedBack = Feedback::whereUserId($user['id'])->first();
+
+        if(!$existingFeedBack)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        $responseData = [
+            'id' => $existingFeedBack->id,
+            'name' => $user->name ,
+            'comment' => $existingFeedBack->comment ,
+            'rate' => $existingFeedBack->rate
+        ];
+
+
+        return response()->json($responseData,200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 }

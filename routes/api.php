@@ -5,6 +5,7 @@ use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
@@ -132,7 +133,7 @@ Route::get('/drinks/categories', [DrinkController::class, 'getDrinksCategories']
 //explore all drinks for specific category
 Route::get('/drinks/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
 
-//find food by its id
+//find drink by its id
 Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
 
 
@@ -181,9 +182,11 @@ Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']
 //Get all governorate
 Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
 
+//create feedbacks
+Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
 
-
-
+//show feedback of user
+Route::get('/location/show/feedback' , [FeedbackController::class,'GetUserFeedBack']);
 
 
 
