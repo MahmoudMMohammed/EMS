@@ -182,13 +182,16 @@ Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']
 //Get all governorate
 Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
 
+
+
 //create feedbacks
 Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
 
 //show feedback of user
-Route::get('/location/show/feedback' , [FeedbackController::class,'GetUserFeedBack']);
+Route::get('/location/show/feedback' , [FeedbackController::class , 'GetUserFeedBack']);
 
-
+//show rating of location
+Route::get('/location/show/rating/{location_id}' , [FeedbackController::class , 'GetLocationRate']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[AuthController::class, 'testNotifications']);

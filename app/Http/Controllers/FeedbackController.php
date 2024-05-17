@@ -33,6 +33,7 @@ class FeedbackController extends Controller
         }
 
         $user = Auth::user();
+
         if(!$user)
         {
             return response()->json([
@@ -81,7 +82,7 @@ class FeedbackController extends Controller
         if(!$existingFeedBack)
         {
             return response()->json([
-                "error" => "Something went wrong , try again later",
+                "error" => "This User dont have a feedback for this location !",
                 "status_code" => 422,
             ], 422);
         }
@@ -97,7 +98,50 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
+    public function GetLocationRate($location_id): JsonResponse
+    {
 
+        $locationExists = Location::find($location_id);
 
+        if (!$locationExists) {
+            return response()->json(['error' => 'Location is not found !'], 404);
+        }
+
+        $ratings = Feedback::where('location_id', $location_id)->pluck('rate');
+
+        $ratingCounts = array_fill(1, 5, 0);
+
+        if ($ratings->isEmpty()) {
+            $ratingPercentages = array_map(function () {
+                return 0.0;
+            }, $ratingCounts);
+
+            $ratingPercentages['total_ratings'] = 0;
+            $ratingPercentages['average_rating'] = 0.0;
+
+            return response()->json($ratingPercentages , 200);
+        }
+
+        $totalRatings = $ratings->count();
+        $sumOfRatings = $ratings->sum();
+
+        foreach ($ratings as $rating) {
+            if (isset($ratingCounts[$rating])) {
+                $ratingCounts[$rating]++;
+            }
+        }
+
+        $ratingPercentages = [];
+        foreach ($ratingCounts as $rating => $count) {
+            $ratingPercentages[$rating] = (double) number_format(($count / $totalRatings) * 100, 2);
+        }
+
+        $averageRating = $sumOfRatings / $totalRatings;
+
+        $ratingPercentages['total_ratings'] = $totalRatings;
+        $ratingPercentages['average_rating'] = $averageRating;
+
+        return response()->json($ratingPercentages , 200);
+    }
 
 }
