@@ -12,12 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class FeedbackController extends Controller
 {
-    public function GetRatingsLocation()
-    {
 
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////
     public function CreateFeedback(Request $request): JsonResponse
     {
         $validator = Validator::make( $request->all() , [
