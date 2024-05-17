@@ -20,6 +20,7 @@ class Feedback extends Model
         'location_id',
         'comment',
         'rate',
+        'date',
     ];
 
     /**

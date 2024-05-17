@@ -51,6 +51,7 @@ class FeedbackController extends Controller
             'location_id' => $request->location_id ,
             'comment' => $request->comment ,
             'rate' => $request->rate,
+            'date'=> now()->toDateString(),
         ]);
 
         if(!$feedback)
@@ -85,7 +86,8 @@ class FeedbackController extends Controller
             'id' => $existingFeedBack->id,
             'name' => $user->name ,
             'comment' => $existingFeedBack->comment ,
-            'rate' => $existingFeedBack->rate
+            'rate' => $existingFeedBack->rate ,
+            'date' => $existingFeedBack->date ,
         ];
 
 
@@ -128,15 +130,18 @@ class FeedbackController extends Controller
 
         $ratingPercentages = [];
         foreach ($ratingCounts as $rating => $count) {
-            $ratingPercentages[$rating] = (double) number_format(($count / $totalRatings) * 100, 2);
+            $ratingPercentages[$rating] = (double) number_format(($count / $totalRatings) * 100, 4);
         }
 
-        $averageRating = $sumOfRatings / $totalRatings;
+        $averageRating = (double) number_format($sumOfRatings / $totalRatings , 4);
 
         $ratingPercentages['total_ratings'] = $totalRatings;
         $ratingPercentages['average_rating'] = $averageRating;
 
         return response()->json($ratingPercentages , 200);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
 
 }
