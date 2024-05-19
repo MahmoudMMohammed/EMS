@@ -180,6 +180,7 @@ class FeedbackController extends Controller
         foreach ($feedbacks as $feedback)
         {
             $transformedFeedbacks[] = [
+                'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
                 'comment' => $feedback -> comment ,
                 'rate' => $feedback -> rate ,
