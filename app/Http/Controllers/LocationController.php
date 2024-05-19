@@ -155,6 +155,7 @@ class LocationController extends Controller
             $location->logo = 'http://localhost:8000/' . $location->logo;
         }
 
+        sleep(2);
         return response()->json($locations , 200);
     }
 

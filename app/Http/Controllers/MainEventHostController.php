@@ -28,6 +28,8 @@ class MainEventHostController extends Controller
         {
             $event->picture = 'http://localhost:8000/' . $event->picture ;
         }
+
+        sleep(2);
         return response()->json($events , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////

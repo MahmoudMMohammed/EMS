@@ -190,8 +190,8 @@ Route::get('/location/show/feedback' , [FeedbackController::class , 'GetCurrentU
 //show rating of location
 Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
 
-//show the first three feedbacks related of location
-Route::get('/location/show/three/feedbacks/{location_id}' , [FeedbackController::class , 'GetFirstThreeFeedback']);
+//show the first three feedbacks related of location and sort feedbacks if(1 star , 2 star , 3 star , 4 star , 5 star)
+Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
 
 
 

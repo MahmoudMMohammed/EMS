@@ -143,27 +143,52 @@ class FeedbackController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    public function GetFirstThreeFeedback($location_id)
+    public function GetFirstThreeFeedback(Request $request): JsonResponse
     {
-        $locationExists = Location::find($location_id);
+        $validator = Validator::make($request->all(), [
+            "location_id" => 'required|integer|exists:locations,host_id',
+            "rate" => 'required|integer'
+        ]);
 
-        if (!$locationExists) {
-            return response()->json(['error' => 'Location is not found !'], 404);
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
         }
 
-        $feedback = Feedback::where('location_id' , $location_id)
-            ->take(3)
-            ->get()
-            ->orderBy('date','desc');
+        $isRateNull = $request->rate === 0 ;
 
-        if(!$feedback->count() > 0)
+        $query = Feedback::with(['user.profile'])->where('Location_id' , $request->location_id);
+
+        if(!$query->count() > 0)
         {
             return response()->json([
                 'message' => 'There are no reviews for this place yet !'
             ] , 422);
         }
 
-        return response()->json($feedback , 200);
+        if($request->rate && !$isRateNull)
+        {
+            $query->where('rate' , $request->rate);
+        }
+
+        $feedbacks = $query->take(3)->get();
+
+        $transformedFeedbacks = [];
+        foreach ($feedbacks as $feedback)
+        {
+            $transformedFeedbacks[] = [
+                'name' => $feedback -> user -> name ,
+                'comment' => $feedback -> comment ,
+                'rate' => $feedback -> rate ,
+                'date' => $feedback -> date ,
+                'profile_picture' => $feedback -> user -> profile -> profile_picture
+            ];
+        }
+
+        return response()->json($transformedFeedbacks , 200);
     }
 
 }
