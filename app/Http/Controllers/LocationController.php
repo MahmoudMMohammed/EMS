@@ -112,42 +112,11 @@ class LocationController extends Controller
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    public function GetAllLocation (Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            "host_id" => 'required|exists:locations,host_id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                "error" => $validator->errors()->first(),
-                "status_code" => 422,
-            ], 422);
-        }
-        $locations = Location::query()->where('host_id', $request->host_id)->select( 'id' , 'name' , 'governorate' , 'open_time' , 'close_time' , 'capacity' , 'logo')->get();
-
-        if (!$locations->count() > 0)
-        {
-            return response()->json([
-                "error" => "Something went wrong , try again later" ,
-                "status_code" => 422,
-            ], 422);
-        }
-
-        foreach ($locations as $location)
-        {
-            $location->logo = 'http://localhost:8000/' . $location->logo;
-        }
-
-        return response()->json($locations ,200);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////
     public function SortLocation(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            "host_id" => 'required|exists:locations,host_id',
-            "governorate" => 'required|exists:locations,governorate'
+            "host_id" => 'required|integer|exists:locations,host_id',
+            "governorate" => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -157,17 +126,29 @@ class LocationController extends Controller
             ], 422);
         }
 
-        $locations = Location::query()
-            ->where('governorate', $request->governorate)
-            ->where('host_id', $request->host_id)
-            ->select('id', 'name', 'governorate', 'open_time', 'close_time', 'logo')
-            ->get();
+        $isGovernorateNull = strtolower($request->governorate) === 'null';
 
-        if (!$locations->count() > 0) {
+        $query = Location::query()->where('host_id' , $request->host_id);
+
+        if (!$query->count() > 0) {
             return response()->json([
                 "error" => "Something went wrong , try again later",
                 "status_code" => 422,
             ], 422);
+        }
+
+        if($request->governorate && !$isGovernorateNull)
+        {
+            $query->where('governorate' , $request->governorate);
+        }
+
+        $locations = $query->select('id', 'name', 'governorate', 'open_time', 'close_time', 'capacity' , 'logo')->get();
+
+        if ($locations->isEmpty() && $request->governorate  && !$isGovernorateNull) {
+            return response()->json([
+                'error' => "No locations found for the specified governorate: $request->governorate",
+                'status_code' => 404,
+            ], 404);
         }
 
         foreach ($locations as $location) {

@@ -173,10 +173,7 @@ Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
 //get count of (location - food - drink - accessory)
 Route::get('/home/count' , [LocationController::class , 'HomeCount']);
 
-//Get all location related hosts
-Route::post('/home/all/location' , [LocationController::class , 'GetAllLocation']);
-
-//Get Location by governorate
+//Get Location related host && get location by governorate
 Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']);
 
 //Get all governorate
@@ -188,10 +185,15 @@ Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGo
 Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
 
 //show feedback of user
-Route::get('/location/show/feedback' , [FeedbackController::class , 'GetUserFeedBack']);
+Route::get('/location/show/feedback' , [FeedbackController::class , 'GetCurrentUserFeedBack']);
 
 //show rating of location
-Route::get('/location/show/rating/{location_id}' , [FeedbackController::class , 'GetLocationRate']);
+Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
+
+//show the first three feedbacks related of location
+Route::get('/location/show/three/feedbacks/{location_id}' , [FeedbackController::class , 'GetFirstThreeFeedback']);
+
+
 
 //test
 //Route::get('/notification/user/{user_id}' ,[AuthController::class, 'testNotifications']);

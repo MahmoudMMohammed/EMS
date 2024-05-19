@@ -69,7 +69,7 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    public function GetUserFeedBack(): JsonResponse
+    public function GetCurrentUserFeedBack(): JsonResponse
     {
         $user = Auth::user();
 
@@ -95,7 +95,7 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    public function GetLocationRate($location_id): JsonResponse
+    public function GetLocationStatisticsRate($location_id): JsonResponse
     {
 
         $locationExists = Location::find($location_id);
@@ -143,5 +143,27 @@ class FeedbackController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
+    public function GetFirstThreeFeedback($location_id)
+    {
+        $locationExists = Location::find($location_id);
+
+        if (!$locationExists) {
+            return response()->json(['error' => 'Location is not found !'], 404);
+        }
+
+        $feedback = Feedback::where('location_id' , $location_id)
+            ->take(3)
+            ->get()
+            ->orderBy('date','desc');
+
+        if(!$feedback->count() > 0)
+        {
+            return response()->json([
+                'message' => 'There are no reviews for this place yet !'
+            ] , 422);
+        }
+
+        return response()->json($feedback , 200);
+    }
 
 }
