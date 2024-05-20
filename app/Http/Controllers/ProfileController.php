@@ -78,14 +78,14 @@ class ProfileController extends Controller
 
         if($request->hasFile('profile_picture') && $user->role == "User"){
             $image = $request->file('profile_picture');
-            $destination = 'Profile Pictures/Users/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
-            $image->move(public_path('Profile Pictures/Users'),$destination);
+            $destination = 'ProfilePictures/Users/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
+            $image->move(public_path('ProfilePictures/Users'),$destination);
         }
 
         elseif($request->hasFile('profile_picture') && $user->role != "User"){
             $image = $request->file('profile_picture');
-            $destination = 'Profile Pictures/Owners & Admins/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
-            $image->move(public_path('Profile Pictures/Owners & Admins'),$destination);
+            $destination = 'ProfilePictures/Owners&Admins/' . time() . ' ' . $user->role . ' ' . $profile->user_id ;
+            $image->move(public_path('ProfilePictures/Owners&Admins'),$destination);
         }
         else {
             // Handle the case when no image is uploaded

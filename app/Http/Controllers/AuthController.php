@@ -47,7 +47,7 @@ class AuthController extends Controller
         ]);
 
         $gender = GenderService::getGenderByName($user->name);
-        $profilePicture = "Profile Pictures/Users/Defaults/$gender.png";
+        $profilePicture = "ProfilePictures/Users/Defaults/$gender.png";
 
         Profile::create([
             'user_id' => $user->id,
