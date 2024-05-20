@@ -85,11 +85,18 @@ class FeedbackController extends Controller
         $responseData = [
             'id' => $existingFeedBack->id,
             'name' => $user->name ,
-            'comment' => $existingFeedBack->comment ,
-            'rate' => $existingFeedBack->rate ,
             'date' => $existingFeedBack->date ,
         ];
 
+        if($existingFeedBack->comment !== null)
+        {
+            $responseData['comment'] = $existingFeedBack->comment;
+        }
+
+        if($existingFeedBack->rate !== null)
+        {
+            $responseData['rate'] = $existingFeedBack->rate ;
+        }
 
         return response()->json($responseData,200);
     }
@@ -191,5 +198,123 @@ class FeedbackController extends Controller
 
         return response()->json($transformedFeedbacks , 200);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function GetAllFeedbacks($location_id): JsonResponse
+    {
+        $exist = Location::find($location_id);
+        if(!$exist)
+        {
+            return response()->json(['error' => 'Location is not found !'], 404);
+        }
+
+        $feedbacks = Feedback::with(['user.profile'])->where('location_id' , $location_id)->get();
+
+        if(!$feedbacks->count() > 0)
+        {
+            return response()->json([ 'message' => 'There are no reviews for this place yet !'] , 422);
+        }
+
+        $response_result = [];
+        foreach ($feedbacks as $feedback)
+        {
+            $response_result [] = [
+                'id' => $feedback -> id ,
+                'name' => $feedback -> user -> name ,
+                'comment' => $feedback -> comment ,
+                'rate' => $feedback -> rate ,
+                'date' => $feedback -> date ,
+                'profile_picture' => $feedback -> user -> profile -> profile_picture ,
+            ];
+        }
+        return response()->json($response_result , 200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function updateFeedback(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all() , [
+            'location_id' => 'required|integer|exists:locations,id' ,
+            'comment' => 'required_without:rate',
+            'rate' => 'required_without:comment'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ] , 422);
+        }
+
+        $user = Auth::user();
+
+        if (!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $existingFeedback = Feedback::where('user_id' , $user['id'])->where('location_id' , $request->location_id)->first();
+
+        if(!$existingFeedback)
+        {
+            return response()->json([
+                'message' => 'No feedback found to update for this location !',
+                'status_code' => 404
+            ], 404);
+        }
+
+        $update_data = [];
+        if($request->has('comment'))
+        {
+            $update_data['comment'] = $request->comment ;
+        }
+        if($request->has('rate'))
+        {
+            $update_data['rate'] = $request->rate ;
+        }
+        $update_data['date'] = now()->toDateString();
+
+        $existingFeedback->update($update_data);
+
+        return response()->json([
+            'message' => 'Your feedback has been updated successfully , Thank you!',
+            'status_code' => 200
+        ] , 200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function deleteFeedback(): JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $existingFeedback = Feedback::where('user_id', $user->id)->first();
+
+        if (!$existingFeedback) {
+            return response()->json([
+                "error" => "No feedback found for this user.",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $existingFeedback->delete();
+
+        return response()->json([
+            "message" => "Feedback deleted successfully.",
+            "status_code" => 200,
+        ], 200);
+    }
+
 
 }
