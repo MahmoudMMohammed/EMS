@@ -182,16 +182,26 @@ Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGo
 
 
 //create feedbacks
-Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
+Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);         //token
 
 //show feedback of user
-Route::get('/location/show/feedback' , [FeedbackController::class , 'GetCurrentUserFeedBack']);
+Route::get('/location/show/feedback' , [FeedbackController::class , 'GetCurrentUserFeedBack']);         //token
 
 //show rating of location
 Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
 
 //show the first three feedbacks related of location and sort feedbacks if(1 star , 2 star , 3 star , 4 star , 5 star)
 Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
+
+//show all feedbacks
+Route::get('location/show/all/feedbacks' , [FeedbackController::class , 'GetAllFeedbacks']);
+
+//update your feedback
+Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);        //token
+
+//delete your feedback
+Route::delete('/location/delete/feedback' , [FeedbackController::class , 'deleteFeedback']);       //token
+
 
 
 
