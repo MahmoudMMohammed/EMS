@@ -12,6 +12,7 @@ use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\TestsController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -196,5 +197,6 @@ Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'Get
 
 
 //test
-//Route::get('/notification/user/{user_id}' ,[AuthController::class, 'testNotifications']);
-//Route::get('/translate' ,[AuthController::class, 'testTranslation']);
+//Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
+//Route::get('/translate' ,[TestsController::class, 'testTranslation']);
+//Route::get('/get-gender', [TestsController::class, 'getGender']);

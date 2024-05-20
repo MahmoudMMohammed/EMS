@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Events\NotificationEvent;
+use App\Helpers\GenderService;
 use App\Helpers\TranslateTextHelper;
 use App\Mail\SendCodeResetPassword;
 use App\Mail\SendEmailVerificationCode;
@@ -39,14 +40,18 @@ class AuthController extends Controller
             ], 422);
         }
 
-
         $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => Hash::make($request->password),
         ]);
+
+        $gender = GenderService::getGenderByName($user->name);
+        $profilePicture = "Profile Pictures/Users/Defaults/$gender.png";
+
         Profile::create([
             'user_id' => $user->id,
+            'profile_picture' => $profilePicture,
         ]);
 
         // Generate and store verification code
@@ -351,28 +356,5 @@ class AuthController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function testNotifications($user_id)
-    {
-        $message = "Testing Pusher";
 
-        event(new NotificationEvent($user_id, $message));
-
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public function testTranslation()
-    {
-        // Set the source and target languages
-        //TranslateTextHelper::setSource('en')->setTarget('ar');
-        //TranslateTextHelper::setSource('en')->setTarget('es');
-        //TranslateTextHelper::setSource('en')->setTarget('fr');
-
-        // Translate the text
-        $translatedText = TranslateTextHelper::translate('Hello, world!');
-
-        // Output the translated text
-        echo $translatedText;
-
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

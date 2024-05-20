@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Helpers\GenderService;
 use Illuminate\Support\ServiceProvider;
+use GuzzleHttp\Client;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(GenderService::class, function ($app) {
+            return new GenderService(new Client());
+        });
     }
 
     /**
