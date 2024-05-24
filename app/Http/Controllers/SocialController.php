@@ -87,6 +87,7 @@ class SocialController extends Controller
     {
         return Socialite::driver('google')->redirect();
     }
+    ///////////////////////////////////////////////////////////////
 
     // Handle the callback from Google
     public function handleGoogleWebCallback()
@@ -113,11 +114,14 @@ class SocialController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    ///////////////////////////////////////////////////////////////
+
     //******** API ********//
     public function redirectToGoogleAPI()
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
+    ///////////////////////////////////////////////////////////////
 
     public function handleGoogleAPICallback()
     {
@@ -131,11 +135,20 @@ class SocialController extends Controller
 
         $token = JWTAuth::fromUser($authenticatedUser);
 
-
-
-        return response()->json(['token' => $token]);
+        //return response()->json(['token' => $token]);
+        return redirect()->route('redirectedUser', ['user_id' => $authenticatedUser->id]);
     }
+    ///////////////////////////////////////////////////////////////
 
+    public function getRedirectedUser(Request $request)
+    {
+        $user = User::find($request->query('user_id'));
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json(["token" => $token],200);
+    }
+    ///////////////////////////////////////////////////////////////
     private function findOrCreateUser($googleUser)
     {
         //Implement your logic to find or create a user in your database based on the Google user data.
