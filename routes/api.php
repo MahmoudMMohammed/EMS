@@ -209,7 +209,7 @@ Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::cla
 Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
 
 //show all feedbacks
-Route::get('location/show/all/feedbacks' , [FeedbackController::class , 'GetAllFeedbacks']);
+Route::get('location/show/all/feedbacks/{location_id}' , [FeedbackController::class , 'GetAllFeedbacks']);
 
 //update your feedback
 Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);        //token
