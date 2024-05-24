@@ -188,4 +188,25 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
+    public function WebGetCurrentAdmin(): JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $userdata = User::with('profile')->where('id', $user->id)->first();
+
+        $response = [
+            'user_id' => $userdata->id ,
+            'user_name' => "Hi ". $userdata->name ,
+            'profile_picture' => $userdata -> profile -> profile_picture
+        ];
+        return response()->json($response , 200);
+    }
 }
