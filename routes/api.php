@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FeedbackController;
@@ -98,6 +99,17 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //delete user account
     Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
 
+    //add item to user cart
+    Route::post('/user/cart/add-items', [CartController::class , 'addToCart']);
+
+    //get cart items for user
+    Route::get('/user/cart/get-items', [CartController::class , 'getCartItems']);
+
+    //remove item from user cart
+    Route::delete('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
+
+    //update item quantity in cart
+    Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
 
 });
 

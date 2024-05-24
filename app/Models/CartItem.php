@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Drink extends Model
+class CartItem extends Model
 {
     use HasFactory;
-    protected $table = 'drinks';
+
+    protected $table = 'cart_items';
     /**
      * The attributes that are mass assignable.
      *
@@ -16,11 +17,10 @@ class Drink extends Model
      */
 
     protected $fillable = [
-        'name',
-        'price',
-        'drink_category_id',
-        'picture',
-        'description',
+        'quantity',
+        'cart_id',
+        'itemable_id',
+        'itemable_type',
     ];
 
     /**
@@ -32,12 +32,14 @@ class Drink extends Model
         'created_at',
         'updated_at',
     ];
-    public function drinkCategory()
+
+    public function itemable()
     {
-        return $this->belongsTo(DrinkCategory::class ,'drink_category_id' , 'id');
+        return $this->morphTo();
     }
-    public function cartItems()
+
+    public function cart()
     {
-        return $this->morphMany(CartItem::class, 'itemable');
+        return $this->belongsTo(Cart::class);
     }
 }

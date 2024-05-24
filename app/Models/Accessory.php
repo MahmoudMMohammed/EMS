@@ -40,4 +40,8 @@ class Accessory extends Model
     {
         return $this->hasMany(WarehouseAccessory::class ,'accessory_id' , 'id');
     }
+    public function cartItems()
+    {
+        return $this->morphMany(CartItem::class, 'itemable');
+    }
 }

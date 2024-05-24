@@ -37,4 +37,8 @@ class Food extends Model
     {
         return $this->belongsTo(FoodCategory::class ,'food_category_id' , 'id');
     }
+    public function cartItems()
+    {
+        return $this->morphMany(CartItem::class, 'itemable');
+    }
 }
