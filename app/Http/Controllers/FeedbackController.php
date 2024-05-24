@@ -145,6 +145,12 @@ class FeedbackController extends Controller
         $ratingPercentages['total_ratings'] = $totalRatings;
         $ratingPercentages['average_rating'] = $averageRating;
 
+        if ($averageRating > 3.2) {
+            $ratingPercentages['rating_message'] = "Suitable";
+        } else {
+            $ratingPercentages['rating_message'] = "null";
+        }
+
         return response()->json($ratingPercentages , 200);
     }
 
