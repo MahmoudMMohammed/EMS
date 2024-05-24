@@ -65,4 +65,8 @@ class Location extends Model
         return $this->hasMany(LocationPicture::class, 'location_id','id');
     }
 
+    public function getLogoAttribute($value)
+    {
+        return url($value);
+    }
 }

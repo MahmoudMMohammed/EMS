@@ -41,4 +41,9 @@ class Profile extends Model
     {
         return $this->belongsTo(User::class ,'user_id' , 'id');
     }
+
+    public function getProfilePictureAttribute($value)
+    {
+        return url($value);
+    }
 }

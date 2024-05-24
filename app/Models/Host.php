@@ -47,4 +47,9 @@ class Host extends Model
     {
         return $this->hasMany(HostDrinkCategory::class, 'host_id', 'id');
     }
+
+    public function getPictureAttribute($value)
+    {
+        return url($value);
+    }
 }

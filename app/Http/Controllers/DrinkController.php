@@ -27,9 +27,6 @@ class DrinkController extends Controller
                 "status_code" => "404"
             ],404);
         }
-        foreach ($drinks as $drink){
-            $drink->picture = "http://localhost:8000/$drink->picture";
-        }
         return response()->json($drinks,200);
     }
 
@@ -50,7 +47,7 @@ class DrinkController extends Controller
             "price" => $drink->price,
             "category" => $drink->drinkCategory->category,
             "description" => $drink->description,
-            "picture" => "http://localhost:8000/$drink->picture",
+            "picture" => $drink->picture,
         ];
         return response()->json($drinkData, 200);
     }

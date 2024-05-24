@@ -40,4 +40,9 @@ class Drink extends Model
     {
         return $this->morphMany(CartItem::class, 'itemable');
     }
+
+    public function getPictureAttribute($value)
+    {
+        return url($value);
+    }
 }

@@ -34,4 +34,9 @@ class LocationPicture extends Model
     {
         return $this->belongsTo(Location::class , 'location_id' , 'id');
     }
+
+    public function getPictureAttribute($value)
+    {
+        return url($value);
+    }
 }

@@ -26,9 +26,6 @@ class FoodController extends Controller
                 "status_code" => "404"
             ],404);
         }
-        foreach ($food as $item){
-            $item->picture = "http://localhost:8000/$item->picture";
-        }
         return response()->json($food,200);
     }
 
@@ -50,7 +47,7 @@ class FoodController extends Controller
             "category" => $food->foodCategory->category,
             "description" => $food->description,
             "country_of_origin" => $food->country_of_origin,
-            "picture" => "http://localhost:8000/$food->picture",
+            "picture" => $food->picture,
         ];
         return response()->json($foodData, 200);
     }

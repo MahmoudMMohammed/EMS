@@ -27,9 +27,7 @@ class AccessoryController extends Controller
                 "status_code" => "404"
             ],404);
         }
-        foreach ($accessories as $accessory){
-            $accessory->picture = "http://localhost:8000/$accessory->picture";
-        }
+
         return response()->json($accessories,200);
     }
 
@@ -50,7 +48,7 @@ class AccessoryController extends Controller
             "price" => $accessory->price,
             "category" => $accessory->accessoriesCategory->category,
             "description" => $accessory->description,
-            "picture" => "http://localhost:8000/$accessory->picture",
+            "picture" => $accessory->picture,
         ];
         return response()->json($accessoryData, 200);
     }

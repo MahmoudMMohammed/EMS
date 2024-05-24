@@ -24,10 +24,6 @@ class MainEventHostController extends Controller
                 'status_code' => 400
                 ] , 400);
         }
-        foreach ($events as $event)
-        {
-            $event->picture = 'http://localhost:8000/' . $event->picture ;
-        }
 
         sleep(2);
         return response()->json($events , 200);

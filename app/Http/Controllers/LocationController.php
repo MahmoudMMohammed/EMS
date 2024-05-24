@@ -67,9 +67,6 @@ class LocationController extends Controller
                 "status_code" => "404"
             ],404);
         }
-        foreach ($locations as $location){
-            $location->logo = "http://localhost:8000/$location->logo";
-        }
         return response()->json($locations,200);
     }
 
@@ -97,13 +94,13 @@ class LocationController extends Controller
             "capacity" => $location->capacity,
             "open_time" => $location->open_time,
             "close_time" => $location->close_time,
-            "reservation_price" => $location->reservation_price,
+            "reservation_price" => $location->reservation_price . "S.P",
             "x_position" => $location->x_position,
             "y_position" => $location->y_position,
-            "logo" => "http://localhost:8000/$location->logo",
-            "picture1" => "http://localhost:8000/$locationPictures[0]",
-            "picture2" => "http://localhost:8000/$locationPictures[1]",
-            "picture3" => "http://localhost:8000/$locationPictures[2]",
+            "logo" => $location->logo,
+            "picture1" => $locationPictures[0],
+            "picture2" => $locationPictures[1],
+            "picture3" => $locationPictures[2],
             "admin_name" => $admin->name,
             "admin_email" => $admin->email,
             "admin_phone_number" => $admin->profile->phone_number,
@@ -149,10 +146,6 @@ class LocationController extends Controller
                 'error' => "No locations found for the specified governorate: $request->governorate",
                 'status_code' => 404,
             ], 404);
-        }
-
-        foreach ($locations as $location) {
-            $location->logo = 'http://localhost:8000/' . $location->logo;
         }
 
         sleep(2);
