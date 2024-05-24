@@ -106,7 +106,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/user/cart/get-items', [CartController::class , 'getCartItems']);
 
     //remove item from user cart
-    Route::delete('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
+    Route::post('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
 
     //update item quantity in cart
     Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
