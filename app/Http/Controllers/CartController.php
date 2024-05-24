@@ -61,7 +61,7 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
 
-        if(!$cart || $cart->items()->count() < 1){
+        if(!$cart || $cart->items()->count() == 0){
             return response()->json([
                 "error" => "You have not added anything to your cart yet!",
                 "status_code" => 404,
