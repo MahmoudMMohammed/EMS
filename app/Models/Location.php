@@ -67,6 +67,6 @@ class Location extends Model
 
     public function getLogoAttribute($value)
     {
-        return url($value);
+        return env('APP_URL') . '/' . $value;
     }
 }

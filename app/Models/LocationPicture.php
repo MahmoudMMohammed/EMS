@@ -37,6 +37,6 @@ class LocationPicture extends Model
 
     public function getPictureAttribute($value)
     {
-        return url($value);
+        return env('APP_URL') . '/' . $value;
     }
 }

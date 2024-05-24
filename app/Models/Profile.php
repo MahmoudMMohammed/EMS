@@ -44,6 +44,6 @@ class Profile extends Model
 
     public function getProfilePictureAttribute($value)
     {
-        return url($value);
+        return env('APP_URL') . '/' . $value;
     }
 }
