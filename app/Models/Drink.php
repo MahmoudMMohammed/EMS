@@ -32,7 +32,7 @@ class Drink extends Model
         'created_at',
         'updated_at',
     ];
-    public function drinkCategory()
+    public function category()
     {
         return $this->belongsTo(DrinkCategory::class ,'drink_category_id' , 'id');
     }

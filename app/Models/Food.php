@@ -33,7 +33,7 @@ class Food extends Model
         'created_at',
         'updated_at',
     ];
-    public function foodCategory()
+    public function category()
     {
         return $this->belongsTo(FoodCategory::class ,'food_category_id' , 'id');
     }
@@ -45,5 +45,10 @@ class Food extends Model
     public function getPictureAttribute($value)
     {
         return env('APP_URL') . '/' . $value;
+    }
+
+    public function getPriceAttribute($value)
+    {
+        return number_format($value,2,'.',',') . " S.P";
     }
 }

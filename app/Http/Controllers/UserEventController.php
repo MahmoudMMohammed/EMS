@@ -21,8 +21,8 @@ class UserEventController extends Controller
             'date' => 'required | date',
             'invitation_type' => 'required|string',
             'description' => 'required|string',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'num_people_invited' => 'required|integer|min:1',
         ]);
 
