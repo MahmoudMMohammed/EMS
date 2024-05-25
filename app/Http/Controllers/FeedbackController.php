@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Feedback;
+use App\Models\Host;
 use App\Models\Location;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -323,4 +324,27 @@ class FeedbackController extends Controller
     }
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebGetFeedBackByHost ($host_id): JsonResponse
+    {
+        $host = Host::find($host_id);
+
+        if (!$host) {
+            return response()->json(['error' => 'Host not found'], 404);
+        }
+
+        $feedbacks = $host->locations()->with('feedbacks.user.profile')->get()->pluck('feedbacks')->flatten();
+
+        $response = [];
+        foreach ($feedbacks as $feedback)
+        {
+            $response[] = [
+                'name' => $feedback -> user -> name ,
+                'comment' => $feedback -> comment ,
+                'rate' => $feedback -> rate ,
+                'profile_picture' => $feedback -> user -> profile -> profile_picture
+            ];
+        }
+        return response()->json($response , 200);
+    }
 }

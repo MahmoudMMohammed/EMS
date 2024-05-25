@@ -9,6 +9,7 @@ use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\HostController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -239,6 +241,16 @@ Route::get('/web/home/admins' , [AdminController::class , 'WebGetAdmins']);
 
 //get owners
 Route::get('/web/home/owners' , [OwnerController::class , 'WebGetOwners']);
+
+//get hosts to filter location according to host related it
+Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
+
+//get feedbacks related of every host
+Route::get('/web/home/statistic/hosts/feedbacks/{host_id}' , [FeedbackController::class , 'WebGetFeedBackByHost']);
+
+//get all users download application
+Route::get('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
+
 
 
 //test

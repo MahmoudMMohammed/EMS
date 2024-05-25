@@ -165,6 +165,8 @@ class LocationController extends Controller
             ], 422);
         }
 
+        $governorate->prepend('all');
+
         return response()->json($governorate , 200);
     }
 
