@@ -171,12 +171,19 @@ class UserEventController extends Controller
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getEventById($event_id)
     {
+        $user = Auth::user();
         $event = UserEvent::find($event_id);
         if (!$event){
             return response()->json([
                 "error" => "Event not found!",
                 "status_code" => 404
             ],404);
+        }
+        if ($event->user_id != $user->id){
+            return response()->json([
+                "error" => "Event is no yours to show!",
+                "status_code" => 403
+            ],403);
         }
         return response()->json($event,200);
     }

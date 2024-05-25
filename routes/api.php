@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkController;
+use App\Http\Controllers\EventSupplementController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodController;
@@ -122,6 +123,10 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //get all events for user
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
+
+    //get supplements for user event
+    Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
+
 
 });
 
