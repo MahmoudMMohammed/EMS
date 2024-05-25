@@ -61,13 +61,51 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
 
-        if(!$cart || $cart->items()->count() == 0){
+        if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
                 "error" => "You have not added anything to your cart yet!",
                 "status_code" => 404,
-            ],404);
+            ], 404);
         }
-        return response()->json($cart->load('items.itemable'));
+
+        // Load items with their itemable relations and categories
+        $cartItems = $cart->items()->with('itemable')->get();
+
+        // Transform the cart items to include only the itemable data with category names
+        $itemables = $cartItems->map(function ($cartItem) {
+            $itemable = $cartItem->itemable->toArray();
+
+            if ($cartItem->itemable instanceof Food) {
+                $categoryName = $cartItem->itemable->category->category ?? null;
+            } elseif ($cartItem->itemable instanceof Drink) {
+                $categoryName = $cartItem->itemable->category->category ?? null;
+            } elseif ($cartItem->itemable instanceof Accessory) {
+                $categoryName = $cartItem->itemable->category->category ?? null;
+            } else {
+                $categoryName = null;
+            }
+
+            // Remove non-numeric characters except for dots and commas, then remove commas
+            $priceString = $cartItem->itemable->price;
+            $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
+            $cleanedPrice = str_replace(',', '', $cleanedPrice);
+            $price = floatval($cleanedPrice);
+            $total_price = $cartItem->quantity * $price;
+
+            // Add category_name and remove category_id
+            $itemable['category_name'] = $categoryName;
+            $itemable['quantity'] = $cartItem->quantity;
+            $itemable['total_price'] = number_format($total_price,2,'.',",")." S.P";
+            unset($itemable['food_category_id']);
+            unset($itemable['drink_category_id']);
+            unset($itemable['accessory_category_id']);
+            unset($itemable['country_of_origin']);
+            unset($itemable['description']);
+
+            return $itemable;
+        });
+
+        return response()->json($itemables);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

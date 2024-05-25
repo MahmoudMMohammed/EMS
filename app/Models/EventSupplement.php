@@ -33,6 +33,11 @@ class EventSupplement extends Model
         'created_at',
         'updated_at',
     ];
+    protected $casts = [
+        'food_details' => 'array',
+        'drinks_details' => 'array',
+        'accessories_details' => 'array',
+    ];
 
     public function receipt()
     {

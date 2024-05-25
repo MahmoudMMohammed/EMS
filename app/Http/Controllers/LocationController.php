@@ -94,7 +94,7 @@ class LocationController extends Controller
             "capacity" => $location->capacity,
             "open_time" => $location->open_time,
             "close_time" => $location->close_time,
-            "reservation_price" => number_format($location->reservation_price , 0 , '.' , ' ') . " S.P",
+            "reservation_price" => $location->reservation_price,
             "x_position" => $location->x_position,
             "y_position" => $location->y_position,
             "logo" => $location->logo,
