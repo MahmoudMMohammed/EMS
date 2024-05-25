@@ -46,4 +46,9 @@ class EventSupplement extends Model
     {
         return $this->belongsTo(UserEvent::class, 'user_event_id', 'id');
     }
+
+    public function getTotalPriceAttribute ($value)
+    {
+        return number_format($value , 2 , '.' , ',');
+    }
 }

@@ -45,4 +45,9 @@ class Drink extends Model
     {
         return env('APP_URL') . '/' . $value;
     }
+
+    public function getPriceAttribute ($value)
+    {
+        return number_format($value , 2 , '.' , ',') . "S.P" ;
+    }
 }

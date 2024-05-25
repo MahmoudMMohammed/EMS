@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\AccessoryController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\FoodController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
+use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
@@ -209,7 +211,7 @@ Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::cla
 Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
 
 //show all feedbacks
-Route::get('location/show/all/feedbacks' , [FeedbackController::class , 'GetAllFeedbacks']);
+Route::get('/location/show/all/feedbacks/{location_id}' , [FeedbackController::class , 'GetAllFeedbacks']);
 
 //update your feedback
 Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);        //token
@@ -218,6 +220,25 @@ Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFe
 Route::delete('/location/delete/feedback' , [FeedbackController::class , 'deleteFeedback']);       //token
 
 
+
+
+//get name and photo of current admin or owner
+Route::get('/web/home/current' , [ProfileController::class , 'WebGetCurrentAdmin']);     //token
+
+//search of admin
+Route::post('/web/home/search' , [AdminController::class , 'WebSearchAdmin']);
+
+//Web Three Statistic in down
+Route::get('/web/home/three/statistic' , [AdminController::class , 'WebThreeStatistic']);
+
+//get home counts
+Route::get('/web/home/counts' , [AdminController::class , 'WebCounts']);
+
+//get admins
+Route::get('/web/home/admins' , [AdminController::class , 'WebGetAdmins']);
+
+//get owners
+Route::get('/web/home/owners' , [OwnerController::class , 'WebGetOwners']);
 
 
 //test
