@@ -18,8 +18,8 @@ return new class extends Migration
             $table->date('date');
             $table->string('invitation_type');
             $table->text('description');
-            $table->date('start_time');
-            $table->date('end_time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->unsignedInteger('num_people_invited');
             $table->timestamps();
         });

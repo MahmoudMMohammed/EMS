@@ -16,6 +16,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
+use App\Http\Controllers\UserEventController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -112,6 +113,15 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //update item quantity in cart
     Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
+
+    //create an event for user
+    Route::post('/user/events', [UserEventController::class , 'createEvent']);
+
+    //get event by its id
+    Route::get('/user/events/{event_id}', [UserEventController::class , 'getEventById']);
+
+    //get all events for user
+    Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
 
 });
 

@@ -95,7 +95,7 @@ class CartController extends Controller
             // Add category_name and remove category_id
             $itemable['category_name'] = $categoryName;
             $itemable['quantity'] = $cartItem->quantity;
-            $itemable['total_price'] = number_format($total_price,2,'.',",");
+            $itemable['total_price'] = number_format($total_price,2,'.',",")." S.P";
             unset($itemable['food_category_id']);
             unset($itemable['drink_category_id']);
             unset($itemable['accessory_category_id']);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,5 +53,17 @@ class UserEvent extends Model
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+
+    // Accessor for start_time
+    public function getStartTimeAttribute($value)
+    {
+        return Carbon::parse($value)->format('h:i A');
+    }
+
+    // Accessor for end_time
+    public function getEndTimeAttribute($value)
+    {
+        return Carbon::parse($value)->format('h:i A');
     }
 }

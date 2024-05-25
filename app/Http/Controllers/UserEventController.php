@@ -7,6 +7,8 @@ use App\Models\EventSupplement;
 use App\Models\Location;
 use App\Models\MainEvent;
 use App\Models\Reservation;
+use App\Models\UserEvent;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,12 +19,12 @@ class UserEventController extends Controller
     public function createEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'location_id' => 'required | exists:locations,id',
-            'date' => 'required | date',
+            'location_id' => 'required|exists:locations,id',
+            'date' => 'required|date',
             'invitation_type' => 'required|string',
             'description' => 'required|string',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
+            'start_time' => 'required|date_format:h:i A',
+            'end_time' => 'required|date_format:h:i A|after:start_time',
             'num_people_invited' => 'required|integer|min:1',
         ]);
 
@@ -33,15 +35,15 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        // Parse date and time
+        // Parse date and time using the specified format
         $eventDate = Carbon::parse($request->date);
-        $startTime = Carbon::parse($request->date . ' ' . $request->start_time);
-        $endTime = Carbon::parse($request->date . ' ' . $request->end_time);
+        $startTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->start_time);
+        $endTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->end_time);
 
         // Retrieve the location's open and close times
         $location = Location::find($request->location_id);
-        $locationOpenTime = Carbon::parse($request->date . ' ' . $location->open_time);
-        $locationCloseTime = Carbon::parse($request->date . ' ' . $location->close_time);
+        $locationOpenTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->open_time);
+        $locationCloseTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->close_time);
 
         // Check if the event is within the location's operating hours
         if ($startTime < $locationOpenTime || $endTime > $locationCloseTime) {
@@ -52,7 +54,7 @@ class UserEventController extends Controller
         }
 
         // Check for overlapping events
-        $overlappingEvents = MainEvent::where('location_id', $request->location_id)
+        $overlappingEvents = UserEvent::where('location_id', $request->location_id)
             ->whereDate('date', $eventDate)
             ->where(function($query) use ($startTime, $endTime) {
                 $query->whereBetween('start_time', [$startTime, $endTime])
@@ -70,9 +72,8 @@ class UserEventController extends Controller
                 "status_code" => 409,
             ], 409);
         }
-
         // Ensure the reservation starts at least one hour after the last event
-        $latestEvent = MainEvent::where('location_id', $request->location_id)
+        $latestEvent = UserEvent::where('location_id', $request->location_id)
             ->whereDate('date', $eventDate)
             ->where('end_time', '<=', $startTime)
             ->orderBy('end_time', 'desc')
@@ -116,25 +117,33 @@ class UserEventController extends Controller
                     $accessoriesDetails[] = $item;
                     break;
             }
+            // Remove non-numeric characters except for dots and commas, then remove commas
+            $priceString = $cartItem->itemable->price;
+            $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
+            $cleanedPrice = str_replace(',', '', $cleanedPrice);
+            $price = floatval($cleanedPrice);
 
-            $totalPrice += $item->price * $cartItem->quantity;
+            $totalPrice += $price * $cartItem->quantity;
         }
 
         // Create Event
-        $event = MainEvent::create([
+        $event = UserEvent::create([
             'user_id' => $user->id,
             'location_id' => $request->location_id,
             'date' => $request->date,
             'invitation_type' => $request->invitation_type,
             'description' => $request->description,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
             'num_people_invited' => $request->num_people_invited,
         ]);
+
+        $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
 
         // Create Event Supplement
         $eventSupplement = EventSupplement::create([
             'user_event_id' => $event->id,
+            'warehouse_id' => $warehouse->id,
             'food_details' => json_encode($foodDetails),
             'drinks_details' => json_encode($drinksDetails),
             'accessories_details' => json_encode($accessoriesDetails),
@@ -160,4 +169,32 @@ class UserEventController extends Controller
         ], 201);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getEventById($event_id)
+    {
+        $event = UserEvent::find($event_id);
+        if (!$event){
+            return response()->json([
+                "error" => "Event not found!",
+                "status_code" => 404
+            ],404);
+        }
+        return response()->json($event,200);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getUserEvents()
+    {
+        $user = Auth::user();
+        $events = UserEvent::whereUserId($user->id)->get();
+        if ($events->count() == 0){
+            return response()->json([
+                "error" => "You have not created any event yet!",
+                "status_code" => 404
+            ],404);
+        }
+        return response()->json($events,200);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
