@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkController;
+use App\Http\Controllers\EventSupplementController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserEventController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -114,6 +116,18 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //update item quantity in cart
     Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
+
+    //create an event for user
+    Route::post('/user/events', [UserEventController::class , 'createEvent']);
+
+    //get event by its id
+    Route::get('/user/events/{event_id}', [UserEventController::class , 'getEventById']);
+
+    //get all events for user
+    Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
+
+    //get supplements for user event
+    Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
 
 });
 
