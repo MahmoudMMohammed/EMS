@@ -4,20 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\EventSupplement;
+use App\Models\FoodCategory;
+use App\Models\HostDrinkCategory;
+use App\Models\HostFoodCategory;
 use App\Models\Location;
-use App\Models\MainEvent;
+use App\Models\MainEventHost;
+use App\Models\MEHAC;
 use App\Models\Reservation;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
+use App\Models\WarehouseAccessory;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserEventController extends Controller
 {
-    public function createEvent(Request $request)
+    public function createEvent(Request $request): JsonResponse
     {
+        // Validate the request
         $validator = Validator::make($request->all(), [
             'location_id' => 'required|exists:locations,id',
             'date' => 'required|date',
@@ -41,7 +48,7 @@ class UserEventController extends Controller
         $endTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->end_time);
 
         // Retrieve the location's open and close times
-        $location = Location::find($request->location_id);
+        $location = Location::findOrFail($request->location_id);
         $locationOpenTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->open_time);
         $locationCloseTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->close_time);
 
@@ -54,31 +61,16 @@ class UserEventController extends Controller
         }
 
         // Check for overlapping events
-        $overlappingEvents = UserEvent::where('location_id', $request->location_id)
-            ->whereDate('date', $eventDate)
-            ->where(function($query) use ($startTime, $endTime) {
-                $query->whereBetween('start_time', [$startTime, $endTime])
-                    ->orWhereBetween('end_time', [$startTime, $endTime])
-                    ->orWhere(function($query) use ($startTime, $endTime) {
-                        $query->where('start_time', '<=', $startTime)
-                            ->where('end_time', '>=', $endTime);
-                    });
-            })
-            ->exists();
-
+        $overlappingEvents = $this->checkForOverlappingEvents($request->location_id, $eventDate, $startTime, $endTime);
         if ($overlappingEvents) {
             return response()->json([
                 "error" => "The selected time overlaps with an existing event.",
                 "status_code" => 409,
             ], 409);
         }
-        // Ensure the reservation starts at least one hour after the last event
-        $latestEvent = UserEvent::where('location_id', $request->location_id)
-            ->whereDate('date', $eventDate)
-            ->where('end_time', '<=', $startTime)
-            ->orderBy('end_time', 'desc')
-            ->first();
 
+        // Ensure the reservation starts at least one hour after the last event
+        $latestEvent = $this->getLatestEvent($request->location_id, $eventDate, $startTime);
         if ($latestEvent && $latestEvent->end_time->diffInMinutes($startTime) < 60) {
             return response()->json([
                 "error" => "The reservation must start at least one hour after the last reserved time.",
@@ -86,9 +78,9 @@ class UserEventController extends Controller
             ], 409);
         }
 
+        // Check if the user's cart is empty
         $user = Auth::user();
         $cart = Cart::where('user_id', $user->id)->first();
-
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
                 "error" => "Cart is empty",
@@ -96,39 +88,121 @@ class UserEventController extends Controller
             ], 400);
         }
 
-        // Categorize cart items
+        // Process cart items
+        [$foodDetails, $drinksDetails, $accessoriesDetails, $declinedItems, $totalPrice] = $this->processCartItems($cart, $location);
+
+        // Create Event
+        $event = $this->createUserEvent($user->id, $request, $startTime, $endTime);
+
+        // Create Event Supplement
+        $eventSupplement = $this->createEventSupplement($event->id, $location->governorate, $foodDetails, $drinksDetails, $accessoriesDetails, $totalPrice);
+
+        // Create Reservation
+        $reservation = $this->createReservation($user->id, $event->id);
+
+        // Return the response
+        return response()->json([
+            "message" => "Event reserved successfully",
+            "event" => $event,
+            "event_supplement" => $eventSupplement,
+            "reservation" => $reservation,
+            "declined_items" => $declinedItems,
+            "status_code" => 201
+        ], 201);
+    }
+    /////////////////////////////////////
+    private function checkForOverlappingEvents($locationId, $eventDate, $startTime, $endTime): bool
+    {
+        return UserEvent::where('location_id', $locationId)
+            ->whereDate('date', $eventDate)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->whereBetween('start_time', [$startTime, $endTime])
+                    ->orWhereBetween('end_time', [$startTime, $endTime])
+                    ->orWhere(function ($query) use ($startTime, $endTime) {
+                        $query->where('start_time', '<=', $startTime)
+                            ->where('end_time', '>=', $endTime);
+                    });
+            })
+            ->exists();
+    }
+    /////////////////////////////////////
+    private function getLatestEvent($locationId, $eventDate, $startTime)
+    {
+        return UserEvent::where('location_id', $locationId)
+            ->whereDate('date', $eventDate)
+            ->where('end_time', '<=', $startTime)
+            ->orderBy('end_time', 'desc')
+            ->first();
+    }
+    /////////////////////////////////////
+    private function processCartItems($cart, $location)
+    {
         $foodDetails = [];
         $drinksDetails = [];
         $accessoriesDetails = [];
+        $declinedItems = [];
         $totalPrice = 0;
 
         foreach ($cart->items as $cartItem) {
             $item = $cartItem->itemable;
             $itemType = strtolower(class_basename($item));
+            $approved = false;
 
             switch ($itemType) {
                 case 'food':
-                    $foodDetails[] = $item;
+                    if (HostFoodCategory::where('food_category_id', $item->food_category_id)->where('host_id', $location->host->id)->exists()) {
+                        $foodDetails[] = $item;
+                        $approved = true;
+                    } else {
+                        $declinedItems['food'][] = $item;
+                    }
                     break;
                 case 'drink':
-                    $drinksDetails[] = $item;
+                    if (HostDrinkCategory::where('drink_category_id', $item->drink_category_id)->where('host_id', $location->host->id)->exists()) {
+                        $drinksDetails[] = $item;
+                        $approved = true;
+                    } else {
+                        $declinedItems['drink'][] = $item;
+                    }
                     break;
                 case 'accessory':
-                    $accessoriesDetails[] = $item;
+                    $mainEventHost = MainEventHost::whereHostId($location->host->id)->pluck('id');
+                    $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
+                    $availableQuantityInWarehouse = WarehouseAccessory::whereAccessoryId($item->id)
+                        ->whereWarehouseId($warehouse->id)
+                        ->pluck('quantity');
+
+                    if (MEHAC::where('accessory_category_id', $item->accessory_category_id)->whereIn('main_event_host_id', $mainEventHost)->exists() &&
+                        $item->quantity <= $availableQuantityInWarehouse) {
+                        $accessoriesDetails[] = $item;
+                        $approved = true;
+                    } else {
+                        $declinedItems['accessory'][] = $item;
+                    }
                     break;
             }
-            // Remove non-numeric characters except for dots and commas, then remove commas
-            $priceString = $cartItem->itemable->price;
-            $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-            $cleanedPrice = str_replace(',', '', $cleanedPrice);
-            $price = floatval($cleanedPrice);
 
-            $totalPrice += $price * $cartItem->quantity;
+            if ($approved) {
+                $price = $this->parsePrice($cartItem->itemable->price);
+                $totalPrice += $price * $cartItem->quantity;
+                $cartItem->delete();
+            }
         }
 
-        // Create Event
-        $event = UserEvent::create([
-            'user_id' => $user->id,
+        return [$foodDetails, $drinksDetails, $accessoriesDetails, $declinedItems, $totalPrice];
+    }
+    /////////////////////////////////////
+    private function parsePrice($priceString): float
+    {
+        $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
+        $cleanedPrice = str_replace(',', '', $cleanedPrice);
+        return floatval($cleanedPrice);
+    }
+    /////////////////////////////////////
+    private function createUserEvent($userId, $request, $startTime, $endTime)
+    {
+        return UserEvent::create([
+            'user_id' => $userId,
             'location_id' => $request->location_id,
             'date' => $request->date,
             'invitation_type' => $request->invitation_type,
@@ -137,39 +211,32 @@ class UserEventController extends Controller
             'end_time' => $endTime,
             'num_people_invited' => $request->num_people_invited,
         ]);
+    }
+    /////////////////////////////////////
+    private function createEventSupplement($eventId, $governorate, $foodDetails, $drinksDetails, $accessoriesDetails, $totalPrice)
+    {
+        $warehouse = Warehouse::whereGovernorate($governorate)->first();
 
-        $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
-
-        // Create Event Supplement
-        $eventSupplement = EventSupplement::create([
-            'user_event_id' => $event->id,
+        return EventSupplement::create([
+            'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
             'food_details' => json_encode($foodDetails),
             'drinks_details' => json_encode($drinksDetails),
             'accessories_details' => json_encode($accessoriesDetails),
             'total_price' => $totalPrice,
         ]);
-
-        //Create Reservation
-        $reservation = Reservation::create([
-            'user_id' => $user->id,
-            'user_event_id' => $event->id,
-            'verified' => false
+    }
+    /////////////////////////////////////
+    private function createReservation($userId, $eventId)
+    {
+        return Reservation::create([
+            'user_id' => $userId,
+            'user_event_id' => $eventId,
+            'verified' => false,
         ]);
-
-        // Clear the user's cart
-        $cart->items()->delete();
-
-        return response()->json([
-            "message" => "Event reserved successfully",
-            "event" => $event,
-            "event_supplement" => $eventSupplement,
-            "reservation" => $reservation,
-            "status_code" => 201
-        ], 201);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function getEventById($event_id)
+    public function getEventById($event_id): JsonResponse
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
@@ -185,11 +252,11 @@ class UserEventController extends Controller
                 "status_code" => 403
             ],403);
         }
-        return response()->json($event,200);
+        return response()->json($event);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function getUserEvents()
+    public function getUserEvents(): JsonResponse
     {
         $user = Auth::user();
         $events = UserEvent::whereUserId($user->id)->get();
@@ -199,7 +266,7 @@ class UserEventController extends Controller
                 "status_code" => 404
             ],404);
         }
-        return response()->json($events,200);
+        return response()->json($events);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
