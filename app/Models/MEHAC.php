@@ -30,11 +30,11 @@ class MEHAC extends Model
         'updated_at',
     ];
 
-    public function accessoryCategory()
+    public function category()
     {
         return $this->belongsTo(AccessoryCategory::class, 'accessory_category_id', 'id');
     }
-    public function mainEventHosts()
+    public function hosts()
     {
         return $this->belongsTo(MainEventHost::class, 'main_event_host_id', 'id');
     }
