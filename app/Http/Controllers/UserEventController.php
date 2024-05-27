@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccessoryCategory;
 use App\Models\Cart;
+use App\Models\DrinkCategory;
 use App\Models\EventSupplement;
 use App\Models\FoodCategory;
 use App\Models\HostDrinkCategory;
@@ -151,6 +153,9 @@ class UserEventController extends Controller
             switch ($itemType) {
                 case 'food':
                     if (HostFoodCategory::where('food_category_id', $item->food_category_id)->where('host_id', $location->host->id)->exists()) {
+                        $category = FoodCategory::find($item->food_category_id);
+                        $item['category'] = $category->category;
+                        unset($item['food_category_id']);
                         $foodDetails[] = $item;
                         $approved = true;
                     } else {
@@ -159,6 +164,8 @@ class UserEventController extends Controller
                     break;
                 case 'drink':
                     if (HostDrinkCategory::where('drink_category_id', $item->drink_category_id)->where('host_id', $location->host->id)->exists()) {
+                        $category = DrinkCategory::find($item->drink_category_id);
+                        $item['category'] = $category->category;
                         $drinksDetails[] = $item;
                         $approved = true;
                     } else {
@@ -174,6 +181,9 @@ class UserEventController extends Controller
 
                     if (MEHAC::where('accessory_category_id', $item->accessory_category_id)->whereIn('main_event_host_id', $mainEventHost)->exists() &&
                         $item->quantity <= $availableQuantityInWarehouse) {
+                        $category = AccessoryCategory::find($item->accessory_category_id);
+                        $item['category'] = $category->category;
+                        unset($item['accessory_category_id']);
                         $accessoriesDetails[] = $item;
                         $approved = true;
                     } else {

@@ -33,11 +33,6 @@ class EventSupplement extends Model
         'created_at',
         'updated_at',
     ];
-    protected $casts = [
-        'food_details' => 'array',
-        'drinks_details' => 'array',
-        'accessories_details' => 'array',
-    ];
 
     public function receipt()
     {
@@ -55,5 +50,17 @@ class EventSupplement extends Model
     public function getTotalPriceAttribute ($value)
     {
         return number_format($value , 2 , '.' , ',');
+    }
+    public function getFoodDetailsAttribute ($value)
+    {
+        return json_decode($value);
+    }
+    public function getDrinksDetailsAttribute ($value)
+    {
+        return json_decode($value);
+    }
+    public function getAccessoriesDetailsAttribute ($value)
+    {
+        return json_decode($value);
     }
 }

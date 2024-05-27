@@ -42,12 +42,12 @@ class Food extends Model
         return $this->morphMany(CartItem::class, 'itemable');
     }
 
-    public function getPictureAttribute($value)
+    public function getPictureAttribute($value): string
     {
         return env('APP_URL') . '/' . $value;
     }
 
-    public function getPriceAttribute($value)
+    public function getPriceAttribute($value): string
     {
         return number_format($value,2,'.',',') . " S.P";
     }
