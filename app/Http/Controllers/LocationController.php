@@ -148,7 +148,7 @@ class LocationController extends Controller
             ], 404);
         }
 
-        sleep(2);
+        sleep(1);
         return response()->json($locations , 200);
     }
 

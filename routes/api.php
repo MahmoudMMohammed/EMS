@@ -191,6 +191,23 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
 Route::middleware([AdminMiddleware::class])->group(function () {
 
+    //get name and photo of current admin or owner
+    Route::get('/web/home/current' , [ProfileController::class , 'WebGetCurrentAdmin']);     //token
+
+    //search of admin
+    Route::post('/web/home/search' , [AdminController::class , 'WebSearchAdmin']);
+
+    //Web Three Statistic in down
+    Route::get('/web/home/three/statistic' , [AdminController::class , 'WebThreeStatistic']);
+
+    //get home counts
+    Route::get('/web/home/counts' , [AdminController::class , 'WebCounts']);
+
+    //get owners
+    Route::get('/web/home/owners' , [OwnerController::class , 'WebGetOwners']);
+
+    //get admins
+    Route::get('/web/home/admins' , [AdminController::class , 'WebGetAdmins']);
 });
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
@@ -218,7 +235,7 @@ Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGo
 Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);         //token
 
 //show feedback of user
-Route::get('/location/show/feedback' , [FeedbackController::class , 'GetCurrentUserFeedBack']);         //token
+Route::get('/location/show/feedback/{location_id}' , [FeedbackController::class , 'GetCurrentUserFeedBack']);         //token
 
 //show rating of location
 Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
@@ -238,23 +255,6 @@ Route::delete('/location/delete/feedback' , [FeedbackController::class , 'delete
 
 
 
-//get name and photo of current admin or owner
-Route::get('/web/home/current' , [ProfileController::class , 'WebGetCurrentAdmin']);     //token
-
-//search of admin
-Route::post('/web/home/search' , [AdminController::class , 'WebSearchAdmin']);
-
-//Web Three Statistic in down
-Route::get('/web/home/three/statistic' , [AdminController::class , 'WebThreeStatistic']);
-
-//get home counts
-Route::get('/web/home/counts' , [AdminController::class , 'WebCounts']);
-
-//get admins
-Route::get('/web/home/admins' , [AdminController::class , 'WebGetAdmins']);
-
-//get owners
-Route::get('/web/home/owners' , [OwnerController::class , 'WebGetOwners']);
 
 //get hosts to filter location according to host related it
 Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);

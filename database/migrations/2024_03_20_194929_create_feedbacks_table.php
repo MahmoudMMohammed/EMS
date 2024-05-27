@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('location_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('comment')->nullable();
             $table->unsignedDouble('rate')->nullable();
-            $table->date('date');
+            $table->dateTime('date');
             $table->timestamps();
         });
     }

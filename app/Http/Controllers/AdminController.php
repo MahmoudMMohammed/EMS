@@ -9,6 +9,7 @@ use App\Models\Food;
 use App\Models\Location;
 use App\Models\MainEvent;
 use App\Models\User;
+use App\Models\Warehouse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -62,9 +63,9 @@ class AdminController extends Controller
 
         $app_downloads = User::query()->where('role' , 'User')->count();
 
-        $admins = User::query()->where('role' , 'Admin')->count();
+        $warehouses = Warehouse::query()->count();
 
-        if(!$admins)
+        if(!$warehouses)
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",
@@ -72,9 +73,9 @@ class AdminController extends Controller
             ], 422);
         }
         $response = [
-            'feedbacks' => $feedbacks ,
-            'app_downloads' => $app_downloads ,
-            'admins' => $admins
+            ['number' => $feedbacks , 'description' => 'Feedbacks counts'] ,
+            ['number' => $app_downloads , 'description' => 'Application downloads'] ,
+            ['number' => $warehouses , 'description' => 'Warehouse counts']
         ];
         return response()->json($response , 200);
     }
@@ -114,7 +115,9 @@ class AdminController extends Controller
             ] , 400);
         }
 
-        $event = MainEvent::query()->count();
+        $custom = 'Custom' ;
+
+        $event = MainEvent::query()->where('name' , '!=' , $custom)->count();
         if(!$event){
             return response()->json([
                 'error' => 'Something went wrong , try again later' ,
@@ -123,11 +126,11 @@ class AdminController extends Controller
         }
 
         $response = [
-            'Location' => $location ,
-            'Food' => $Food ,
-            'Drink' => $Drink ,
-            'Accessory' => $Accessory ,
-            'MainEvent' => $event
+            ['number' => $location , 'description' => 'Location'] ,
+            ['number' => $Food , 'description' => 'Food'] ,
+            ['number' => $Drink , 'description' => 'Drink'] ,
+            ['number' => $Accessory , 'description' => 'Accessory'] ,
+            ['number' => $event , 'description' => 'Event']
         ];
 
         return response()->json($response , 200);
