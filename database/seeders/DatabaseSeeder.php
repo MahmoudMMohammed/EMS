@@ -3,7 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Location;
+use App\Models\User;
+use App\Models\UserEvent;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -31,7 +35,11 @@ class DatabaseSeeder extends Seeder
             HostFoodCategorySeeder::class ,
             WarehouseAccessorSeeder::class ,
             MehacsSeeder::class ,
-            ProfileSeeder::class
+            ProfileSeeder::class,
+            CartItemSeeder::class,
+//            UserEventSeeder::class,
+
+
         ]);
     }
 }

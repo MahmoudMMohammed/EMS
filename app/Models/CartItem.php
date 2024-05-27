@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Database\Factories\CartItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CartItem extends Model
 {
@@ -33,13 +36,17 @@ class CartItem extends Model
         'updated_at',
     ];
 
-    public function itemable()
+    public function itemable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function cart()
+    public function cart(): BelongsTo
     {
         return $this->belongsTo(Cart::class);
+    }
+    protected static function newFactory(): CartItemFactory
+    {
+        return CartItemFactory::new();
     }
 }

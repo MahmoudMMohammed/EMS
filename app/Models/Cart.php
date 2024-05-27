@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\CartFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,10 @@ class Cart extends Model
     public function items()
     {
         return $this->hasMany(CartItem::class);
+    }
+    protected static function newFactory(): CartFactory
+    {
+        return CartFactory::new();
     }
 
 }

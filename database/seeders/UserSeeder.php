@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\User;
+use Database\Factories\CartFactory;
+use Database\Factories\CartItemFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -31,5 +35,9 @@ class UserSeeder extends Seeder
                 'role' => $role[$i]
             ]);
         }
+
+        User::factory()->count(10)
+            ->has(Cart::factory(), 'cart')
+            ->create();
     }
 }
