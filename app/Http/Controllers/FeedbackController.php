@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Feedback;
 use App\Models\Host;
 use App\Models\Location;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,9 @@ class FeedbackController extends Controller
             ], 422);
         }
 
-        $existingFeedBack = Feedback::where('user_id' , $user['id'])->first();
+        $existingFeedBack = Feedback::where('user_id' , $user['id'])
+                                    ->where('location_id', $request->location_id)
+                                    ->first();
 
         if($existingFeedBack)
         {
@@ -51,8 +54,8 @@ class FeedbackController extends Controller
             'user_id' => $user['id'],
             'location_id' => $request->location_id ,
             'comment' => $request->comment ,
-            'rate' => $request->rate,
-            'date'=> now()->toDateString(),
+            'rate' => $request->rate ,
+            'date'=> now()->format('Y-m-d H:i:s') ,
         ]);
 
         if(!$feedback)
@@ -70,11 +73,11 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    public function GetCurrentUserFeedBack(): JsonResponse
+    public function GetCurrentUserFeedBack($id): JsonResponse
     {
         $user = Auth::user();
 
-        $existingFeedBack = Feedback::whereUserId($user['id'])->first();
+        $existingFeedBack = Feedback::whereUserId($user['id'])->where('location_id' , $id)->first();
 
         if(!$existingFeedBack)
         {
@@ -83,10 +86,28 @@ class FeedbackController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        $feedbackDate = Carbon::parse($existingFeedBack->date);
+        $now = Carbon::now();
+        $diffInSeconds = $feedbackDate->diffInSeconds($now);
+        $diffInMinutes = $feedbackDate->diffInMinutes($now);
+        $diffInHours = $feedbackDate->diffInHours($now);
+        $diffInDays = $feedbackDate->diffInDays($now);
+
+        if ($diffInSeconds < 60) {
+            $formattedDate = $diffInSeconds . ' seconds ago';
+        } elseif ($diffInMinutes < 60) {
+            $formattedDate = $diffInMinutes . ' minutes ago';
+        } elseif ($diffInHours < 24) {
+            $formattedDate = $diffInHours . ' hours ago';
+        } else {
+            $formattedDate = $feedbackDate->format('Y-m-d');
+        }
+
         $responseData = [
             'id' => $existingFeedBack->id,
             'name' => $user->name ,
-            'date' => $existingFeedBack->date ,
+            'date' => $formattedDate ,
         ];
 
         if($existingFeedBack->comment !== null)
@@ -190,15 +211,38 @@ class FeedbackController extends Controller
 
         $feedbacks = $query->take(3)->get();
 
+        if(!$feedbacks->count() > 0)
+        {
+            return response()->json([
+                'message' => 'There are no reviews for this place yet !'
+            ] , 422);
+        }
+
         $transformedFeedbacks = [];
         foreach ($feedbacks as $feedback)
         {
+            $feedbackDate = Carbon::parse($feedback->date);
+            $now = Carbon::now();
+            $diffInSeconds = $feedbackDate->diffInSeconds($now);
+            $diffInMinutes = $feedbackDate->diffInMinutes($now);
+            $diffInHours = $feedbackDate->diffInHours($now);
+            $diffInDays = $feedbackDate->diffInDays($now);
+
+            if ($diffInSeconds < 60) {
+                $formattedDate = $diffInSeconds . ' seconds ago';
+            } elseif ($diffInMinutes < 60) {
+                $formattedDate = $diffInMinutes . ' minutes ago';
+            } elseif ($diffInHours < 24) {
+                $formattedDate = $diffInHours . ' hours ago';
+            } else {
+                $formattedDate = $feedbackDate->format('Y-m-d');
+            }
             $transformedFeedbacks[] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
                 'comment' => $feedback -> comment ,
                 'rate' => $feedback -> rate ,
-                'date' => $feedback -> date ,
+                'date' => $formattedDate,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture
             ];
         }
@@ -225,12 +269,30 @@ class FeedbackController extends Controller
         $response_result = [];
         foreach ($feedbacks as $feedback)
         {
+            $feedbackDate = Carbon::parse($feedback->date);
+            $now = Carbon::now();
+
+            $diffInSeconds = $feedbackDate->diffInSeconds($now);
+            $diffInMinutes = $feedbackDate->diffInMinutes($now);
+            $diffInHours = $feedbackDate->diffInHours($now);
+            $diffInDays = $feedbackDate->diffInDays($now);
+
+            if($diffInSeconds < 60 ){
+                $formattedDate = $diffInSeconds . ' seconds ago';
+            } elseif ($diffInMinutes < 60){
+                $formattedDate = $diffInMinutes. ' minutes ago';
+            } elseif ($diffInHours < 24){
+                $formattedDate = $diffInHours . ' hours ago';
+            } else {
+                $formattedDate = $feedbackDate->format('Y-m-d');
+            }
+
             $response_result [] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
                 'comment' => $feedback -> comment ,
                 'rate' => $feedback -> rate ,
-                'date' => $feedback -> date ,
+                'date' => $formattedDate ,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture ,
             ];
         }
@@ -283,7 +345,7 @@ class FeedbackController extends Controller
         {
             $update_data['rate'] = $request->rate ;
         }
-        $update_data['date'] = now()->toDateString();
+        $update_data['date'] = now()->format('Y-m-d H:i:s');
 
         $existingFeedback->update($update_data);
 
@@ -322,7 +384,6 @@ class FeedbackController extends Controller
             "status_code" => 200,
         ], 200);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////
     public function WebGetFeedBackByHost ($host_id): JsonResponse
