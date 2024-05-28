@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->unsignedDouble('rate')->nullable();
             $table->dateTime('date');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -27,6 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feedbacks');
+        Schema::table('feedbacks', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

@@ -212,6 +212,9 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
 
+    //deleted user feedback offensive from owner
+    Route::delete('/web/home/statistic/feedbacks/delete/{feedback_id}' , [OwnerController::class , 'WebDeleteFeedback']);
+
 });
 
 //get hosts related each event
@@ -250,7 +253,7 @@ Route::get('/location/show/all/feedbacks/{location_id}' , [FeedbackController::c
 Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);        //token
 
 //delete your feedback
-Route::delete('/location/delete/feedback' , [FeedbackController::class , 'deleteFeedback']);       //token
+Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::class , 'deleteFeedback']);       //token
 
 
 
@@ -259,11 +262,14 @@ Route::delete('/location/delete/feedback' , [FeedbackController::class , 'delete
 //get hosts to filter location according to host related it
 Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
 
-//get feedbacks related of every host
-Route::get('/web/home/statistic/hosts/feedbacks/{host_id}' , [FeedbackController::class , 'WebGetFeedBackByHost']);
+//get location related of each host
+Route::get('/web/home/statistic/hosts/locations/{host_id}' , [HostController::class , 'GetLocationRelatedHost']);
 
-//get all users download application
-Route::get('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
+//get feedbacks related of every location
+Route::get('/web/home/statistic/hosts/locations/feedbacks/{location_id}' , [FeedbackController::class , 'WebGetFeedBackByLocation']);
+
+//filter all users download application by date registration
+Route::post('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
 
 
 

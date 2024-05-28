@@ -237,6 +237,7 @@ class FeedbackController extends Controller
             } else {
                 $formattedDate = $feedbackDate->format('Y-m-d');
             }
+
             $transformedFeedbacks[] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
@@ -356,7 +357,7 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    public function deleteFeedback(): JsonResponse
+    public function deleteFeedback($location_id): JsonResponse
     {
         $user = Auth::user();
 
@@ -368,7 +369,7 @@ class FeedbackController extends Controller
             ], 422);
         }
 
-        $existingFeedback = Feedback::where('user_id', $user->id)->first();
+        $existingFeedback = Feedback::where('user_id', $user->id)->where('location_id' , $location_id)->first();
 
         if (!$existingFeedback) {
             return response()->json([
@@ -377,7 +378,7 @@ class FeedbackController extends Controller
             ], 404);
         }
 
-        $existingFeedback->delete();
+        $existingFeedback->forceDelete();
 
         return response()->json([
             "message" => "Feedback deleted successfully.",
@@ -386,26 +387,41 @@ class FeedbackController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
-    public function WebGetFeedBackByHost ($host_id): JsonResponse
+    public function WebGetFeedBackByLocation ($location_id): JsonResponse
     {
-        $host = Host::find($host_id);
+        $location = Location::find($location_id);
 
-        if (!$host) {
-            return response()->json(['error' => 'Host not found'], 404);
+        if (!$location) {
+            return response()->json([
+                'message' => 'Location not found , Invalid location id'
+            ], 404);
         }
 
-        $feedbacks = $host->locations()->with('feedbacks.user.profile')->get()->pluck('feedbacks')->flatten();
+        $feedbacks = $location->feedbacks()->with('user.profile')->get();
+
+        if(!$feedbacks->count() > 0)
+        {
+            return response()->json([
+                'message' => 'There is no users feedback for this locations'
+            ] ,404);
+        }
 
         $response = [];
+
         foreach ($feedbacks as $feedback)
         {
             $response[] = [
-                'name' => $feedback -> user -> name ,
-                'comment' => $feedback -> comment ,
-                'rate' => $feedback -> rate ,
-                'profile_picture' => $feedback -> user -> profile -> profile_picture
+                'id' => $feedback -> id,
+                'name' => $feedback->user->name,
+                'comment' => $feedback->comment,
+                'rate' => $feedback->rate,
+                'profile_picture' => $feedback->user->profile->profile_picture ,
+                'date' => $feedback->date
             ];
         }
-        return response()->json($response , 200);
+        return response()->json($response, 200);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
 }
