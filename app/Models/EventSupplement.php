@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\EventSupplementsFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,7 +43,7 @@ class EventSupplement extends Model
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
-    public function userEvent()
+    public function event()
     {
         return $this->belongsTo(UserEvent::class, 'user_event_id', 'id');
     }
@@ -62,5 +63,9 @@ class EventSupplement extends Model
     public function getAccessoriesDetailsAttribute ($value)
     {
         return json_decode($value);
+    }
+    protected static function newFactory(): EventSupplementsFactory
+    {
+        return EventSupplementsFactory::new();
     }
 }

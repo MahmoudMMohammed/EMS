@@ -35,15 +35,11 @@ class EventSupplementController extends Controller
             ],404);
         }
 
-//        unset($supplements['id']);
-//        unset($supplements['user_event_id']);
-//        unset($supplements['warehouse_id']);
+        unset($supplements['id']);
+        unset($supplements['user_event_id']);
+        unset($supplements['warehouse_id']);
 
-        return response()->json([
-            "food_details" => json_decode($supplements->food_details),
-            "drinks_details" => json_decode($supplements->drinks_details),
-            "accessories_details" => json_decode($supplements->accessories_details),
-        ],200);
+        return response()->json($supplements);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -69,19 +69,19 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return $this->hasMany(Favorite::class , 'user_id' , 'id');
     }
-    public function feedback()
+    public function feedbacks()
     {
-        return $this->hasOne(Feedback::class , 'user_id' , 'id');
+        return $this->hasMany(Feedback::class , 'user_id' , 'id');
     }
-    public function userEvents()
+    public function events()
     {
         return $this->hasMany(UserEvent::class , 'user_id' , 'id');
     }
-    public function receipts()
+    public function receipt()
     {
         return $this->hasMany(Receipt::class , 'user_id' , 'id');
     }
-    public function reservations()
+    public function reservation()
     {
         return $this->hasMany(Reservation::class , 'user_id' , 'id');
     }

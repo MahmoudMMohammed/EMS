@@ -37,9 +37,8 @@ class DatabaseSeeder extends Seeder
             MehacsSeeder::class ,
             ProfileSeeder::class,
             CartItemSeeder::class,
-//            UserEventSeeder::class,
-
-
+            UserEventSeeder::class,
+            EventSupplementSeeder::class,
         ]);
     }
 }

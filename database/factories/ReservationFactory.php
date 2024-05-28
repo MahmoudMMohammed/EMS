@@ -2,16 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Cart;
+use App\Models\Reservation;
 use App\Models\User;
+use App\Models\UserEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cart>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reservation>
  */
-class CartFactory extends Factory
+class ReservationFactory extends Factory
 {
-    protected $model = Cart::class;
+    protected $model = Reservation::class;
     /**
      * Define the model's default state.
      *
@@ -22,6 +23,8 @@ class CartFactory extends Factory
         static $counter = 29;
         return [
             'user_id' => $counter++,
+            'user_event_id' => UserEvent::factory(),
+            'verified' => false,
         ];
     }
 }
