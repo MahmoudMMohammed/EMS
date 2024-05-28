@@ -154,6 +154,13 @@ class AuthController extends Controller
 
         $user = User::withTrashed()->where('email', $request->email)->first();
 
+        if (!$user->verified){
+            return response()->json([
+                'error' => 'Please verify your account first to continue.',
+                'status_code' => 422
+            ], 422);
+        }
+
         // Check if the account has been soft deleted
         if ($user->deleted_at) {
             $deletionTime = Carbon::parse($user->deleted_at);
