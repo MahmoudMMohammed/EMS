@@ -280,9 +280,36 @@ class UserEventController extends Controller
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function WebEventGraphicalStatistics()
+    public function WebEventGraphicalStatistics(): JsonResponse
     {
+        // Initialize an array to store the results
+        $monthlyEventCounts = [];
 
+        // Get current year
+        $currentYear = Carbon::now()->year;
+
+        // Loop through each month of the year
+        for ($month = 1; $month <= 12; $month++) {
+            // Calculate the start and end dates for the current month
+            $startDate = Carbon::create($currentYear, $month, 1)->startOfMonth();
+            $endDate = Carbon::create($currentYear, $month, 1)->endOfMonth();
+
+            // Query to count events within the current month
+            $eventCount = UserEvent::query()
+                ->whereBetween('date', [$startDate, $endDate])
+                ->count();
+
+            // Format the month name (e.g., 'jan' for January)
+            $monthName = $startDate->format('M');
+
+            // Store the result in the array
+            $monthlyEventCounts[] = [
+                'month' => $monthName,
+                'number_of_events' => $eventCount,
+            ];
+        }
+
+        return response()->json($monthlyEventCounts , 200);
     }
 
 }

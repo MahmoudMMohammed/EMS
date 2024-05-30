@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('verified')->default(false);
             $table->string('role')->default('User');
             $table->boolean('is_blocked')->default(false);
+            $table->timestamp('blocked_until')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -30,6 +31,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['is_blocked', 'blocked_until']);
+        });
     }
 };

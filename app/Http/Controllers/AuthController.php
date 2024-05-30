@@ -177,6 +177,22 @@ class AuthController extends Controller
             }
         }
 
+        // Check if the user is banned
+        if ($user->is_blocked) {
+            if ($user->blocked_until && Carbon::now() < $user->blocked_until) {
+                $banDuration = Carbon::now()->diffForHumans($user->blocked_until, true);
+                return response()->json([
+                    'error' => 'Your account is currently banned. Please try again after ' . $banDuration . '.',
+                    'status_code' => 403
+                ], 403);
+            } else {
+                // If the ban period has expired, unblock the user
+                $user->is_blocked = false;
+                $user->blocked_until = null;
+                $user->save();
+            }
+        }
+
         if (!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
                 'error' => 'Invalid email or password.',

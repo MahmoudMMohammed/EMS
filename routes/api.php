@@ -216,6 +216,9 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     //deleted user feedback offensive from owner
     Route::delete('/web/home/statistic/feedbacks/delete/{feedback_id}' , [OwnerController::class , 'WebDeleteFeedback']);
 
+    //owner block user
+    Route::post('/web/home/blockUser/{user_id}' , [OwnerController::class , 'blockUser']);
+
 });
 
 //get hosts related each event
@@ -258,7 +261,8 @@ Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::c
 
 
 
-
+//get numbers of events for each month
+Route::get('web/home/event/statistic' , [UserEventController::class , 'WebEventGraphicalStatistics']);
 
 //get hosts to filter location according to host related it
 Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
@@ -277,8 +281,6 @@ Route::get('/web/home/statistic/download/profile/{user_id}' , [UserController::c
 
 //get all warehouses and sort it by governorate
 Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
-
-
 
 
 
