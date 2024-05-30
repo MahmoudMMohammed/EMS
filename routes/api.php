@@ -20,6 +20,7 @@ use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEventController;
+use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
@@ -270,6 +271,14 @@ Route::get('/web/home/statistic/hosts/locations/feedbacks/{location_id}' , [Feed
 
 //filter all users download application by date registration
 Route::post('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
+
+//get the user profile details
+Route::get('/web/home/statistic/download/profile/{user_id}' , [UserController::class , 'GetUserProfileDetails']);
+
+//get all warehouses and sort it by governorate
+Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
+
+
 
 
 

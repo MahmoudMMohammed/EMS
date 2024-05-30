@@ -389,7 +389,7 @@ class FeedbackController extends Controller
     ////////////////////////////////////////////////////////////////////////////////////////
     public function WebGetFeedBackByLocation ($location_id): JsonResponse
     {
-        $location = Location::find($location_id);
+        $location = Location::query()->find($location_id);
 
         if (!$location) {
             return response()->json([

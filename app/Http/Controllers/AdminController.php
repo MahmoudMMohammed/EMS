@@ -73,9 +73,9 @@ class AdminController extends Controller
             ], 422);
         }
         $response = [
-            ['number' => $feedbacks , 'description' => 'Feedbacks counts'] ,
-            ['number' => $app_downloads , 'description' => 'Application downloads'] ,
-            ['number' => $warehouses , 'description' => 'Warehouse counts']
+            ['id' => 1 , 'number' => $feedbacks , 'description' => 'Feedbacks counts'] ,
+            ['id' => 2 , 'number' => $app_downloads , 'description' => 'Application downloads'] ,
+            ['id' => 3 , 'number' => $warehouses , 'description' => 'Warehouse counts']
         ];
         return response()->json($response , 200);
     }

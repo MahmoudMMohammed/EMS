@@ -86,7 +86,7 @@ class UserController extends Controller
         foreach ($users as $user)
         {
             $response [] = [
-                'id' => $user->id ,
+                'user_id' => $user->id ,
                 'name' => $user->name ,
                 'email' => $user->email ,
                 'profile_picture' => $user -> profile -> profile_picture
@@ -94,5 +94,42 @@ class UserController extends Controller
         }
 
         return response()->json($response, 200);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function GetUserProfileDetails($id): JsonResponse
+    {
+        $exist = User::query()->find($id);
+        if(!$exist)
+        {
+            return response()->json([
+                'message' => 'User not found , Invalid user id' ,
+                'status_code' => 404
+            ], 404);
+
+        }
+        $users = User::where('role' , 'User')->where('id' , $id)->first();
+
+        if(!$users)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'name' => $users->name ,
+            'Registration' => $users->created_at->format('Y/m/d') ,
+            'role' => $users->role ,
+            'email' => $users->email ,
+            'phone_number' => $users -> profile -> phone_number ,
+            'residence' => $users -> profile -> place_of_residence ,
+            'birth_date' => $users -> profile -> birth_date ,
+            'gender' => $users -> profile -> gender ,
+            'about_me' => $users -> profile -> about_me
+        ];
+
+        return response() -> json($response , 200);
     }
 }
