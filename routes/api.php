@@ -94,6 +94,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //updating user privacy info
     Route::post('/user/profile/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
 
+    //updating user preferred language
+    Route::post('/user/profile/language', [ProfileController::class , 'updatePreferredLanguage']);
+
     //get user favorites
     Route::get('/user/profile/favorites', [FavoriteController::class, 'getUserFavorites']);
 
