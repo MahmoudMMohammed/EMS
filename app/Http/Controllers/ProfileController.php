@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -170,6 +171,38 @@ class ProfileController extends Controller
             'status_code' => 200
         ], 200);
     }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    public function updatePreferredLanguage(Request $request)
+    {
+        $profile = $this->getUserProfile();
+
+        $validator = Validator::make($request->all(),[
+            'preferred_language' => 'required | in:ar,en,zh,fr,de,ru,es,hi'
+        ]);
+        if ($validator->fails()) {
+            TranslateTextHelper::setTarget($profile->preferred_language);
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $profile->preferred_language = $request->preferred_language;
+        if (!$profile->save()){
+            return response()->json([
+                'error' => 'Could not update language please try again later!',
+                'status_code' => 400
+            ], 400);
+        }
+
+        $profile->save();
+        return response()->json([
+            'message' => 'Preferred language updated successfully',
+            'status_code' => 200
+        ], 200);
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
     //method to get user with profile

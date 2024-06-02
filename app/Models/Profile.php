@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ProfileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,5 +46,9 @@ class Profile extends Model
     public function getProfilePictureAttribute($value)
     {
         return env('APP_URL') . '/' . $value;
+    }
+    protected static function newFactory(): ProfileFactory
+    {
+        return ProfileFactory::new();
     }
 }

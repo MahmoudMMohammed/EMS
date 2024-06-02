@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Profile;
 use App\Models\User;
 use Database\Factories\CartFactory;
 use Database\Factories\CartItemFactory;
@@ -38,6 +39,7 @@ class UserSeeder extends Seeder
 
         User::factory()->count(10)
             ->has(Cart::factory(), 'cart')
+            ->has(Profile::factory(), 'profile')
             ->create();
     }
 }
