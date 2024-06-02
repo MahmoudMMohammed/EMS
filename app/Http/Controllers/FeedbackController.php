@@ -105,20 +105,11 @@ class FeedbackController extends Controller
         }
 
         $responseData = [
-            'id' => $existingFeedBack->id,
-            'name' => $user->name ,
+            'id' => $existingFeedBack->id ,
             'date' => $formattedDate ,
+            'comment' => $existingFeedBack->comment ,
+            'rate' => $existingFeedBack->rate
         ];
-
-        if($existingFeedBack->comment !== null)
-        {
-            $responseData['comment'] = $existingFeedBack->comment;
-        }
-
-        if($existingFeedBack->rate !== null)
-        {
-            $responseData['rate'] = $existingFeedBack->rate ;
-        }
 
         return response()->json($responseData,200);
     }
