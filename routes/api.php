@@ -263,8 +263,6 @@ Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::c
 
 
 
-//get numbers of events for each month
-Route::get('web/home/event/statistic' , [UserEventController::class , 'WebEventGraphicalStatistics']);
 
 //get hosts to filter location according to host related it
 Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
@@ -284,6 +282,8 @@ Route::get('/web/home/statistic/download/profile/{user_id}' , [UserController::c
 //get all warehouses and sort it by governorate
 Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
 
+//get numbers of events for each month
+Route::get('web/home/event/chart' , [UserEventController::class , 'WebEventGraphicalStatistics']);
 
 
 //test
