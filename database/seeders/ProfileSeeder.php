@@ -51,7 +51,7 @@ class ProfileSeeder extends Seeder
 
         $profile_picture = [
             'ProfilePictures/Owners&Admins/001.jpg' ,
-            'ProfilePictures/Owners&Admins/002.jpg' ,
+            'ProfilePictures/Owners&Admins/002.png' ,
             'ProfilePictures/Owners&Admins/003.JPEG' ,
             'ProfilePictures/Owners&Admins/004.jpg' ,
             'ProfilePictures/Owners&Admins/005.jpg' ,

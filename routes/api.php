@@ -71,7 +71,6 @@ Route::get('/auth/google', [SocialController::class, 'redirectToGoogleAPI']);
 //handling google callback with user info
 Route::get('/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallback']);
 
-Route::get('/auth/callback' ,[SocialController::class, 'getRedirectedUser'])->name("redirectedUser");
 
 
 Route::middleware([UserMiddleware::class])->group(function () {

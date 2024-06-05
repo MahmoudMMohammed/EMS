@@ -135,18 +135,8 @@ class SocialController extends Controller
 
         $token = JWTAuth::fromUser($authenticatedUser);
 
-        //return response()->json(['token' => $token]);
-        return redirect()->route('redirectedUser', ['user_id' => $authenticatedUser->id]);
-    }
-    ///////////////////////////////////////////////////////////////
+        return response()->json(['token' => $token]);
 
-    public function getRedirectedUser(Request $request)
-    {
-        $user = User::find($request->query('user_id'));
-
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json(["token" => $token],200);
     }
     ///////////////////////////////////////////////////////////////
     private function findOrCreateUser($googleUser)
