@@ -13,7 +13,6 @@ use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
-use App\Models\Reservation;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
@@ -28,7 +27,6 @@ class UserEventController extends Controller
 {
     public function createEvent(Request $request): JsonResponse
     {
-        // Validate the request
         $validator = Validator::make($request->all(), [
             'location_id' => 'required|exists:locations,id',
             'date' => 'required|date',
@@ -109,8 +107,6 @@ class UserEventController extends Controller
         // Create Event Supplement
         $eventSupplement = $this->createEventSupplement($event->id, $location->governorate, $foodDetails, $drinksDetails, $accessoriesDetails, $totalPrice);
 
-        // Create Reservation
-        $reservation = $this->createReservation($user->id, $event->id);
 
         event(new NotificationEvent($location->user_id, "Event reservation has been requested by user $user->id", "New reservation"));
 
@@ -119,7 +115,6 @@ class UserEventController extends Controller
             "message" => "Event reserved successfully",
             "event" => $event,
             "event_supplement" => $eventSupplement,
-            "reservation" => $reservation,
             "declined_items" => $declinedItems,
             "status_code" => 201
         ], 201);
@@ -246,15 +241,6 @@ class UserEventController extends Controller
             'drinks_details' => json_encode($drinksDetails),
             'accessories_details' => json_encode($accessoriesDetails),
             'total_price' => $totalPrice,
-        ]);
-    }
-    /////////////////////////////////////
-    private function createReservation($userId, $eventId)
-    {
-        return Reservation::create([
-            'user_id' => $userId,
-            'user_event_id' => $eventId,
-            'verified' => false,
         ]);
     }
     /////////////////////////////////////
