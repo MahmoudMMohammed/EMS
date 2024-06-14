@@ -165,7 +165,20 @@ class FavoriteController extends Controller
         foreach ($favorites as $favorite) {
             $item = $favorite->favoritable;
             if ($item) {
-                $items[$favorite->favoritable_type . 's'][] = $item;
+                switch (class_basename($item)) {
+                    case 'Location':
+                        $items['locations'][] = $item;
+                        break;
+                    case 'Food':
+                        $items['foods'][] = $item;
+                        break;
+                    case 'Drink':
+                        $items['drinks'][] = $item;
+                        break;
+                    case 'Accessory':
+                        $items['accessories'][] = $item;
+                        break;
+                }
             }
         }
 
