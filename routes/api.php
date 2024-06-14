@@ -106,10 +106,10 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/user/profile/favorites', [FavoriteController::class, 'getUserFavorites']);
 
     //add location to user favorites
-    Route::post('/user/profile/favorites', [FavoriteController::class , 'addLocationToFavorites']);
+    Route::post('/user/profile/favorites', [FavoriteController::class , 'addToFavorites']);
 
     //remove location from user favorites
-    Route::delete('/user/profile/favorites/{location_id}', [FavoriteController::class , 'removeFromFavorites']);
+    Route::post('/user/profile/favorites/remove', [FavoriteController::class , 'removeFromFavorites']);
 
     //delete user account
     Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
