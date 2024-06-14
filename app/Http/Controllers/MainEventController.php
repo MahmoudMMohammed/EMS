@@ -13,6 +13,12 @@ class MainEventController extends Controller
     public function GetEvents() :JsonResponse
     {
         $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
         $events = MainEvent::query()->get();
         if(!$events->count() > 0)

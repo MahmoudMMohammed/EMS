@@ -199,6 +199,18 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get all events
     Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
 
+    //get hosts related each event
+    Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
+
+    //get count of (location - food - drink - accessory)
+    Route::get('/home/count' , [LocationController::class , 'HomeCount']);
+
+    //Get Location related host && get location by governorate
+    Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']);
+
+    //Get all governorate
+    Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -231,21 +243,6 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     Route::post('/web/home/blockUser/{user_id}' , [OwnerController::class , 'blockUser']);
 
 });
-
-//get hosts related each event
-Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
-
-
-//get count of (location - food - drink - accessory)
-Route::get('/home/count' , [LocationController::class , 'HomeCount']);
-
-//Get Location related host && get location by governorate
-Route::post('/home/sort/location' , [LocationController::class , 'SortLocation']);
-
-//Get all governorate
-Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
-
-
 
 //create feedbacks
 Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);         //token

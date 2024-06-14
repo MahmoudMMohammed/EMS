@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Drink;
 use App\Models\Food;
@@ -10,6 +11,7 @@ use App\Models\LocationPicture;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Constraint\IsEmpty;
 
@@ -111,6 +113,15 @@ class LocationController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////
     public function SortLocation(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
             "host_id" => 'required|integer|exists:locations,host_id',
             "governorate" => 'required|string'
@@ -118,7 +129,7 @@ class LocationController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -143,21 +154,53 @@ class LocationController extends Controller
 
         if ($locations->isEmpty() && $request->governorate  && !$isGovernorateNull) {
             return response()->json([
-                'error' => "No locations found for the specified governorate: $request->governorate",
+                'error' => TranslateTextHelper::translate("No locations found for the specified governorate"),
                 'status_code' => 404,
             ], 404);
         }
 
+        $name = $locations->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $governorate = $locations->pluck('governorate')->toArray();
+        $governorate = TranslateTextHelper::batchTranslate($governorate);
+
+        $response = [];
+        foreach ($locations as $location)
+        {
+            $response [] = [
+                'id' => $location -> id ,
+                'name' => $name[$location->name] ,
+                'governorate' => $governorate[$location->governorate] ,
+                'open_time' => $location -> open_time ,
+                'close_time' => $location -> close_time,
+                'capacity' => $location -> capacity,
+                'logo' => $location -> logo
+            ];
+        }
+
+
         sleep(1);
-        return response()->json($locations , 200);
+        return response()->json($response , 200);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
     public function GetAllGovernorate(): JsonResponse
     {
-        $governorate = Location::distinct()->pluck('governorate');
+        $user = Auth::user();
 
-        if(!$governorate->count() > 0)
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
+        $governorate = Location::distinct()->pluck('governorate')->toArray();
+
+        if(!$governorate)
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",
@@ -165,9 +208,11 @@ class LocationController extends Controller
             ], 422);
         }
 
-        $governorate->prepend('all');
+        array_unshift($governorate, 'all');
 
-        return response()->json($governorate , 200);
+        $response = TranslateTextHelper::batchTranslateArray($governorate);
+
+        return response()->json($response , 200);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////

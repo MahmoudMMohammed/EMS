@@ -99,4 +99,43 @@ class TranslateTextHelper
 
         return $translatedTexts;
     }
+
+
+    public static function batchTranslateArray(array $texts): array
+    {
+        $translatedTexts = [];
+
+        // Initialize GoogleTranslate instance
+        $translator = new GoogleTranslate();
+
+        // Set source and target languages
+        $translator->setSource(self::$source);
+        $translator->setTarget(self::$target);
+
+        // Translate each text in the batch
+        foreach ($texts as $text) {
+            $cacheKey = 'translation_' . self::$source . '_' . self::$target . '_' . $text;
+
+            // Check if translation exists in cache
+            if (Cache::has($cacheKey)) {
+                $translatedText = Cache::get($cacheKey);
+            } else {
+                try {
+                    // Translate text
+                    $translatedText = $translator->translate($text);
+
+                    // Cache translated text for future use
+                    Cache::put($cacheKey, $translatedText, now()->addHours(72));
+                } catch (\Exception $e) {
+                    // Handle translation errors
+                    $translatedText = 'Translation error';
+                }
+            }
+
+            $translatedTexts[] = $translatedText;
+        }
+
+        return $translatedTexts;
+    }
+
 }
