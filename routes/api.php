@@ -211,6 +211,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //Get all governorate
     Route::get('/home/location/governorate' , [LocationController::class , 'GetAllGovernorate']);
 
+    //create feedbacks
+    Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -244,8 +247,6 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
-//create feedbacks
-Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);         //token
 
 //show feedback of user
 Route::get('/location/show/feedback/{location_id}' , [FeedbackController::class , 'GetCurrentUserFeedBack']);         //token

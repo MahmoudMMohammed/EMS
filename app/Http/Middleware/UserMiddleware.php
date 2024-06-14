@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\TranslateTextHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,16 @@ class UserMiddleware
     {
         $user = Auth::user();
 
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         // Check if user's role is allowed
         $allowedRoles = ['User', 'Admin', 'Owner'];
         if ($user && in_array($user->role, $allowedRoles)) {
@@ -25,7 +36,7 @@ class UserMiddleware
         }
 
         return response()->json([
-            'error' => 'Unauthorized, You are not User to access this page!'
+            'error' => TranslateTextHelper::translate('Unauthorized, You are not User to access this page!')
         ], 403);
     }
 

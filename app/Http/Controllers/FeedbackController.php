@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Feedback;
 use App\Models\Host;
 use App\Models\Location;
@@ -17,24 +18,27 @@ class FeedbackController extends Controller
 
     public function CreateFeedback(Request $request): JsonResponse
     {
+
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile ->preferred_language);
+
         $validator = Validator::make( $request->all() , [
             "location_id" => 'required|exists:locations,id',
             "comment" => 'required_without:rate' ,
             "rate" => 'required_without:comment|numeric|between:1,5'
         ]);
+
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
-                "status_code" => 422,
-            ], 422);
-        }
-
-        $user = Auth::user();
-
-        if(!$user)
-        {
-            return response()->json([
-                "error" => "Something went wrong , try again later",
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -46,7 +50,7 @@ class FeedbackController extends Controller
         if($existingFeedBack)
         {
             return response()->json([
-                'message' => 'You can not create a new feedback , you already have one !' ,
+                'message' => TranslateTextHelper::translate('You can not create a new feedback , you already have one !') ,
                 'status_code'=> 400] , 400);
         }
 
@@ -67,7 +71,7 @@ class FeedbackController extends Controller
         }
 
         return response()->json([
-            'message' => 'Your feedback add successfully , Thank you !' ,
+            'message' => TranslateTextHelper::translate('Your feedback add successfully , Thank you !') ,
             'status_code' => 201
         ] , 201);
     }
