@@ -17,7 +17,6 @@ class UserEventSeeder extends Seeder
     {
         UserEvent::factory()
         ->count(10)
-        ->has(Reservation::factory(),'reservation')
         ->create();
     }
 }
