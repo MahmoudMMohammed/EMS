@@ -16,11 +16,13 @@ class SocialController extends Controller
 {
     //****************************  Facebook Login **********************************//
     //********** Web **********//
+    // Not used and never will be in this project
     public function redirectToFacebook()
     {
         return Socialite::driver('facebook')->redirect();
     }
 
+    // Not used and never will be in this project
     public function handleFacebookCallback()
     {
         try {
@@ -48,11 +50,13 @@ class SocialController extends Controller
         }
     }
     //********** API **********//
+    // Not used and never will be in this project
     public function redirectToFacebookAPI()
     {
         return Socialite::driver('facebook')->stateless()->redirect();
     }
 
+    // Not used and never will be in this project
     public function handleFacebookAPICallback()
     {
         try {
@@ -83,6 +87,7 @@ class SocialController extends Controller
 
     //******** Web ********//
     // Redirect to Google for authentication
+    // Not used and never will be in this project
     public function redirectToGoogleWeb()
     {
         return Socialite::driver('google')->redirect();
@@ -90,6 +95,7 @@ class SocialController extends Controller
     ///////////////////////////////////////////////////////////////
 
     // Handle the callback from Google
+    // Not used and never will be in this project
     public function handleGoogleWebCallback()
     {
         try {
@@ -117,13 +123,18 @@ class SocialController extends Controller
     ///////////////////////////////////////////////////////////////
 
     //******** API ********//
-    public function redirectToGoogleAPI()
+    public function redirectToGoogleAPIMobile()
+    {
+        return Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+    }
+    ////////////////////////////
+    public function redirectToGoogleAPIWeb()
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
     ///////////////////////////////////////////////////////////////
 
-    public function handleGoogleAPICallback()
+    public function handleGoogleAPICallbackWeb()
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
@@ -136,17 +147,25 @@ class SocialController extends Controller
         $token = JWTAuth::fromUser($authenticatedUser);
 
         //return response()->json(['token' => $token]);
-        return redirect()->route('redirectedUser', ['user_id' => $authenticatedUser->id]);
+
+        return redirect()->to("http://localhost:3000/auth/success?token=$token");
+
     }
-    ///////////////////////////////////////////////////////////////
-
-    public function getRedirectedUser(Request $request)
+    ////////////////////////////
+    public function handleGoogleAPICallbackMobile()
     {
-        $user = User::find($request->query('user_id'));
+        try {
+            $user = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Google login failed'], 401);
+        }
 
-        $token = JWTAuth::fromUser($user);
+        $authenticatedUser = $this->findOrCreateUser($user);
 
-        return response()->json(["token" => $token],200);
+        $token = JWTAuth::fromUser($authenticatedUser);
+
+        return response()->json(['token' => $token]);
+
     }
     ///////////////////////////////////////////////////////////////
     private function findOrCreateUser($googleUser)

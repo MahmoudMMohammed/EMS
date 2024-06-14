@@ -64,6 +64,10 @@ class Location extends Model
     {
         return $this->hasMany(LocationPicture::class, 'location_id','id');
     }
+    public function favoriteItems()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
+    }
 
     public function getLogoAttribute($value)
     {

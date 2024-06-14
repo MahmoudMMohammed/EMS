@@ -65,13 +65,18 @@ Route::post('/password/reset', [AuthController::class , 'resetPassword']);
 
 
 
-//redirecting to google for authentication
-Route::get('/auth/google', [SocialController::class, 'redirectToGoogleAPI']);
+//redirecting to google for authentication for mobile
+Route::get('/mobile/auth/google', [SocialController::class, 'redirectToGoogleAPIMobile']);
 
-//handling google callback with user info
-Route::get('/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallback']);
+//handling google callback with user info for mobile
+Route::get('/mobile/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackMobile']);
 
-Route::get('/auth/callback' ,[SocialController::class, 'getRedirectedUser'])->name("redirectedUser");
+//redirecting to google for authentication for dashboard
+Route::get('/web/auth/google', [SocialController::class, 'redirectToGoogleAPIWeb']);
+
+//handling google callback with user info for dashboard
+Route::get('/web/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackWeb']);
+
 
 
 Route::middleware([UserMiddleware::class])->group(function () {
@@ -101,10 +106,10 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/user/profile/favorites', [FavoriteController::class, 'getUserFavorites']);
 
     //add location to user favorites
-    Route::post('/user/profile/favorites', [FavoriteController::class , 'addLocationToFavorites']);
+    Route::post('/user/profile/favorites', [FavoriteController::class , 'addToFavorites']);
 
     //remove location from user favorites
-    Route::delete('/user/profile/favorites/{location_id}', [FavoriteController::class , 'removeFromFavorites']);
+    Route::post('/user/profile/favorites/remove', [FavoriteController::class , 'removeFromFavorites']);
 
     //delete user account
     Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);

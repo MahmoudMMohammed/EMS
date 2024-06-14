@@ -44,6 +44,10 @@ class Accessory extends Model
     {
         return $this->morphMany(CartItem::class, 'itemable');
     }
+    public function favoriteItems()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
+    }
 
     public function getPictureAttribute($value)
     {

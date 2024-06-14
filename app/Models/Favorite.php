@@ -17,7 +17,8 @@ class Favorite extends Model
 
     protected $fillable = [
         'user_id',
-        'location_id',
+        'favoritable_id',
+        'favoritable_type',
     ];
 
     /**
@@ -37,5 +38,8 @@ class Favorite extends Model
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+    public function favoritable(){
+        return $this->morphTo();
     }
 }
