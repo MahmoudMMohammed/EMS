@@ -19,10 +19,10 @@ class GoogleServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $isApiRequest = request()->is('api/*');
+        $isMobileRequest = request()->is('api/mobile/*');
 
         config([
-            'services.google.redirect' => $isApiRequest
+            'services.google.redirect' => $isMobileRequest
                 ? env('GOOGLE_REDIRECT_URI_API')
                 : env('GOOGLE_REDIRECT_URI_WEB'),
         ]);

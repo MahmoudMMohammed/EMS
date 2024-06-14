@@ -65,11 +65,17 @@ Route::post('/password/reset', [AuthController::class , 'resetPassword']);
 
 
 
-//redirecting to google for authentication
-Route::get('/auth/google', [SocialController::class, 'redirectToGoogleAPI']);
+//redirecting to google for authentication for mobile
+Route::get('/mobile/auth/google', [SocialController::class, 'redirectToGoogleAPIMobile']);
 
-//handling google callback with user info
-Route::get('/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallback']);
+//handling google callback with user info for mobile
+Route::get('/mobile/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackMobile']);
+
+//redirecting to google for authentication for dashboard
+Route::get('/web/auth/google', [SocialController::class, 'redirectToGoogleAPIWeb']);
+
+//handling google callback with user info for dashboard
+Route::get('/web/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackWeb']);
 
 
 
