@@ -196,6 +196,9 @@ Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAcces
 /*...................................<Mansour>...................................*/
 Route::middleware([UserMiddleware::class])->group(function () {
 
+    //get all events
+    Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -232,8 +235,6 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 //get hosts related each event
 Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
 
-//get all events
-Route::get('/home/events' , [MainEventController::class , 'GetEvents']);
 
 //get count of (location - food - drink - accessory)
 Route::get('/home/count' , [LocationController::class , 'HomeCount']);

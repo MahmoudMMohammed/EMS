@@ -27,7 +27,6 @@ class MainEventController extends Controller
 
         $names = $events->pluck('name')->toArray();
         $translatedNames = TranslateTextHelper::batchTranslate($names);
-
         foreach ($events as $event){
             $responseData [] = [
                 'id' => $event->id,

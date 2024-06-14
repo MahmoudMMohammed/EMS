@@ -108,7 +108,7 @@ class FeedbackController extends Controller
             'id' => $existingFeedBack->id ,
             'date' => $formattedDate ,
             'comment' => $existingFeedBack->comment ?? 'No comment provided' ,
-            'rate' => $existingFeedBack->rate ?? 0
+            'rate' => $existingFeedBack->rate ?? 500
         ];
 
         return response()->json($responseData,200);
@@ -233,7 +233,7 @@ class FeedbackController extends Controller
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
                 'comment' => $feedback -> comment ?? 'No comment provided' ,
-                'rate' => $feedback -> rate ?? 0 ,
+                'rate' => $feedback -> rate ?? 500 ,
                 'date' => $formattedDate,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture
             ];
@@ -283,7 +283,7 @@ class FeedbackController extends Controller
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
                 'comment' => $feedback -> comment ?? 'No comment provided' ,
-                'rate' => $feedback -> rate ?? 0,
+                'rate' => $feedback -> rate ?? 500,
                 'date' => $formattedDate ,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture ,
             ];
