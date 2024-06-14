@@ -20,7 +20,7 @@ class FeedbackController extends Controller
         $validator = Validator::make( $request->all() , [
             "location_id" => 'required|exists:locations,id',
             "comment" => 'required_without:rate' ,
-            "rate" => 'required_without:comment|int|between:1,5'
+            "rate" => 'required_without:comment|numeric|between:1,5'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -107,8 +107,8 @@ class FeedbackController extends Controller
         $responseData = [
             'id' => $existingFeedBack->id ,
             'date' => $formattedDate ,
-            'comment' => $existingFeedBack->comment ,
-            'rate' => $existingFeedBack->rate
+            'comment' => $existingFeedBack->comment ?? 'No comment provided' ,
+            'rate' => $existingFeedBack->rate ?? 0
         ];
 
         return response()->json($responseData,200);
@@ -161,7 +161,7 @@ class FeedbackController extends Controller
         if ($averageRating > 3.2) {
             $ratingPercentages['rating_message'] = "Suitable";
         } else {
-            $ratingPercentages['rating_message'] = "null";
+            $ratingPercentages['rating_message'] = "Discouraged";
         }
 
         return response()->json($ratingPercentages , 200);
@@ -232,8 +232,8 @@ class FeedbackController extends Controller
             $transformedFeedbacks[] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
-                'comment' => $feedback -> comment ,
-                'rate' => $feedback -> rate ,
+                'comment' => $feedback -> comment ?? 'No comment provided' ,
+                'rate' => $feedback -> rate ?? 0 ,
                 'date' => $formattedDate,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture
             ];
@@ -282,8 +282,8 @@ class FeedbackController extends Controller
             $response_result [] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
-                'comment' => $feedback -> comment ,
-                'rate' => $feedback -> rate ,
+                'comment' => $feedback -> comment ?? 'No comment provided' ,
+                'rate' => $feedback -> rate ?? 0,
                 'date' => $formattedDate ,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture ,
             ];
@@ -297,7 +297,7 @@ class FeedbackController extends Controller
         $validator = Validator::make($request->all() , [
             'location_id' => 'required|integer|exists:locations,id' ,
             'comment' => 'required_without:rate',
-            'rate' => 'required_without:comment'
+            'rate' => 'required_without:comment|numeric'
         ]);
 
         if($validator->fails())
@@ -404,7 +404,7 @@ class FeedbackController extends Controller
             $response[] = [
                 'id' => $feedback -> id,
                 'name' => $feedback->user->name,
-                'comment' => $feedback->comment,
+                'comment' => $feedback->comment ?? 'No comment provided',
                 'rate' => $feedback->rate,
                 'profile_picture' => $feedback->user->profile->profile_picture ,
                 'date' => $feedback->date
