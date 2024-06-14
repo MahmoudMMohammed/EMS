@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services;
 
 use GuzzleHttp\Client;
+
 class GenderService
 {
     protected static $client;

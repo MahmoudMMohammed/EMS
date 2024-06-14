@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\AccessoryCategory;
 use App\Models\Cart;
 use App\Models\DrinkCategory;
@@ -16,6 +17,7 @@ use App\Models\Reservation;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -93,6 +95,14 @@ class UserEventController extends Controller
         // Process cart items
         [$foodDetails, $drinksDetails, $accessoriesDetails, $declinedItems, $totalPrice] = $this->processCartItems($cart, $location);
 
+        $isBalanceSufficient = $this->checkForBalanceRequired($user->profile->balance, $totalPrice);
+        if (!$isBalanceSufficient) {
+            return response()->json([
+                "error" => "Insufficient balance",
+                "status_code" => 422
+            ], 422);
+        }
+
         // Create Event
         $event = $this->createUserEvent($user->id, $request, $startTime, $endTime);
 
@@ -101,6 +111,8 @@ class UserEventController extends Controller
 
         // Create Reservation
         $reservation = $this->createReservation($user->id, $event->id);
+
+        event(new NotificationEvent($location->user_id, "Event reservation has been requested by user $user->id", "New reservation"));
 
         // Return the response
         return response()->json([
@@ -245,6 +257,16 @@ class UserEventController extends Controller
             'verified' => false,
         ]);
     }
+    /////////////////////////////////////
+    private function checkForBalanceRequired($userBalance, $eventSupplementsTotalPrice): bool
+    {
+        if ($userBalance < $eventSupplementsTotalPrice){
+            return false; // Indicates insufficient balance
+        } else {
+            return true; // Indicates sufficient balance
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getEventById($event_id): JsonResponse
     {

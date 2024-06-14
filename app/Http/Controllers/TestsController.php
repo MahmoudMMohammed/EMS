@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
-use App\Helpers\GenderService;
 use App\Helpers\TranslateTextHelper;
+use App\Services\GenderService;
 use Illuminate\Http\Request;
 
 class TestsController extends Controller

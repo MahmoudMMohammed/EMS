@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Helpers\GenderService;
-use Illuminate\Support\ServiceProvider;
+use App\Services\GenderService;
 use GuzzleHttp\Client;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

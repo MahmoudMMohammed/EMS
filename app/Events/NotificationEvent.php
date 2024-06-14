@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Notification;
+use App\Services\NotificationService;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -16,13 +18,17 @@ class NotificationEvent implements ShouldBroadcast
 
     public $userId;
     public $message;
+
     /**
      * Create a new event instance.
      */
-    public function __construct($userId, $message)
+    public function __construct($userId, $message, $title)
     {
         $this->userId = $userId;
         $this->message = $message;
+
+        // Save notification using a service
+        (new NotificationService())->createNotification($userId, $title, $message);
     }
 
     /**
@@ -36,9 +42,9 @@ class NotificationEvent implements ShouldBroadcast
             new PrivateChannel("user.$this->userId"),
         ];
     }
+
     public function broadcastAs()
     {
         return 'user-event.' . $this->userId;
     }
-
 }

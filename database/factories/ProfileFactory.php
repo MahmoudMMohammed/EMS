@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Helpers\GenderService;
 use App\Models\Profile;
-
 use App\Models\User;
+use App\Services\GenderService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

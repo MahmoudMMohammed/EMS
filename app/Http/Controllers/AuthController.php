@@ -1,15 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Events\NotificationEvent;
-use App\Helpers\GenderService;
-use App\Helpers\TranslateTextHelper;
 use App\Mail\SendCodeResetPassword;
 use App\Mail\SendEmailVerificationCode;
 use App\Models\EmailVerification;
 use App\Models\Profile;
 use App\Models\ResetCodePassword;
 use App\Models\User;
+use App\Services\GenderService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -18,9 +16,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password as password_rule;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Validation\Rules\Password as password_rule;
+
 class AuthController extends Controller
 {
 
