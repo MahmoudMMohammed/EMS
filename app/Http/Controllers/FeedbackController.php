@@ -404,8 +404,10 @@ class FeedbackController extends Controller
     ////////////////////////////////////////////////////////////////////////////////////////
     public function WebGetFeedBackByLocation ($location_id): JsonResponse
     {
-        $location = Location::query()->find($location_id);
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
+        $location = Location::query()->find($location_id);
         if (!$location) {
             return response()->json([
                 'message' => 'Location not found , Invalid location id'
@@ -417,21 +419,24 @@ class FeedbackController extends Controller
         if(!$feedbacks->count() > 0)
         {
             return response()->json([
-                'message' => 'There is no users feedback for this locations'
+                'message' => TranslateTextHelper::translate('There is no users feedback for this location yet')
             ] ,404);
         }
+
+        $data = $feedbacks->pluck('date')->toArray();
+        $data = TranslateTextHelper::batchTranslate($data);
 
         $response = [];
 
         foreach ($feedbacks as $feedback)
         {
             $response[] = [
-                'id' => $feedback -> id,
+                'feedback_id' => $feedback -> id,
                 'name' => $feedback->user->name,
-                'comment' => $feedback->comment ?? 'No comment provided',
+                'comment' => $feedback->comment ?? TranslateTextHelper::translate('No comment provided'),
                 'rate' => $feedback->rate,
                 'profile_picture' => $feedback->user->profile->profile_picture ,
-                'date' => $feedback->date
+                'date' => $data[$feedback->date]
             ];
         }
         return response()->json($response, 200);

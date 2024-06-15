@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Feedback;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class OwnerController extends Controller
 {
     public function WebGetOwners (): JsonResponse
     {
+        $user = Auth::user();
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $owners = User::with('profile')->where('role' , "Owner")->get();
 
         if(!$owners->count() > 0)
@@ -23,12 +29,15 @@ class OwnerController extends Controller
             ] , 400);
         }
 
+        $data = $owners->pluck('name')->toArray();
+        $data = TranslateTextHelper::batchTranslate($data);
+
         $response = [];
         foreach ($owners as $owner)
         {
             $response [] = [
                 'owner_id' => $owner->id ,
-                'name' => $owner->name ,
+                'name' => $data[$owner->name] ,
                 'profile_picture' => $owner -> profile -> profile_picture
             ];
         }
@@ -39,6 +48,9 @@ class OwnerController extends Controller
     ////////////////////////////////////////////////////////////////
     public function WebDeleteFeedback($feedback_id): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $feedback = Feedback::query()->find($feedback_id);
 
         if (!$feedback) {
@@ -51,7 +63,7 @@ class OwnerController extends Controller
         $feedback->delete();
 
         return response()->json([
-            'message' => 'Feedback has been deleted successfully !',
+            'message' => TranslateTextHelper::translate('Rating has been deleted successfully'),
             'status_code' => 200,
         ], 200);
 
@@ -60,6 +72,9 @@ class OwnerController extends Controller
     ////////////////////////////////////////////////////////////////
     public function blockUser(Request $request , $user_id): JsonResponse
     {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
             'duration' => 'required|string|in:hour,day,month,year',
         ]);
@@ -84,7 +99,7 @@ class OwnerController extends Controller
         if($user->is_blocked == 1)
         {
             return response()->json([
-                'message' => "The user has already been banned for a period of time until : $user->blocked_until" ,
+                'message' => TranslateTextHelper::translate("The user has already been banned for a period of time until : $user->blocked_until") ,
                 'status_code' => 403
             ] , 403);
         }
@@ -110,8 +125,41 @@ class OwnerController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => "User blocked until $user->blocked_until successfully !",
+            'message' => TranslateTextHelper::translate("User blocked until $user->blocked_until successfully"),
             'status_code' => 200,
         ], 200);
     }
+
+    ////////////////////////////////////////////////////////////////
+    public function unblockUser($user_id): JsonResponse
+    {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return response()->json([
+                'error' => 'User not found',
+                'status_code' => 404,
+            ], 404);
+        }
+
+        if ($user->is_blocked == 0) {
+            return response()->json([
+                'message' => TranslateTextHelper::translate("The user is not currently blocked"),
+                'status_code' => 403,
+            ], 403);
+        }
+
+        $user->is_blocked = false;
+        $user->blocked_until = null;
+        $user->save();
+
+        return response()->json([
+            'message' => TranslateTextHelper::translate("User unblocked successfully"),
+            'status_code' => 200,
+        ], 200);
+    }
+
+
 }

@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Warehouse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class WarehouseController extends Controller
 {
     public function GetWarehouseByGovernorate(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user-> profile -> preferred_language);
+
        $validator = Validator::make($request->all() , [
            'governorate' => 'required|string'
        ]);
@@ -31,16 +36,16 @@ class WarehouseController extends Controller
             if($query->isEmpty())
             {
                 return response()->json([
-                    "error" => "There are no warehouses in this governorate !",
+                    "error" => TranslateTextHelper::translate("There are no warehouses in this governorate"),
                     "status_code" => 404
                 ] , 404);
             }
             return response()->json($query , 200);
         }
 
-        $query = Warehouse::query()->get();
+        $queries = Warehouse::query()->get();
 
-        if($query->isEmpty())
+        if($queries->isEmpty())
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",
@@ -48,7 +53,23 @@ class WarehouseController extends Controller
             ] , 422);
         }
 
-        return response()->json($query , 200);
+        $governorate = $queries->pluck('governorate')->toArray();
+        $governorate = TranslateTextHelper::batchTranslate($governorate);
+
+        $address = $queries->pluck('address')->toArray();
+        $address = TranslateTextHelper::batchTranslate($address);
+
+        $response = [];
+        foreach ($queries as $query)
+        {
+            $response [] = [
+                'id' => $query->id ,
+                'governorate' => $governorate[$query->governorate] ,
+                'address' => $address[$query->address]
+            ];
+        }
+
+        return response()->json($response , 200);
     }
 
 }

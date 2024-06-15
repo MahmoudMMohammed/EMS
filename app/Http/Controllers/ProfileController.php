@@ -224,7 +224,8 @@ class ProfileController extends Controller
     public function WebGetCurrentAdmin(): JsonResponse
     {
         $user = Auth::user();
-
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+        
         if(!$user)
         {
             return response()->json([
@@ -237,7 +238,7 @@ class ProfileController extends Controller
 
         $response = [
             'user_id' => $userdata->id ,
-            'user_name' => "Hi ". $userdata->name ,
+            'user_name' => TranslateTextHelper::translate("Hi ". $userdata->name) ,
             'profile_picture' => $userdata -> profile -> profile_picture
         ];
         return response()->json($response , 200);

@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function WebGetUserDownloadApp(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
             'filter' => 'required|string|in:all,today,week,month,year',
         ]);
@@ -68,7 +73,7 @@ class UserController extends Controller
 
                 if(!$users->count() > 0){
                     return response()->json([
-                        "error" => "There are no users who have downloaded the application !",
+                        "error" => TranslateTextHelper::translate("There are no users who have downloaded the application"),
                         "status_code" => 404,
                     ] , 404);
                 }
@@ -77,7 +82,7 @@ class UserController extends Controller
 
         if ($users->isEmpty() && $filter != 'all') {
             return response()->json([
-                "message" => "There are no users who have downloaded the application at this time !",
+                "message" => TranslateTextHelper::translate("There are no users who have downloaded the application at this time"),
                 "status_code" => 404,
             ], 404);
         }
@@ -99,6 +104,9 @@ class UserController extends Controller
     /////////////////////////////////////////////////////////////////////////////////////
     public function GetUserProfileDetails($id): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = User::query()->find($id);
         if(!$exist)
         {
@@ -118,16 +126,24 @@ class UserController extends Controller
             ], 422);
         }
 
+        $data = [ $users->role ,
+            $users -> profile -> phone_number ?? 'there is no phone number' ,
+            $users -> profile -> place_of_residence ?? 'There is no information about the place of residence' ,
+            $users -> profile -> gender ?? 'Not set yet' ,
+           ];
+
+        $data = TranslateTextHelper::batchTranslateArray($data);
+
         $response = [
             'name' => $users->name ,
             'Registration' => $users->created_at->format('Y/m/d') ,
-            'role' => $users->role ,
+            'role' => $data[0] ,
             'email' => $users->email ,
-            'phone_number' => $users -> profile -> phone_number ,
-            'residence' => $users -> profile -> place_of_residence ,
-            'birth_date' => $users -> profile -> birth_date ,
-            'gender' => $users -> profile -> gender ,
-            'about_me' => $users -> profile -> about_me
+            'phone_number' => $data[1] ,
+            'residence' => $data[2] ,
+            'birth_date' => $users -> profile -> birth_date ?? TranslateTextHelper::translate('Not set yet'),
+            'gender' => $data[3] ,
+            'about_me' => $users -> profile -> about_me ?? TranslateTextHelper::translate('Not set yet')
         ];
 
         return response() -> json($response , 200);

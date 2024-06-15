@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Drink;
 use App\Models\Feedback;
@@ -12,12 +13,16 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
     public function WebSearchAdmin (Request $request): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make( $request->all() , [
             'search' => 'required | string'
         ]);
@@ -31,7 +36,7 @@ class AdminController extends Controller
 
         $results = User::with('profile')
             ->where('role' , 'Admin')
-            ->where('name' , 'LIKE' , '%' . $request->search . '%')
+            ->where('name' , 'LIKE' ,  $request->search . '%')
             ->orderBy('users.name')
             ->get();
 
@@ -43,11 +48,13 @@ class AdminController extends Controller
             ] , 404);
         }
 
+        $data = $results->pluck('name')->toArray();
+        $data = TranslateTextHelper::batchTranslate($data);
         $response = [];
         foreach ($results as $result)
         {
             $response [] = [
-                'name' => $result->name ,
+                'name' => $data[$result->name] ,
                 'email' => $result->email ,
                 'profile_picture' => $result -> profile -> profile_picture
             ];
@@ -59,6 +66,9 @@ class AdminController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////
     public function WebThreeStatistic(): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $feedbacks = Feedback::query()->count();
 
         $app_downloads = User::query()->where('role' , 'User')->count();
@@ -72,10 +82,13 @@ class AdminController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        $response_data = TranslateTextHelper::batchTranslateArray(['ratings counts' , 'Application downloads' , 'Warehouse censuses']);
+
         $response = [
-            ['id' => 1 , 'number' => $feedbacks , 'description' => 'Feedbacks counts'] ,
-            ['id' => 2 , 'number' => $app_downloads , 'description' => 'Application downloads'] ,
-            ['id' => 3 , 'number' => $warehouses , 'description' => 'Warehouse counts']
+            ['id' => 1 , 'number' => $feedbacks , 'description' => $response_data[0]] ,
+            ['id' => 2 , 'number' => $app_downloads , 'description' => $response_data[1]] ,
+            ['id' => 3 , 'number' => $warehouses , 'description' => $response_data[2]]
         ];
         return response()->json($response , 200);
     }
@@ -83,6 +96,9 @@ class AdminController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////
     public function WebCounts(): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $location = Location::query()->count();
         if(!$location){
             return response()->json([
@@ -125,12 +141,14 @@ class AdminController extends Controller
             ] , 400);
         }
 
+        $response_data = TranslateTextHelper::batchTranslateArray(['Locations' , 'Foods' , 'Drinks' , 'Accessories' , 'Events']);
+
         $response = [
-            ['number' => $location , 'description' => 'Location'] ,
-            ['number' => $Food , 'description' => 'Food'] ,
-            ['number' => $Drink , 'description' => 'Drink'] ,
-            ['number' => $Accessory , 'description' => 'Accessory'] ,
-            ['number' => $event , 'description' => 'Event']
+            ['number' => $location , 'description' =>$response_data[0] ] ,
+            ['number' => $Food , 'description' =>$response_data[1] ] ,
+            ['number' => $Drink , 'description' => $response_data[2]] ,
+            ['number' => $Accessory , 'description' => $response_data[3]] ,
+            ['number' => $event , 'description' => $response_data[4]]
         ];
 
         return response()->json($response , 200);
@@ -139,6 +157,9 @@ class AdminController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////
     public function WebGetAdmins(): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $admins = User::with('profile')->where('role' , "Admin")->get();
 
         if(!$admins->count() > 0)
@@ -149,12 +170,15 @@ class AdminController extends Controller
             ] , 400);
         }
 
+        $data = $admins->pluck('name')->toArray();
+        $data = TranslateTextHelper::batchTranslate($data);
+
         $response = [];
         foreach ($admins as $admin)
         {
             $response [] = [
-                'owner_id' => $admin->id ,
-                'name' => $admin->name ,
+                'admin_id' => $admin->id ,
+                'name' => $data[$admin->name] ,
                 'email' => $admin->email ,
                 'profile_picture' => $admin -> profile -> profile_picture
             ];

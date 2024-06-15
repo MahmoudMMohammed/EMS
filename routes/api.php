@@ -236,7 +236,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
 Route::middleware([AdminMiddleware::class])->group(function () {
 
     //get name and photo of current admin or owner
-    Route::get('/web/home/current' , [ProfileController::class , 'WebGetCurrentAdmin']);     //token
+    Route::get('/web/home/current' , [ProfileController::class , 'WebGetCurrentAdmin']);
 
     //search of admin
     Route::post('/web/home/search' , [AdminController::class , 'WebSearchAdmin']);
@@ -247,11 +247,32 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     //get home counts
     Route::get('/web/home/counts' , [AdminController::class , 'WebCounts']);
 
+    //get numbers of events for each month
+    Route::get('/web/home/event/chart' , [UserEventController::class , 'WebEventGraphicalStatistics']);
+
     //get owners
     Route::get('/web/home/owners' , [OwnerController::class , 'WebGetOwners']);
 
     //get admins
     Route::get('/web/home/admins' , [AdminController::class , 'WebGetAdmins']);
+
+    //get hosts to filter location according to host related it
+    Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
+
+    //get location related of each host
+    Route::get('/web/home/statistic/hosts/locations/{host_id}' , [HostController::class , 'GetLocationRelatedHost']);
+
+    //get feedbacks related of every location
+    Route::get('/web/home/statistic/hosts/locations/feedbacks/{location_id}' , [FeedbackController::class , 'WebGetFeedBackByLocation']);
+
+    //filter all users download application by date registration
+    Route::post('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
+
+    //get the user profile details
+    Route::get('/web/home/statistic/download/profile/{user_id}' , [UserController::class , 'GetUserProfileDetails']);
+
+    //get all warehouses and sort it by governorate
+    Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
 });
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
@@ -262,29 +283,10 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     //owner block user
     Route::post('/web/home/blockUser/{user_id}' , [OwnerController::class , 'blockUser']);
 
+    //owner unblock user
+    Route::get('/web/home/unBlockUser/{user_id}' , [OwnerController::class , 'unblockUser']);
+
 });
-
-
-//get hosts to filter location according to host related it
-Route::get('/web/home/statistic/hosts' , [HostController::class , 'WebGetHosts']);
-
-//get location related of each host
-Route::get('/web/home/statistic/hosts/locations/{host_id}' , [HostController::class , 'GetLocationRelatedHost']);
-
-//get feedbacks related of every location
-Route::get('/web/home/statistic/hosts/locations/feedbacks/{location_id}' , [FeedbackController::class , 'WebGetFeedBackByLocation']);
-
-//filter all users download application by date registration
-Route::post('/web/home/statistic/download' , [UserController::class , 'WebGetUserDownloadApp']);
-
-//get the user profile details
-Route::get('/web/home/statistic/download/profile/{user_id}' , [UserController::class , 'GetUserProfileDetails']);
-
-//get all warehouses and sort it by governorate
-Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
-
-//get numbers of events for each month
-Route::get('web/home/event/chart' , [UserEventController::class , 'WebEventGraphicalStatistics']);
 
 
 //test
