@@ -61,7 +61,7 @@ class AdminController extends Controller
     {
         $feedbacks = Feedback::query()->count();
 
-        $app_downloads = User::query()->where('role' , 'User')->whereNull('google_id')->count();
+        $app_downloads = User::query()->where('role' , 'User')->count();
 
         $warehouses = Warehouse::query()->count();
 

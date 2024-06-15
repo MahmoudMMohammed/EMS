@@ -214,6 +214,23 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //create feedbacks
     Route::post('/location/add/feedback' , [FeedbackController::class , 'CreateFeedback']);
 
+    //show feedback of user
+    Route::get('/location/show/feedback/{location_id}' , [FeedbackController::class , 'GetCurrentUserFeedBack']);
+
+    //show rating of location
+    Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
+
+    //show the first three feedbacks related of location and sort feedbacks if(1 star , 2 star , 3 star , 4 star , 5 star)
+    Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
+
+    //show all feedbacks
+    Route::get('/location/show/all/feedbacks/{location_id}' , [FeedbackController::class , 'GetAllFeedbacks']);
+
+    //update your feedback
+    Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);
+
+    //delete your feedback
+    Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::class , 'deleteFeedback']);
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -246,27 +263,6 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     Route::post('/web/home/blockUser/{user_id}' , [OwnerController::class , 'blockUser']);
 
 });
-
-
-//show feedback of user
-Route::get('/location/show/feedback/{location_id}' , [FeedbackController::class , 'GetCurrentUserFeedBack']);         //token
-
-//show rating of location
-Route::get('/location/statistic/rating/{location_id}' , [FeedbackController::class , 'GetLocationStatisticsRate']);
-
-//show the first three feedbacks related of location and sort feedbacks if(1 star , 2 star , 3 star , 4 star , 5 star)
-Route::post('/location/show/three/feedbacks' , [FeedbackController::class , 'GetFirstThreeFeedback']);
-
-//show all feedbacks
-Route::get('/location/show/all/feedbacks/{location_id}' , [FeedbackController::class , 'GetAllFeedbacks']);
-
-//update your feedback
-Route::post('/location/update/feedback' , [FeedbackController::class , 'updateFeedback']);        //token
-
-//delete your feedback
-Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::class , 'deleteFeedback']);       //token
-
-
 
 
 //get hosts to filter location according to host related it

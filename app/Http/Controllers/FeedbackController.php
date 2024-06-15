@@ -33,7 +33,7 @@ class FeedbackController extends Controller
         $validator = Validator::make( $request->all() , [
             "location_id" => 'required|exists:locations,id',
             "comment" => 'required_without:rate' ,
-            "rate" => 'required_without:comment|numeric|between:1,5'
+            "rate" => 'required_without:comment|numeric|between:0.5,5'
         ]);
 
         if ($validator->fails()) {
@@ -50,7 +50,7 @@ class FeedbackController extends Controller
         if($existingFeedBack)
         {
             return response()->json([
-                'message' => TranslateTextHelper::translate('You can not create a new feedback , you already have one !') ,
+                'message' => TranslateTextHelper::translate('You can not create a new feedback , you already have one') ,
                 'status_code'=> 400] , 400);
         }
 
@@ -71,7 +71,7 @@ class FeedbackController extends Controller
         }
 
         return response()->json([
-            'message' => TranslateTextHelper::translate('Your feedback add successfully , Thank you !') ,
+            'message' => TranslateTextHelper::translate('Your feedback add successfully , Thank you') ,
             'status_code' => 201
         ] , 201);
     }
@@ -80,6 +80,8 @@ class FeedbackController extends Controller
     public function GetCurrentUserFeedBack($id): JsonResponse
     {
         $user = Auth::user();
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $existingFeedBack = Feedback::whereUserId($user['id'])->where('location_id' , $id)->first();
 
@@ -99,19 +101,21 @@ class FeedbackController extends Controller
         $diffInDays = $feedbackDate->diffInDays($now);
 
         if ($diffInSeconds < 60) {
-            $formattedDate = $diffInSeconds . ' seconds ago';
+            $formattedDate =  TranslateTextHelper::translate($diffInSeconds . ' seconds ago');
         } elseif ($diffInMinutes < 60) {
-            $formattedDate = $diffInMinutes . ' minutes ago';
+            $formattedDate =  TranslateTextHelper::translate($diffInMinutes . ' minutes ago');
         } elseif ($diffInHours < 24) {
-            $formattedDate = $diffInHours . ' hours ago';
+            $formattedDate =  TranslateTextHelper::translate($diffInHours . ' hours ago');
         } else {
             $formattedDate = $feedbackDate->format('Y-m-d');
         }
 
+        $comment = $existingFeedBack->comment ?? TranslateTextHelper::translate('No comment provided');
+
         $responseData = [
             'id' => $existingFeedBack->id ,
             'date' => $formattedDate ,
-            'comment' => $existingFeedBack->comment ?? 'No comment provided' ,
+            'comment' => $comment ,
             'rate' => $existingFeedBack->rate ?? 500
         ];
 
@@ -121,6 +125,9 @@ class FeedbackController extends Controller
     ////////////////////////////////////////////////////////////////////////////////////////
     public function GetLocationStatisticsRate($location_id): JsonResponse
     {
+
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $locationExists = Location::find($location_id);
 
@@ -163,9 +170,9 @@ class FeedbackController extends Controller
         $ratingPercentages['average_rating'] = $averageRating;
 
         if ($averageRating > 3.2) {
-            $ratingPercentages['rating_message'] = "Suitable";
+            $ratingPercentages['rating_message'] = TranslateTextHelper::translate("Suitable");
         } else {
-            $ratingPercentages['rating_message'] = "Discouraged";
+            $ratingPercentages['rating_message'] = TranslateTextHelper::translate("Discouraged");
         }
 
         return response()->json($ratingPercentages , 200);
@@ -175,15 +182,18 @@ class FeedbackController extends Controller
 
     public function GetFirstThreeFeedback(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
-            "location_id" => 'required|integer|exists:locations,host_id',
+            "location_id" => 'required|integer|exists:locations,id',
             "rate" => 'required|integer'
         ]);
 
         if($validator->fails())
         {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -195,7 +205,7 @@ class FeedbackController extends Controller
         if(!$query->count() > 0)
         {
             return response()->json([
-                'message' => 'There are no reviews for this place yet !'
+                'message' => TranslateTextHelper::translate('There are no reviews for this place yet')
             ] , 422);
         }
 
@@ -209,11 +219,12 @@ class FeedbackController extends Controller
         if(!$feedbacks->count() > 0)
         {
             return response()->json([
-                'message' => 'There are no reviews for this place yet !'
+                'message' => TranslateTextHelper::translate("There are no $request->rate stars reviews for this place yet")
             ] , 422);
         }
 
         $transformedFeedbacks = [];
+
         foreach ($feedbacks as $feedback)
         {
             $feedbackDate = Carbon::parse($feedback->date);
@@ -224,11 +235,11 @@ class FeedbackController extends Controller
             $diffInDays = $feedbackDate->diffInDays($now);
 
             if ($diffInSeconds < 60) {
-                $formattedDate = $diffInSeconds . ' seconds ago';
+                $formattedDate = TranslateTextHelper::translate($diffInSeconds . ' seconds ago');
             } elseif ($diffInMinutes < 60) {
-                $formattedDate = $diffInMinutes . ' minutes ago';
+                $formattedDate = TranslateTextHelper::translate($diffInMinutes . ' minutes ago');
             } elseif ($diffInHours < 24) {
-                $formattedDate = $diffInHours . ' hours ago';
+                $formattedDate = TranslateTextHelper::translate($diffInHours . ' hours ago');
             } else {
                 $formattedDate = $feedbackDate->format('Y-m-d');
             }
@@ -236,7 +247,7 @@ class FeedbackController extends Controller
             $transformedFeedbacks[] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
-                'comment' => $feedback -> comment ?? 'No comment provided' ,
+                'comment' => $feedback -> comment ?? TranslateTextHelper::translate('No comment provided') ,
                 'rate' => $feedback -> rate ?? 500 ,
                 'date' => $formattedDate,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture
@@ -249,6 +260,9 @@ class FeedbackController extends Controller
     ////////////////////////////////////////////////////////////////////////////////////////
     public function GetAllFeedbacks($location_id): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $exist = Location::find($location_id);
         if(!$exist)
         {
@@ -259,7 +273,9 @@ class FeedbackController extends Controller
 
         if(!$feedbacks->count() > 0)
         {
-            return response()->json([ 'message' => 'There are no reviews for this place yet !'] , 422);
+            return response()->json([
+                'message' => TranslateTextHelper::translate('There are no reviews for this place yet')]
+                , 422);
         }
 
         $response_result = [];
@@ -274,11 +290,11 @@ class FeedbackController extends Controller
             $diffInDays = $feedbackDate->diffInDays($now);
 
             if($diffInSeconds < 60 ){
-                $formattedDate = $diffInSeconds . ' seconds ago';
+                $formattedDate = TranslateTextHelper::translate($diffInSeconds . ' seconds ago');
             } elseif ($diffInMinutes < 60){
-                $formattedDate = $diffInMinutes. ' minutes ago';
+                $formattedDate = TranslateTextHelper::translate($diffInMinutes. ' minutes ago');
             } elseif ($diffInHours < 24){
-                $formattedDate = $diffInHours . ' hours ago';
+                $formattedDate = TranslateTextHelper::translate($diffInHours . ' hours ago');
             } else {
                 $formattedDate = $feedbackDate->format('Y-m-d');
             }
@@ -286,7 +302,7 @@ class FeedbackController extends Controller
             $response_result [] = [
                 'id' => $feedback -> id ,
                 'name' => $feedback -> user -> name ,
-                'comment' => $feedback -> comment ?? 'No comment provided' ,
+                'comment' => $feedback -> comment ?? TranslateTextHelper::translate('No comment provided') ,
                 'rate' => $feedback -> rate ?? 500,
                 'date' => $formattedDate ,
                 'profile_picture' => $feedback -> user -> profile -> profile_picture ,
@@ -298,6 +314,18 @@ class FeedbackController extends Controller
     ////////////////////////////////////////////////////////////////////////////////////////
     public function updateFeedback(Request $request): JsonResponse
     {
+        $user = Auth::user();
+
+        if (!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all() , [
             'location_id' => 'required|integer|exists:locations,id' ,
             'comment' => 'required_without:rate',
@@ -307,19 +335,9 @@ class FeedbackController extends Controller
         if($validator->fails())
         {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ] , 422);
-        }
-
-        $user = Auth::user();
-
-        if (!$user)
-        {
-            return response()->json([
-                "error" => "Something went wrong , try again later",
-                "status_code" => 422,
-            ], 422);
         }
 
         $existingFeedback = Feedback::where('user_id' , $user['id'])->where('location_id' , $request->location_id)->first();
@@ -346,7 +364,7 @@ class FeedbackController extends Controller
         $existingFeedback->update($update_data);
 
         return response()->json([
-            'message' => 'Your feedback has been updated successfully , Thank you!',
+            'message' => TranslateTextHelper::translate('Your feedback has been updated successfully , Thank you'),
             'status_code' => 200
         ] , 200);
     }
@@ -355,6 +373,8 @@ class FeedbackController extends Controller
     public function deleteFeedback($location_id): JsonResponse
     {
         $user = Auth::user();
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
 
         if(!$user)
         {
@@ -376,7 +396,7 @@ class FeedbackController extends Controller
         $existingFeedback->forceDelete();
 
         return response()->json([
-            "message" => "Feedback deleted successfully.",
+            "message" => TranslateTextHelper::translate("Your rating has been successfully deleted"),
             "status_code" => 200,
         ], 200);
     }
