@@ -143,7 +143,8 @@ class UserController extends Controller
             'residence' => $data[2] ,
             'birth_date' => $users -> profile -> birth_date ?? TranslateTextHelper::translate('Not set yet'),
             'gender' => $data[3] ,
-            'about_me' => $users -> profile -> about_me ?? TranslateTextHelper::translate('Not set yet')
+            'about_me' => $users -> profile -> about_me ?? TranslateTextHelper::translate('Not set yet'),
+            'profile_picture' => $users -> profile -> profile_picture
         ];
 
         return response() -> json($response , 200);
