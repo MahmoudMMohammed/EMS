@@ -13,7 +13,7 @@ class DrinkCategorySeeder extends Seeder
      */
     public function run(): void
     {               //1              2              3             4              5                 6
-        $category = ['Cold Drinks' , 'Hot Drinks' , 'Milkshake' , 'Cocktails' , 'Natural juices' , 'Coffee'];
+        $category = ['Cold Drinks' , 'Hot Drinks' , 'Milk shake' , 'Cocktails' , 'Natural juices' , 'Coffee'];
         for($i = 0 ; $i<count($category) ; $i++)
         {
             DrinkCategory::query()->create([

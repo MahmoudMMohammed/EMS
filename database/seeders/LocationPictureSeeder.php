@@ -142,7 +142,7 @@ class LocationPictureSeeder extends Seeder
             'Location/90.jpg' ,
             'Location/91.jpg' ,
 
-            'Location/93.jpg' ,  //Opera House Theater
+            'Location/93.png' ,  //Opera House Theater
             'Location/94.jpg' ,
             'Location/95.jpg' ,
 

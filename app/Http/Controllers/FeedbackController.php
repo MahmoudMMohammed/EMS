@@ -329,7 +329,7 @@ class FeedbackController extends Controller
         $validator = Validator::make($request->all() , [
             'location_id' => 'required|integer|exists:locations,id' ,
             'comment' => 'required_without:rate',
-            'rate' => 'required_without:comment|numeric'
+            'rate' => 'required_without:comment|numeric|between:0.5,5'
         ]);
 
         if($validator->fails())
