@@ -182,8 +182,9 @@ class EventSupplementController extends Controller
                         ->whereWarehouseId($warehouse->id)
                         ->pluck('quantity');
 
+
                     if (MEHAC::where('accessory_category_id', $item->accessory_category_id)->whereIn('main_event_host_id', $mainEventHost)->exists() &&
-                        $item->quantity <= $availableQuantityInWarehouse) {
+                        $cartItem->quantity <= $availableQuantityInWarehouse[0]) {
                         $category = AccessoryCategory::find($item->accessory_category_id);
                         $item['category'] = $category->category;
                         unset($item['accessory_category_id']);
@@ -209,7 +210,7 @@ class EventSupplementController extends Controller
         if (!empty($declinedItems)){
             $numberOfDeclinedItems = sizeof($declinedItems);
             return response()->json([
-                "message" => "Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host, if you want to see them Click Here!",
+                "message" => "Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!",
                 "status_code" => 200,
             ], 200);
         }
