@@ -17,6 +17,7 @@ class FoodCategory extends Model
 
     protected $fillable = [
         'category',
+        'logo'
     ];
 
     /**
@@ -36,5 +37,10 @@ class FoodCategory extends Model
     public function hostFoodCategories()
     {
         return $this->hasMany(HostFoodCategory::class, 'food_category_id', 'id');
+    }
+
+    public function getLogoAttribute($value)
+    {
+        return env('APP_URL') . '/' . $value;
     }
 }

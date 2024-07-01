@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('accessory_categories', function (Blueprint $table) {
             $table->id();
             $table->string('category');
+            $table->string('logo');
             $table->timestamps();
         });
     }

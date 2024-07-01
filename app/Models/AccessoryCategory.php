@@ -17,6 +17,7 @@ class AccessoryCategory extends Model
 
     protected $fillable = [
         'category',
+        'logo'
     ];
 
     /**
@@ -36,5 +37,10 @@ class AccessoryCategory extends Model
     public function MEHACs()
     {
         return $this->hasMany(MEHAC::class, 'accessory_category_id', 'id');
+    }
+
+    public function getLogoAttribute ($value)
+    {
+        return env('APP_URL') . '/' . $value ;
     }
 }
