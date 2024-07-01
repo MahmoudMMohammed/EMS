@@ -26,6 +26,7 @@ class FavoriteController extends Controller
 
         $item = $this->getItem($request->favoritable_type, $request->favoritable_id);
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         // Check if the favoritable item exists
         if (!$item) {
             return response()->json([
@@ -41,7 +42,7 @@ class FavoriteController extends Controller
 
         if ($existing) {
             return response()->json([
-                "error" => ucfirst($request->favoritable_type) . ' is already in your favorites!',
+                "error" => TranslateTextHelper::translate(ucfirst($request->favoritable_type) . ' is already in your favorites!'),
                 "status_code" => 400,
             ], 400);
         }
@@ -52,7 +53,7 @@ class FavoriteController extends Controller
 
 
         return response()->json([
-            "message" => ucfirst($request->favoritable_type) . ' added to favorites successfully',
+            "message" => TranslateTextHelper::translate(ucfirst($request->favoritable_type) . ' added to favorites successfully'),
             "status_code" => 200,
         ], 200);
     }
@@ -63,9 +64,10 @@ class FavoriteController extends Controller
 
         $favorites = Favorite::whereUserId($user->id)->get();
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if ($favorites->isEmpty()) {
             return response()->json([
-                "error" => 'You have not added anything to favorites yet!',
+                "error" => TranslateTextHelper::translate('You have not added anything to favorites yet!'),
                 "status_code" => 404,
             ], 404);
         }
@@ -88,6 +90,8 @@ class FavoriteController extends Controller
         $user = Auth::user();
         $item = $this->getItem($request->favoritable_type, $request->favoritable_id);
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         // Check if the favoritable item exists
         if (!$item) {
             return response()->json([
@@ -104,7 +108,7 @@ class FavoriteController extends Controller
 
         if (!$favorite) {
             return response()->json([
-                "error" => ucfirst($request->favoritable_type) . " is not in your favorites!",
+                "error" => TranslateTextHelper::translate(ucfirst($request->favoritable_type) . " is not in your favorites!"),
                 "status_code" => 400,
             ], 400);
         }
@@ -113,7 +117,7 @@ class FavoriteController extends Controller
         $favorite->delete();
 
         return response()->json([
-            "message" => ucfirst($request->favoritable_type) . " removed from your favorites successfully",
+            "message" => TranslateTextHelper::translate(ucfirst($request->favoritable_type) . " removed from your favorites successfully"),
             "status_code" => 200,
         ], 200);
     }

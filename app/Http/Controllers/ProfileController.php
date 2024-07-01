@@ -23,10 +23,12 @@ class ProfileController extends Controller
             'place_of_residence' => 'nullable | string',
             'gender' => 'nullable'
         ]);
+        $user =Auth::user();
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -40,7 +42,7 @@ class ProfileController extends Controller
         $profile->save();
 
         return response()->json([
-            'message' => 'General info updated successfully',
+            'message' => TranslateTextHelper::translate('General info updated successfully'),
             'status_code' => 200
         ],200);
 
@@ -64,18 +66,21 @@ class ProfileController extends Controller
 
     public function updateProfilePicture(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        $profile = $this->getUserProfile();
+
         $validator = Validator::make($request->all(),[
             'profile_picture' => 'required | image'
         ]);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
 
-        $user = Auth::user();
-        $profile = $this->getUserProfile();
+
 
         if($request->hasFile('profile_picture') && $user->role == "User"){
             $image = $request->file('profile_picture');
@@ -91,7 +96,7 @@ class ProfileController extends Controller
         else {
             // Handle the case when no image is uploaded
             return response()->json([
-                'error' => 'No image uploaded.',
+                'error' => TranslateTextHelper::translate('No image uploaded.'),
                 'status_code' => 400
             ], 400);
         }
@@ -99,7 +104,7 @@ class ProfileController extends Controller
         $profile->profile_picture = $destination;
         $profile->save();
         return response()->json([
-            'message' => 'Profile picture updated successfully',
+            'message' => TranslateTextHelper::translate('Profile picture updated successfully'),
             'status_code' => 200
         ], 200);
     }
@@ -117,9 +122,10 @@ class ProfileController extends Controller
             'phone_number' => ['nullable', 'regex:/^09[0-9]{8}$/', Rule::unique('profiles')->ignore($profile)],
             "password" => ['nullable' , password_rule::min(6)->numbers()->letters()->mixedCase() ],
         ]);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -137,7 +143,7 @@ class ProfileController extends Controller
         $profile->save();
 
         return response()->json([
-            'message' => 'Privacy updated successfully',
+            'message' => TranslateTextHelper::translate('Privacy updated successfully'),
             'status_code' => 200
         ], 200);
 
@@ -167,7 +173,7 @@ class ProfileController extends Controller
         $user->delete();
 
         return response()->json([
-            'message' => 'Account deletion requested. You have 30 days to reactivate your account by logging in or it will be permanently deleted.',
+            'message' => TranslateTextHelper::translate('Account deletion requested. You have 30 days to reactivate your account by logging in or it will be permanently deleted.'),
             'status_code' => 200
         ], 200);
     }
@@ -191,14 +197,14 @@ class ProfileController extends Controller
         $profile->preferred_language = $request->preferred_language;
         if (!$profile->save()){
             return response()->json([
-                'error' => 'Could not update language please try again later!',
+                'error' => TranslateTextHelper::translate('Could not update language please try again later!'),
                 'status_code' => 400
             ], 400);
         }
 
         $profile->save();
         return response()->json([
-            'message' => 'Preferred language updated successfully',
+            'message' => TranslateTextHelper::translate('Preferred language updated successfully'),
             'status_code' => 200
         ], 200);
     }
@@ -212,8 +218,9 @@ class ProfileController extends Controller
 
         $profile = Profile::whereUserId($user->id)->first();
         if (!$profile){
+            TranslateTextHelper::setTarget($profile->preferred_language);
             return response()->json([
-                'error' => 'Profile not found!',
+                'error' => TranslateTextHelper::translate('Profile not found!'),
                 'status_code' => 404
             ],404);
         }
@@ -225,7 +232,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
-        
+
         if(!$user)
         {
             return response()->json([

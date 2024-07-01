@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -15,9 +16,11 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         $validationError = $this->validateCartItem($request);
         if ($validationError) {
-            return response()->json($validationError, 422);
+            return response()->json(TranslateTextHelper::translate($validationError), 422);
         }
 
         $data = $request->all();
@@ -35,7 +38,7 @@ class CartController extends Controller
                 $cartItem->quantity += $data['quantity'];
                 $cartItem->save();
                 return response()->json([
-                    "message" => "Item quantity updated successfully",
+                    "message" => TranslateTextHelper::translate("Item quantity updated successfully"),
                     "status_code" => 200,
                 ],200);
             } else {
@@ -44,7 +47,7 @@ class CartController extends Controller
                 $cartItem->itemable()->associate($item);
                 $cart->items()->save($cartItem);
                 return response()->json([
-                    "message" => "Item added to cart successfully",
+                    "message" => TranslateTextHelper::translate("Item added to cart successfully"),
                     "status_code" => 200,
                 ],200);
             }
@@ -61,9 +64,10 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => "You have not added anything to your cart yet!",
+                "error" => TranslateTextHelper::translate("You have not added anything to your cart yet!"),
                 "status_code" => 404,
             ], 404);
         }
@@ -112,9 +116,11 @@ class CartController extends Controller
 
     public function removeFromCart(Request $request)
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         $validationError = $this->validateCartItem($request);
         if ($validationError) {
-            return response()->json($validationError, 422);
+            return response()->json(TranslateTextHelper::translate($validationError), 422);
         }
 
         $data = $request->all();
@@ -131,12 +137,12 @@ class CartController extends Controller
                 $cartItem->delete();
 
                 return response()->json([
-                    "message" => "Item removed from cart",
+                    "message" => TranslateTextHelper::translate("Item removed from cart"),
                     "status_code" => 200,
                 ], 200);
             } else {
                 return response()->json([
-                    "error" => "Item not found in cart",
+                    "error" => TranslateTextHelper::translate("Item not found in cart"),
                     "status_code" => 404,
                 ], 404);
             }
@@ -150,9 +156,12 @@ class CartController extends Controller
     //////////////////////////////////////////////////////////////////////////////////////////////
     public function updateCartQuantity(Request $request)
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $validationError = $this->validateCartItem($request);
         if ($validationError) {
-            return response()->json($validationError, 422);
+            return response()->json(TranslateTextHelper::translate($validationError), 422);
         }
 
         $data = $request->all();
@@ -170,12 +179,12 @@ class CartController extends Controller
                 $cartItem->save();
 
                 return response()->json([
-                    "message" => "Item quantity updated",
+                    "message" => TranslateTextHelper::translate("Item quantity updated"),
                     "status_code" => 200,
                 ], 200);
             } else {
                 return response()->json([
-                    "error" => "Item not found in cart",
+                    "error" => TranslateTextHelper::translate("Item not found in cart"),
                     "status_code" => 404,
                 ], 404);
             }
@@ -196,10 +205,7 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return [
-                "error" => $validator->errors()->first(),
-                "status_code" => 422,
-            ];
+            return $validator->errors()->first();
         }
 
         return null;
