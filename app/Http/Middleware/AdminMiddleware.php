@@ -19,16 +19,6 @@ class AdminMiddleware
     {
         $user = Auth::user();
 
-        if(!$user)
-        {
-            return response()->json([
-                "error" => "Something went wrong , try again later",
-                "status_code" => 422,
-            ], 422);
-        }
-
-        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
-
         // Check if user's role is allowed
         $allowedRoles = ['Admin', 'Owner'];
         if ($user && in_array($user->role, $allowedRoles)) {
@@ -36,7 +26,7 @@ class AdminMiddleware
         }
 
         return response()->json([
-            'error' => TranslateTextHelper::translate('Unauthorized, You are not Admin to access this page!')
+            'error' => 'Unauthorized, You are not Admin to access this page!',
         ], 403);
     }
 }

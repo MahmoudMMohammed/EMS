@@ -80,32 +80,21 @@ class UserEventController extends Controller
             ], 409);
         }
 
-        // Check if the user's cart is empty
-        $user = Auth::user();
-        $cart = Cart::where('user_id', $user->id)->first();
-        if (!$cart || $cart->items()->count() == 0) {
+        $isLocationHasSpaceForPeople = $this->checkLocationCapacity($location->id, $request->num_people_invited);
+        if (!$isLocationHasSpaceForPeople){
             return response()->json([
-                "error" => "Cart is empty",
-                "status_code" => 400,
-            ], 400);
-        }
-
-        // Process cart items
-        [$foodDetails, $drinksDetails, $accessoriesDetails, $declinedItems, $totalPrice] = $this->processCartItems($cart, $location);
-
-        $isBalanceSufficient = $this->checkForBalanceRequired($user->profile->balance, $totalPrice);
-        if (!$isBalanceSufficient) {
-            return response()->json([
-                "error" => "Insufficient balance",
-                "status_code" => 422
+                "error" => "The number of invited people is bigger than location capacity, Please choose a different location.",
+                "status_code" => 422,
             ], 422);
         }
+
+        $user = Auth::user();
 
         // Create Event
         $event = $this->createUserEvent($user->id, $request, $startTime, $endTime);
 
         // Create Event Supplement
-        $eventSupplement = $this->createEventSupplement($event->id, $location->governorate, $foodDetails, $drinksDetails, $accessoriesDetails, $totalPrice);
+        $eventSupplement = $this->createEventSupplement($event->id, $location->governorate);
 
 
         event(new NotificationEvent($location->user_id, "Event reservation has been requested by user $user->id", "New reservation"));
@@ -115,7 +104,6 @@ class UserEventController extends Controller
             "message" => "Event reserved successfully",
             "event" => $event,
             "event_supplement" => $eventSupplement,
-            "declined_items" => $declinedItems,
             "status_code" => 201
         ], 201);
     }
@@ -144,78 +132,6 @@ class UserEventController extends Controller
             ->first();
     }
     /////////////////////////////////////
-    private function processCartItems($cart, $location)
-    {
-        $foodDetails = [];
-        $drinksDetails = [];
-        $accessoriesDetails = [];
-        $declinedItems = [];
-        $totalPrice = 0;
-
-        foreach ($cart->items as $cartItem) {
-            $item = $cartItem->itemable;
-            $itemType = strtolower(class_basename($item));
-            $approved = false;
-
-            switch ($itemType) {
-                case 'food':
-                    if (HostFoodCategory::where('food_category_id', $item->food_category_id)->where('host_id', $location->host->id)->exists()) {
-                        $category = FoodCategory::find($item->food_category_id);
-                        $item['category'] = $category->category;
-                        unset($item['food_category_id']);
-                        $foodDetails[] = $item;
-                        $approved = true;
-                    } else {
-                        $declinedItems['food'][] = $item;
-                    }
-                    break;
-                case 'drink':
-                    if (HostDrinkCategory::where('drink_category_id', $item->drink_category_id)->where('host_id', $location->host->id)->exists()) {
-                        $category = DrinkCategory::find($item->drink_category_id);
-                        $item['category'] = $category->category;
-                        $drinksDetails[] = $item;
-                        $approved = true;
-                    } else {
-                        $declinedItems['drink'][] = $item;
-                    }
-                    break;
-                case 'accessory':
-                    $mainEventHost = MainEventHost::whereHostId($location->host->id)->pluck('id');
-                    $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
-                    $availableQuantityInWarehouse = WarehouseAccessory::whereAccessoryId($item->id)
-                        ->whereWarehouseId($warehouse->id)
-                        ->pluck('quantity');
-
-                    if (MEHAC::where('accessory_category_id', $item->accessory_category_id)->whereIn('main_event_host_id', $mainEventHost)->exists() &&
-                        $item->quantity <= $availableQuantityInWarehouse) {
-                        $category = AccessoryCategory::find($item->accessory_category_id);
-                        $item['category'] = $category->category;
-                        unset($item['accessory_category_id']);
-                        $accessoriesDetails[] = $item;
-                        $approved = true;
-                    } else {
-                        $declinedItems['accessory'][] = $item;
-                    }
-                    break;
-            }
-
-            if ($approved) {
-                $price = $this->parsePrice($cartItem->itemable->price);
-                $totalPrice += $price * $cartItem->quantity;
-                $cartItem->delete();
-            }
-        }
-
-        return [$foodDetails, $drinksDetails, $accessoriesDetails, $declinedItems, $totalPrice];
-    }
-    /////////////////////////////////////
-    private function parsePrice($priceString): float
-    {
-        $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-        $cleanedPrice = str_replace(',', '', $cleanedPrice);
-        return floatval($cleanedPrice);
-    }
-    /////////////////////////////////////
     private function createUserEvent($userId, $request, $startTime, $endTime)
     {
         return UserEvent::create([
@@ -230,29 +146,30 @@ class UserEventController extends Controller
         ]);
     }
     /////////////////////////////////////
-    private function createEventSupplement($eventId, $governorate, $foodDetails, $drinksDetails, $accessoriesDetails, $totalPrice)
+    private function createEventSupplement($eventId, $governorate)
     {
+        $event = UserEvent::find($eventId);
+
         $warehouse = Warehouse::whereGovernorate($governorate)->first();
+
+        $location = Location::find($event->location_id);
 
         return EventSupplement::create([
             'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
-            'food_details' => json_encode($foodDetails),
-            'drinks_details' => json_encode($drinksDetails),
-            'accessories_details' => json_encode($accessoriesDetails),
-            'total_price' => $totalPrice,
+            'total_price' => $location->reservation_price, // add the reservation price for start,other supplements later
         ]);
     }
     /////////////////////////////////////
-    private function checkForBalanceRequired($userBalance, $eventSupplementsTotalPrice): bool
+    private function checkLocationCapacity($location_id, $people_invited): bool
     {
-        if ($userBalance < $eventSupplementsTotalPrice){
-            return false; // Indicates insufficient balance
-        } else {
-            return true; // Indicates sufficient balance
+        $location = Location::find($location_id);
+        if ( $location->capacity < $people_invited){
+            return false;
+        }else{
+            return true;
         }
     }
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getEventById($event_id): JsonResponse
     {
