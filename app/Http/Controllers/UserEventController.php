@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
+use App\Helpers\TranslateTextHelper;
 use App\Models\AccessoryCategory;
 use App\Models\Cart;
 use App\Models\DrinkCategory;
@@ -13,6 +14,7 @@ use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
+use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
@@ -27,6 +29,9 @@ class UserEventController extends Controller
 {
     public function createEvent(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $validator = Validator::make($request->all(), [
             'location_id' => 'required|exists:locations,id',
             'date' => 'required|date',
@@ -39,7 +44,7 @@ class UserEventController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
                 "status_code" => 422,
             ], 422);
         }
@@ -57,7 +62,7 @@ class UserEventController extends Controller
         // Check if the event is within the location's operating hours
         if ($startTime < $locationOpenTime || $endTime > $locationCloseTime) {
             return response()->json([
-                "error" => "The event time is outside the location's operating hours.",
+                "error" => TranslateTextHelper::translate("The event time is outside the location's operating hours."),
                 "status_code" => 422,
             ], 422);
         }
@@ -66,7 +71,7 @@ class UserEventController extends Controller
         $overlappingEvents = $this->checkForOverlappingEvents($request->location_id, $eventDate, $startTime, $endTime);
         if ($overlappingEvents) {
             return response()->json([
-                "error" => "The selected time overlaps with an existing event.",
+                "error" => TranslateTextHelper::translate("The selected time overlaps with an existing event."),
                 "status_code" => 409,
             ], 409);
         }
@@ -75,7 +80,7 @@ class UserEventController extends Controller
         $latestEvent = $this->getLatestEvent($request->location_id, $eventDate, $startTime);
         if ($latestEvent && $latestEvent->end_time->diffInMinutes($startTime) < 60) {
             return response()->json([
-                "error" => "The reservation must start at least one hour after the last reserved time.",
+                "error" => TranslateTextHelper::translate("The reservation must start at least one hour after the last reserved time."),
                 "status_code" => 409,
             ], 409);
         }
@@ -83,7 +88,7 @@ class UserEventController extends Controller
         $isLocationHasSpaceForPeople = $this->checkLocationCapacity($location->id, $request->num_people_invited);
         if (!$isLocationHasSpaceForPeople){
             return response()->json([
-                "error" => "The number of invited people is bigger than location capacity, Please choose a different location.",
+                "error" => TranslateTextHelper::translate("The number of invited people is bigger than location capacity, Please choose a different location."),
                 "status_code" => 422,
             ], 422);
         }
@@ -96,14 +101,14 @@ class UserEventController extends Controller
         // Create Event Supplement
         $eventSupplement = $this->createEventSupplement($event->id, $location->governorate);
 
-
-        event(new NotificationEvent($location->user_id, "Event reservation has been requested by user $user->id", "New reservation"));
+        $admin = User::find($location->user_id);
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        event(new NotificationEvent($location->user_id, TranslateTextHelper::translate("Event reservation has been requested by user $user->id"), TranslateTextHelper::translate("New reservation")));
 
         // Return the response
         return response()->json([
-            "message" => "Event reserved successfully",
-            "event" => $event,
-            "event_supplement" => $eventSupplement,
+            "message" => TranslateTextHelper::translate("Event reserved successfully"),
+            "event_id" => $event->id,
             "status_code" => 201
         ], 201);
     }
@@ -175,15 +180,16 @@ class UserEventController extends Controller
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$event){
             return response()->json([
-                "error" => "Event not found!",
+                "error" => TranslateTextHelper::translate("Event not found!"),
                 "status_code" => 404
             ],404);
         }
         if ($event->user_id != $user->id){
             return response()->json([
-                "error" => "Event is no yours to show!",
+                "error" => TranslateTextHelper::translate("Event is no yours to show!"),
                 "status_code" => 403
             ],403);
         }
@@ -195,9 +201,10 @@ class UserEventController extends Controller
     {
         $user = Auth::user();
         $events = UserEvent::whereUserId($user->id)->get();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if ($events->count() == 0){
             return response()->json([
-                "error" => "You have not created any event yet!",
+                "error" => TranslateTextHelper::translate("You have not created any event yet!"),
                 "status_code" => 404
             ],404);
         }
