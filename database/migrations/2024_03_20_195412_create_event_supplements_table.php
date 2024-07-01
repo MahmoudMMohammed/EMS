@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_event_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('warehouse_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->json('food_details');
-            $table->json('drinks_details');
-            $table->json('accessories_details');
+            $table->json('food_details')->nullable();
+            $table->json('drinks_details')->nullable();
+            $table->json('accessories_details')->nullable();
             $table->double('total_price');
             $table->timestamps();
         });
