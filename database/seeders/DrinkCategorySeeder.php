@@ -14,10 +14,21 @@ class DrinkCategorySeeder extends Seeder
     public function run(): void
     {               //1              2              3             4              5                 6
         $category = ['Cold Drinks' , 'Hot Drinks' , 'Milk shake' , 'Cocktails' , 'Natural juices' , 'Coffee'];
+
+        $logo = [
+            'Drinks/Logo/13.png' ,
+            'Drinks/Logo/14.png' ,
+            'Drinks/Logo/15.png' ,
+            'Drinks/Logo/16.png' ,
+            'Drinks/Logo/17.png' ,
+            'Drinks/Logo/18.png' ,
+        ];
+
         for($i = 0 ; $i<count($category) ; $i++)
         {
             DrinkCategory::query()->create([
-                'category' => $category[$i]
+                'category' => $category[$i] ,
+                'logo' => $logo[$i]
             ]);
         }
     }

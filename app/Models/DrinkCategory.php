@@ -17,6 +17,7 @@ class DrinkCategory extends Model
 
     protected $fillable = [
         'category',
+        'logo'
     ];
 
     /**
@@ -36,5 +37,10 @@ class DrinkCategory extends Model
     public function hostDrinkCategories()
     {
         return $this->hasMany(HostDrinkCategory::class, 'drink_category_id', 'id');
+    }
+
+    public function getLogoAttribute ($value)
+    {
+        return env('APP_URL') . '/' . $value ;
     }
 }
