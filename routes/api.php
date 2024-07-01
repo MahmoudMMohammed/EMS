@@ -1,14 +1,17 @@
 <?php
 
 
+use App\Http\Controllers\AccessoryCategoryController;
 use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DrinkCategoryController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\EventSupplementController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FoodCategoryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\HostController;
 use App\Http\Controllers\LocationController;
@@ -287,6 +290,10 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     Route::get('/web/home/unBlockUser/{user_id}' , [OwnerController::class , 'unblockUser']);
 
 });
+
+Route::get('/location/food/category/{host_id}' , [FoodCategoryController::class , 'getFoodCategory']);
+Route::get('/location/drinks/category/{host_id}' , [DrinkCategoryController::class , 'getDrinksCategory']);
+Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCategoryController::class , 'getAccessoriesCategory']);
 
 
 //test
