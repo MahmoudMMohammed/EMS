@@ -191,7 +191,7 @@ class EventSupplementController extends Controller
                         $accessoriesDetails[] = $item;
                         $approved = true;
                     } else {
-                        $declinedItems['accessory'][] = $item;
+                        $declinedItems[] = $item;
                     }
                     break;
             }
@@ -222,10 +222,90 @@ class EventSupplementController extends Controller
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function getDeclinedFoodAndDrinks(): JsonResponse
+    {
+        $user = Auth::user();
+        $cart = Cart::whereUserId($user->id)->first();
+        if (!$cart || $cart->items()->count() == 0) {
+            return response()->json([
+                "error" => "Cart is empty, No declined items!",
+                "status_code" => 400,
+            ], 400);
+        }
+
+        $declinedItems = [
+            'food' => [],
+            'drink' => [],
+        ];
+
+        foreach ($cart->items as $cartItem) {
+            $item = $cartItem->itemable;
+            $itemType = strtolower(class_basename($item));
+
+            switch ($itemType) {
+                case 'food':
+                    unset($item['price']);
+                    unset($item['food_category_id']);
+                    unset($item['description']);
+                    unset($item['country_of_origin']);
+                    $declinedItems['food'][] = $item;
+                    break;
+                case 'drink':
+                    unset($item['price']);
+                    unset($item['drink_category_id']);
+                    unset($item['description']);
+                    $declinedItems['drink'][] = $item;
+                    break;
+                case 'accessory':
+                    break;
+            }
+        }
+
+        return response()->json($declinedItems, 200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function getDeclinedAccessories()
+    {
+        $user = Auth::user();
+        $cart = Cart::whereUserId($user->id)->first();
+        if (!$cart || $cart->items()->count() == 0) {
+            return response()->json([
+                "error" => "Cart is empty, No declined items!",
+                "status_code" => 400,
+            ], 400);
+        }
+
+        $declinedItems = [];
+
+        foreach ($cart->items as $cartItem) {
+            $item = $cartItem->itemable;
+            $itemType = strtolower(class_basename($item));
+
+            switch ($itemType) {
+                case 'food':
+                case 'drink':
+                    break;
+                case 'accessory':
+                    unset($item['price']);
+                    unset($item['accessory_category_id']);
+                    unset($item['description']);
+                    $declinedItems[] = $item;
+                    break;
+            }
+        }
+
+        return response()->json($declinedItems, 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     private function parsePrice($priceString): float
     {
         $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
         $cleanedPrice = str_replace(',', '', $cleanedPrice);
         return floatval($cleanedPrice);
     }
+    /////////////////////////////////////////////////
 }

@@ -138,12 +138,17 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get supplements for user event
     Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
 
-    //
+    //add food and drinks to user's event supplements
     Route::post('/user/events/{event_id}/food&drinks', [EventSupplementController::class , 'processFoodAndDrinksSupplements']);
 
-    //
+    //add accessories to user's event supplements
     Route::post('/user/events/{event_id}/accessories', [EventSupplementController::class , 'processAccessoriesSupplements']);
 
+    //get the declined food and drinks for user
+    Route::get('/user/cart/declined_food&drinks',[EventSupplementController::class, 'getDeclinedFoodAndDrinks']);
+
+    //get the declined accessories for user
+    Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
 });
 
