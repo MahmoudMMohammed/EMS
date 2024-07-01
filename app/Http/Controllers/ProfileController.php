@@ -193,16 +193,16 @@ class ProfileController extends Controller
                 "status_code" => 422,
             ], 422);
         }
-
         $profile->preferred_language = $request->preferred_language;
+
         if (!$profile->save()){
             return response()->json([
                 'error' => TranslateTextHelper::translate('Could not update language please try again later!'),
                 'status_code' => 400
             ], 400);
         }
-
         $profile->save();
+        TranslateTextHelper::setTarget($profile->preferred_language);
         return response()->json([
             'message' => TranslateTextHelper::translate('Preferred language updated successfully'),
             'status_code' => 200
