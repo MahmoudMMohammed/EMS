@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('event_supplement_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_event_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('qr_code')->nullable();
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
+use App\Models\Receipt;
 use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
@@ -99,12 +100,16 @@ class UserEventController extends Controller
         $event = $this->createUserEvent($user->id, $request, $startTime, $endTime);
 
         // Create Event Supplement
-        $eventSupplement = $this->createEventSupplement($event->id, $location->governorate);
+        $eventSupplements = $this->createEventSupplement($event->id, $location->governorate);
+
+        // Create a receipt for the event
+        $this->createReceipt($user->id, $eventSupplements->id, $event->id);
 
         $admin = User::find($location->user_id);
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         event(new NotificationEvent($location->user_id, TranslateTextHelper::translate("Event reservation has been requested by user $user->id"), TranslateTextHelper::translate("New reservation")));
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         // Return the response
         return response()->json([
             "message" => TranslateTextHelper::translate("Event reserved successfully"),
@@ -163,6 +168,15 @@ class UserEventController extends Controller
             'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
             'total_price' => $location->reservation_price, // add the reservation price for start,other supplements later
+        ]);
+    }
+    /////////////////////////////////////
+    private function createReceipt($userId, $eventSupplementsId, $userEventId)
+    {
+        return Receipt::create([
+            'user_id' => $userId,
+            'event_supplement_id' => $eventSupplementsId,
+            'user_event_id' => $userEventId,
         ]);
     }
     /////////////////////////////////////
