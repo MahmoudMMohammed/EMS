@@ -330,9 +330,16 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
+
+//mobile without translate
 Route::get('/location/food/category/{host_id}' , [FoodCategoryController::class , 'getFoodCategory']);
 Route::get('/location/drinks/category/{host_id}' , [DrinkCategoryController::class , 'getDrinksCategory']);
 Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCategoryController::class , 'getAccessoriesCategory']);
+
+Route::post('/location/food/category/sort' , [FoodController::class , 'getFoodByCategorySorted']);
+Route::post('/location/drinks/category/sort' , [DrinkController::class , 'getDrinksByCategorySorted']);
+Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
+
 
 
 //test
