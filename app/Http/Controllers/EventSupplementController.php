@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\AccessoryCategory;
 use App\Models\Cart;
 use App\Models\DrinkCategory;
@@ -25,15 +26,16 @@ class EventSupplementController extends Controller
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$event){
             return response()->json([
-                "error" => "Event not found!",
+                "error" => TranslateTextHelper::translate("Event not found!"),
                 "status_code" => 404
             ],404);
         }
         if ($event->user_id != $user->id ){
             return response()->json([
-                "error" => "Event is not yours to show!",
+                "error" => TranslateTextHelper::translate("Event is not yours to show!"),
                 "status_code" => 403
             ],403);
         }
@@ -41,7 +43,7 @@ class EventSupplementController extends Controller
 
         if (!$supplements){
             return response()->json([
-                "error" => "You have not ordered any supplements for your event!",
+                "error" => TranslateTextHelper::translate("You have not ordered any supplements for your event!"),
                 "status_code" => 404
             ],404);
         }
@@ -65,9 +67,10 @@ class EventSupplementController extends Controller
 
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => "Cart is empty",
+                "error" => TranslateTextHelper::translate("Cart is empty"),
                 "status_code" => 400,
             ], 400);
         }
@@ -129,13 +132,13 @@ class EventSupplementController extends Controller
         if (!empty($declinedItems)) {
             $numberOfDeclinedItems = sizeof($declinedItems);
             return response()->json([
-                "message" => "Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host, if you want to see them Click Here!",
+                "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host, if you want to see them Click Here!"),
                 "status_code" => 200,
             ], 200);
         }
 
         return response()->json([
-            "message" => "Items added to event's supplements successfully",
+            "message" => TranslateTextHelper::translate("Items added to event's supplements successfully"),
             "status_code" => 200,
         ], 200);
     }
@@ -153,9 +156,10 @@ class EventSupplementController extends Controller
 
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => "Cart is empty",
+                "error" => TranslateTextHelper::translate("Cart is empty"),
                 "status_code" => 400,
             ], 400);
         }
@@ -210,13 +214,13 @@ class EventSupplementController extends Controller
         if (!empty($declinedItems)){
             $numberOfDeclinedItems = sizeof($declinedItems);
             return response()->json([
-                "message" => "Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!",
+                "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!"),
                 "status_code" => 200,
             ], 200);
         }
 
         return response()->json([
-            "message" => "Items added to event's supplements successfully",
+            "message" => TranslateTextHelper::translate("Items added to event's supplements successfully"),
             "status_code" => 200,
         ], 200);
     }
@@ -227,9 +231,10 @@ class EventSupplementController extends Controller
     {
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => "Cart is empty, No declined items!",
+                "error" => TranslateTextHelper::translate("Cart is empty, No declined items!"),
                 "status_code" => 400,
             ], 400);
         }
@@ -271,9 +276,11 @@ class EventSupplementController extends Controller
     {
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => "Cart is empty, No declined items!",
+                "error" => TranslateTextHelper::translate("Cart is empty, No declined items!"),
                 "status_code" => 400,
             ], 400);
         }

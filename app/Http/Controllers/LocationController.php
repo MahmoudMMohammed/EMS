@@ -61,21 +61,42 @@ class LocationController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////
     public function getLocations(): JsonResponse
     {
-        $locations = Location::select('id','name','governorate','open_time','close_time','logo')->get();
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
 
-        if (!$locations->count() > 0){
+        $locations = Location::select('id', 'name', 'governorate', 'open_time', 'close_time', 'logo')->get();
+
+        if ($locations->isEmpty()) {
             return response()->json([
                 "error" => "No locations to show!",
-                "status_code" => "404"
-            ],404);
+                "status_code" => 404
+            ], 404);
         }
-        return response()->json($locations,200);
+
+        // Convert the plucked collections to arrays and reset indices
+        $names = $locations->pluck('name')->values()->toArray();
+        $governorates = $locations->pluck('governorate')->values()->toArray();
+
+        // Translate names and governorates
+        $translatedNames = TranslateTextHelper::batchTranslate($names);
+        $translatedGovernorates = TranslateTextHelper::batchTranslate($governorates);
+
+        // Map the translated names and governorates back to the locations
+        foreach ($locations as  $location) {
+            $location->name = $translatedNames[$location->name] ?? $location->name;
+            $location->governorate = $translatedGovernorates[$location->governorate] ?? $location->governorate;
+        }
+
+        return response()->json($locations, 200);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
     public function getLocationById($location_id): JsonResponse
     {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
         $location = Location::find($location_id);
         if (!$location){
             return response()->json([
@@ -90,9 +111,9 @@ class LocationController extends Controller
 
         $locationData = [
             "id" => $location->id,
-            "name" => $location->name,
-            "governorate" => $location->governorate,
-            "address" => $location->address,
+            "name" => TranslateTextHelper::translate($location->name),
+            "governorate" => TranslateTextHelper::translate($location->governorate),
+            "address" => TranslateTextHelper::translate($location->address),
             "capacity" => $location->capacity,
             "open_time" => $location->open_time,
             "close_time" => $location->close_time,

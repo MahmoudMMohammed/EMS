@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Helpers\TranslateTextHelper;
 use App\Mail\SendCodeResetPassword;
 use App\Mail\SendEmailVerificationCode;
 use App\Models\EmailVerification;
@@ -236,22 +237,24 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         try{
-            if (Auth::user()){
+            $user = Auth::user();
+            TranslateTextHelper::setTarget($user->profile->preferred_language);
+            if ($user){
                 JWTAuth::invalidate(JWTAuth::getToken());
                 return response()->json([
-                    'message'=>'Logout successfully',
+                    'message'=>TranslateTextHelper::translate("Logout successfully"),
                     'status_code' => 200,
                 ],200);
             }else{
                 return response()->json([
-                    'error'=>'Already logged out!',
+                    'error'=>TranslateTextHelper::translate('Already logged out!'),
                     'status_code' => 400,
                 ],400);
             }
 
         }catch (JWTException $e){
             return response()->json([
-                'error'=>'Logout failed!',
+                'error'=>TranslateTextHelper::translate('Logout failed!'),
                 'status_code' => 401,
             ],401);
         }
