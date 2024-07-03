@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Drink;
 use App\Models\Food;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -57,59 +58,6 @@ class CartController extends Controller
             "error" => "Item not found",
             "status_code" => 404,
         ], 404);
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    public function getCartItems()
-    {
-        $user = Auth::user();
-        $cart = Cart::whereUserId($user->id)->first();
-
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
-        if (!$cart || $cart->items()->count() == 0) {
-            return response()->json([
-                "error" => TranslateTextHelper::translate("You have not added anything to your cart yet!"),
-                "status_code" => 404,
-            ], 404);
-        }
-
-        // Load items with their itemable relations and categories
-        $cartItems = $cart->items()->with('itemable')->get();
-
-        // Transform the cart items to include only the itemable data with category names
-        $itemables = $cartItems->map(function ($cartItem) {
-            $itemable = $cartItem->itemable->toArray();
-
-            if ($cartItem->itemable instanceof Food) {
-                $categoryName = $cartItem->itemable->category->category ?? null;
-            } elseif ($cartItem->itemable instanceof Drink) {
-                $categoryName = $cartItem->itemable->category->category ?? null;
-            } elseif ($cartItem->itemable instanceof Accessory) {
-                $categoryName = $cartItem->itemable->category->category ?? null;
-            } else {
-                $categoryName = null;
-            }
-
-            // Remove non-numeric characters except for dots and commas, then remove commas
-            $priceString = $cartItem->itemable->price;
-            $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-            $cleanedPrice = str_replace(',', '', $cleanedPrice);
-            $price = floatval($cleanedPrice);
-            $total_price = $cartItem->quantity * $price;
-
-            // Add category_name and remove category_id
-            $itemable['category_name'] = $categoryName;
-            $itemable['quantity'] = $cartItem->quantity;
-            $itemable['total_price'] = number_format($total_price,2,'.',",")." S.P";
-            unset($itemable['food_category_id']);
-            unset($itemable['drink_category_id']);
-            unset($itemable['accessory_category_id']);
-            unset($itemable['country_of_origin']);
-            unset($itemable['description']);
-
-            return $itemable;
-        });
-
-        return response()->json($itemables);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,5 +177,99 @@ class CartController extends Controller
     {
         $user = Auth::user();
         return Cart::firstOrCreate(['user_id' => $user->id]);
+    }
+
+    //////////////////////////////////////////////////
+    public function getCartItemSorted(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $cart = Cart::query()->where('user_id' , $user->id)->pluck('id');
+
+        if(! $cart->count() > 0)
+        {
+            return response()->json([
+                "error" => "You don't have a cart yet",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'type' => 'required|string|in:all,food,drink,accessory'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+                'status_code' => 422
+            ] , 422);
+        }
+
+        $isTypeAll = strtolower($request->type) === 'all' ;
+
+        $results = CartItem::query()->where('cart_id' , $cart);
+
+        if($request->type && !$isTypeAll)
+        {
+            if(strtolower($request->type) == 'food') {
+                $results->where('itemable_type', 'App\Models\Food');
+            }
+            elseif(strtolower($request->type) == 'drink') {
+                $results->where('itemable_type' , 'App\Models\Drink');
+            }
+            elseif(strtolower($request->type) == 'accessory'){
+                $results->where('itemable_type' , 'App\Models\Accessory');
+            }
+        }
+
+        $items = $results->orderBy('quantity')->with('itemable')->get();
+
+        if ($items->isEmpty() && $request->type && $isTypeAll) {
+            return response()->json([
+                'error' => "No Items found , Add some",
+                'status_code' => 404,
+            ], 404);
+        }
+
+        if ($items->isEmpty() && $request->type && !$isTypeAll) {
+            return response()->json([
+                'error' => "No Items found for specific category , Add some",
+                'status_code' => 404,
+            ], 404);
+        }
+
+        $response = [];
+        $totalPrice = 0;
+        $totalItems = 0;
+
+        foreach ($items as $item)
+        {
+            $itemTotalPrice = $item->itemable->raw_price * $item->quantity;
+            $totalPrice += $itemTotalPrice;
+            $totalItems ++;
+
+            $response [] = [
+                'id' => $item->itemable->id ,
+                'name' => $item->itemable->name ,
+                'quantity' => $item->quantity ,
+                'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
+                'picture' => $item->itemable->picture ,
+            ];
+        }
+
+        return response()->json([
+            'data' => $response ,
+            'total_price' => number_format($totalPrice , 2 , '.' , ',') . ' S.P' ,
+            'total_Items' => $totalItems ,
+        ] , 200);
     }
 }

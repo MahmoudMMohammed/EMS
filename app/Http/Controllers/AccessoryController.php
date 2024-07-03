@@ -102,7 +102,7 @@ class AccessoryController extends Controller
         $validator = Validator::make($request->all(), [
             "category_id" => 'required|integer|exists:drink_categories,id',
             "location_id" => 'required|integer|exists:locations,id',
-            "type" => 'required|integer'
+            "type" => 'required|integer|between:-1,999999'
         ]);
 
         if ($validator->fails()) {

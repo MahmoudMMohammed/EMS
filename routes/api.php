@@ -120,9 +120,6 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //add item to user cart
     Route::post('/user/cart/add-items', [CartController::class , 'addToCart']);
 
-    //get cart items for user
-    Route::get('/user/cart/get-items', [CartController::class , 'getCartItems']);
-
     //remove item from user cart
     Route::post('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
 
@@ -312,6 +309,9 @@ Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCateg
 Route::post('/location/food/category/sort' , [FoodController::class , 'getFoodByCategorySorted']);
 Route::post('/location/drinks/category/sort' , [DrinkController::class , 'getDrinksByCategorySorted']);
 Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
+
+Route::post('/location/get/cart/sort' , [CartController::class , 'getCartItemSorted']);
+
 
 
 

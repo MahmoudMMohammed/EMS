@@ -54,4 +54,10 @@ class Drink extends Model
     {
         return number_format($value , 2 , '.' , ',') . "S.P" ;
     }
+
+    public function getRawPriceAttribute(): float
+    {
+        return (float) str_replace(',', '', $this->attributes['price']);
+    }
+
 }

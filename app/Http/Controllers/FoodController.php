@@ -103,7 +103,7 @@ class FoodController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "category_id" => 'required|integer|exists:food_categories,id',
-            "type" => 'required|integer'
+            "type" => 'required|integer|between:-1,999999'
         ]);
 
         if ($validator->fails()) {
