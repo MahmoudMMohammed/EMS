@@ -212,6 +212,7 @@ class FavoriteController extends Controller
             if ($item) {
                 switch (get_class($item)) {
                     case Location::class:
+                        $itemData['id'] = $item->id;
                         $itemData['type'] = 'location';
                         $itemData['name'] = $translations['locations'][0][$item->name] ?? $item->name;
                         $itemData['governorate'] = $translations['locations'][1][$item->governorate] ?? $item->governorate;
@@ -220,6 +221,7 @@ class FavoriteController extends Controller
                         $itemData['logo'] = $item->logo;
                         break;
                     case Food::class:
+                        $itemData['id'] = $item->id;
                         $itemData['type'] = 'food';
                         $itemData['name'] = $translations['foods'][$item->name] ?? $item->name;
                         $itemData['price'] = $item->price;
@@ -227,6 +229,7 @@ class FavoriteController extends Controller
                         $itemData['picture'] = $item->picture;
                         break;
                     case Drink::class:
+                        $itemData['id'] = $item->id;
                         $itemData['type'] = 'drink';
                         $itemData['name'] = $translations['drinks'][$item->name] ?? $item->name;
                         $itemData['price'] = $item->price;
@@ -234,6 +237,7 @@ class FavoriteController extends Controller
                         $itemData['picture'] = $item->picture;
                         break;
                     case Accessory::class:
+                        $itemData['id'] = $item->id;
                         $itemData['type'] = 'accessory';
                         $itemData['name'] = $translations['accessories'][$item->name] ?? $item->name;
                         $itemData['price'] = $item->price;

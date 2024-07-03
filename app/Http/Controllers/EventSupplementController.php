@@ -94,6 +94,7 @@ class EventSupplementController extends Controller
                         $category = FoodCategory::find($item->food_category_id);
                         $item['category'] = $category->category;
                         unset($item['food_category_id']);
+                        $item['quantity'] = $cartItem->quantity;
                         $foodDetails[] = $item;
 
                         $approved = true;
@@ -105,6 +106,8 @@ class EventSupplementController extends Controller
                     if (HostDrinkCategory::where('drink_category_id', $item->drink_category_id)->where('host_id', $location->host->id)->exists()) {
                         $category = DrinkCategory::find($item->drink_category_id);
                         $item['category'] = $category->category;
+                        unset($item['drink_category_id']);
+                        $item['quantity'] = $cartItem->quantity;
                         $drinksDetails[] = $item;
                         $approved = true;
                     } else {
@@ -192,6 +195,7 @@ class EventSupplementController extends Controller
                         $category = AccessoryCategory::find($item->accessory_category_id);
                         $item['category'] = $category->category;
                         unset($item['accessory_category_id']);
+                        $item['quantity'] = $cartItem->quantity;
                         $accessoriesDetails[] = $item;
                         $approved = true;
                     } else {

@@ -54,15 +54,15 @@ class EventSupplement extends Model
     }
     public function getFoodDetailsAttribute ($value)
     {
-        return json_decode($value);
+        return json_decode($value,true);
     }
     public function getDrinksDetailsAttribute ($value)
     {
-        return json_decode($value);
+        return json_decode($value, true);
     }
     public function getAccessoriesDetailsAttribute ($value)
     {
-        return json_decode($value);
+        return json_decode($value, true);
     }
     protected static function newFactory(): EventSupplementsFactory
     {

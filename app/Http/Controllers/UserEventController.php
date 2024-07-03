@@ -14,6 +14,7 @@ use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
+use App\Models\Receipt;
 use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
@@ -38,7 +39,7 @@ class UserEventController extends Controller
             'invitation_type' => 'required|string',
             'description' => 'required|string',
             'start_time' => 'required|date_format:h:i A',
-            'end_time' => 'required|date_format:h:i A|after:start_time',
+            'end_time' => 'required|date_format:h:i A',
             'num_people_invited' => 'required|integer|min:1',
         ]);
 
@@ -49,15 +50,20 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        // Parse date and time using the specified format
+        // Parse date and time using the specified format and convert to 24-hour format
         $eventDate = Carbon::parse($request->date);
         $startTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->start_time);
         $endTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->end_time);
 
-        // Retrieve the location's open and close times
+        // Retrieve the location's open and close times and convert to 24-hour format
         $location = Location::findOrFail($request->location_id);
-        $locationOpenTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->open_time);
-        $locationCloseTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $location->close_time);
+        $locationOpenTime = Carbon::createFromFormat('h:i A', $location->open_time)->setDateFrom($eventDate);
+        $locationCloseTime = Carbon::createFromFormat('h:i A', $location->close_time)->setDateFrom($eventDate);
+
+        // Handle cases where closing time is past midnight
+        if ($locationCloseTime->lt($locationOpenTime)) {
+            $locationCloseTime->addDay();
+        }
 
         // Check if the event is within the location's operating hours
         if ($startTime < $locationOpenTime || $endTime > $locationCloseTime) {
@@ -78,7 +84,7 @@ class UserEventController extends Controller
 
         // Ensure the reservation starts at least one hour after the last event
         $latestEvent = $this->getLatestEvent($request->location_id, $eventDate, $startTime);
-        if ($latestEvent && $latestEvent->end_time->diffInMinutes($startTime) < 60) {
+        if ($latestEvent && Carbon::parse($latestEvent->end_time)->diffInMinutes($startTime) < 60) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("The reservation must start at least one hour after the last reserved time."),
                 "status_code" => 409,
@@ -93,18 +99,20 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        $user = Auth::user();
-
         // Create Event
         $event = $this->createUserEvent($user->id, $request, $startTime, $endTime);
 
         // Create Event Supplement
-        $eventSupplement = $this->createEventSupplement($event->id, $location->governorate);
+        $eventSupplements = $this->createEventSupplement($event->id, $location->governorate);
+
+        // Create a receipt for the event
+        $this->createReceipt($user->id, $eventSupplements->id, $event->id);
 
         $admin = User::find($location->user_id);
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         event(new NotificationEvent($location->user_id, TranslateTextHelper::translate("Event reservation has been requested by user $user->id"), TranslateTextHelper::translate("New reservation")));
 
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
         // Return the response
         return response()->json([
             "message" => TranslateTextHelper::translate("Event reserved successfully"),
@@ -163,6 +171,15 @@ class UserEventController extends Controller
             'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
             'total_price' => $location->reservation_price, // add the reservation price for start,other supplements later
+        ]);
+    }
+    /////////////////////////////////////
+    private function createReceipt($userId, $eventSupplementsId, $userEventId)
+    {
+        return Receipt::create([
+            'user_id' => $userId,
+            'event_supplement_id' => $eventSupplementsId,
+            'user_event_id' => $userEventId,
         ]);
     }
     /////////////////////////////////////

@@ -19,6 +19,7 @@ use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
@@ -87,6 +88,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //logout user
     Route::post('/logout', [AuthController::class, 'logout']);
 
+
+
+
     //getting user general info
     Route::get('/user/profile/general', [ProfileController::class, 'getGeneralInfo']);
 
@@ -117,6 +121,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //delete user account
     Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
 
+
+
+
     //add item to user cart
     Route::post('/user/cart/add-items', [CartController::class , 'addToCart']);
 
@@ -126,6 +133,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //update item quantity in cart
     Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
 
+
+
+
     //create an event for user
     Route::post('/user/events', [UserEventController::class , 'createEvent']);
 
@@ -134,6 +144,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //get all events for user
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
+
+
+
 
     //get supplements for user event
     Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
@@ -150,6 +163,58 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get the declined accessories for user
     Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
+
+
+
+
+    //explore all locations available
+    Route::get('/locations', [LocationController::class, 'getLocations']);
+
+    //find location by its id
+    Route::get('/locations/{location_id}', [LocationController::class, 'getLocationById']);
+
+
+
+    //explore all available food categories
+    Route::get('/food/categories', [FoodController::class, 'getFoodCategories']);
+
+    //explore all food for specific category
+    Route::get('/food/category/{category_id}', [FoodController::class, 'getFoodByCategory']);
+
+    //find food by its id
+    Route::get('/food/{food_id}', [FoodController::class, 'getFoodById']);
+
+
+
+
+    //explore all available drinks categories
+    Route::get('/drinks/categories', [DrinkController::class, 'getDrinksCategories']);
+
+    //explore all drinks for specific category
+    Route::get('/drinks/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
+
+    //find drink by its id
+    Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
+
+
+
+
+
+    //explore all available drinks categories
+    Route::get('/accessories/categories', [AccessoryController::class, 'getAccessoriesCategories']);
+
+    //explore all accessories for specific category
+    Route::get('/accessories/category/{category_id}', [AccessoryController::class, 'getAccessoriesByCategory']);
+
+    //find accessory by its id
+    Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
+
+
+
+    Route::get('/user/event/{userEventId}/qr', [ReceiptController::class, 'generateQRForReceipt']);
+
+
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -162,46 +227,8 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 /*..................APIs for guests.....................*/
 
-//explore all locations available
-Route::get('/locations', [LocationController::class, 'getLocations']);
 
-//find location by its id
-Route::get('/locations/{location_id}', [LocationController::class, 'getLocationById']);
-
-
-
-//explore all available food categories
-Route::get('/food/categories', [FoodController::class, 'getFoodCategories']);
-
-//explore all food for specific category
-Route::get('/food/category/{category_id}', [FoodController::class, 'getFoodByCategory']);
-
-//find food by its id
-Route::get('/food/{food_id}', [FoodController::class, 'getFoodById']);
-
-
-
-//explore all available drinks categories
-Route::get('/drinks/categories', [DrinkController::class, 'getDrinksCategories']);
-
-//explore all drinks for specific category
-Route::get('/drinks/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
-
-//find drink by its id
-Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
-
-
-
-
-//explore all available drinks categories
-Route::get('/accessories/categories', [AccessoryController::class, 'getAccessoriesCategories']);
-
-//explore all accessories for specific category
-Route::get('/accessories/category/{category_id}', [AccessoryController::class, 'getAccessoriesByCategory']);
-
-//find accessory by its id
-Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
-
+Route::get('/download-receipt', [ReceiptController::class, 'downloadReceipt']);
 
 
 

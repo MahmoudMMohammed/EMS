@@ -19,6 +19,7 @@ class Receipt extends Model
         'user_id',
         'event_supplement_id',
         'user_event_id',
+        'qr_code',
     ];
 
     /**

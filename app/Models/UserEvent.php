@@ -40,10 +40,6 @@ class UserEvent extends Model
         'updated_at',
     ];
 
-    public function reservation(): HasOne
-    {
-        return $this->hasOne(Reservation::class, 'user_event_id', 'id');
-    }
     public function receipt(): HasOne
     {
         return $this->hasOne(Receipt::class, 'user_event_id', 'id');
@@ -56,6 +52,10 @@ class UserEvent extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'location_id', 'id');
+    }
+    public function supplements(): HasOne
+    {
+        return $this->hasOne(EventSupplement::class, 'user_event_id', 'id');
     }
 
     // Accessor for start_time
