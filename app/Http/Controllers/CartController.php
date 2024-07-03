@@ -192,12 +192,14 @@ class CartController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $cart = Cart::query()->where('user_id' , $user->id)->pluck('id');
 
         if(! $cart->count() > 0)
         {
             return response()->json([
-                "error" => "You don't have a cart yet",
+                "error" => TranslateTextHelper::translate("You don't have a cart yet"),
                 "status_code" => 404,
             ], 404);
         }
@@ -235,14 +237,14 @@ class CartController extends Controller
 
         if ($items->isEmpty() && $request->type && $isTypeAll) {
             return response()->json([
-                'error' => "No Items found , Add some",
+                'error' => TranslateTextHelper::translate("No Items found , Add some"),
                 'status_code' => 404,
             ], 404);
         }
 
         if ($items->isEmpty() && $request->type && !$isTypeAll) {
             return response()->json([
-                'error' => "No Items found for specific category , Add some",
+                'error' => TranslateTextHelper::translate("No Items found for specific category , Add some"),
                 'status_code' => 404,
             ], 404);
         }
@@ -250,6 +252,14 @@ class CartController extends Controller
         $response = [];
         $totalPrice = 0;
         $totalItems = 0;
+
+        $names = [];
+        foreach ($items as $item)
+        {
+            $names [] = $item->itemable->name ;
+        }
+
+        $translate = TranslateTextHelper::batchTranslate($names);
 
         foreach ($items as $item)
         {
@@ -259,7 +269,7 @@ class CartController extends Controller
 
             $response [] = [
                 'id' => $item->itemable->id ,
-                'name' => $item->itemable->name ,
+                'name' => $translate[$item->itemable->name] ,
                 'quantity' => $item->quantity ,
                 'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
                 'picture' => $item->itemable->picture ,

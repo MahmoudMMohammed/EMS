@@ -243,6 +243,17 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //delete your feedback
     Route::delete('/location/delete/feedback/{location_id}' , [FeedbackController::class , 'deleteFeedback']);
+
+    //get items in cart sorted
+    Route::post('/location/get/cart/sort' , [CartController::class , 'getCartItemSorted']);
+
+    //get Food category
+    Route::get('/location/food/category/{host_id}' , [FoodCategoryController::class , 'getFoodCategory']);
+
+    //get Drink category
+    Route::get('/location/drinks/category/{host_id}' , [DrinkCategoryController::class , 'getDrinksCategory']);
+
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -302,15 +313,16 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 
 //mobile without translate
-Route::get('/location/food/category/{host_id}' , [FoodCategoryController::class , 'getFoodCategory']);
-Route::get('/location/drinks/category/{host_id}' , [DrinkCategoryController::class , 'getDrinksCategory']);
+
+
+//get Accessory category
 Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCategoryController::class , 'getAccessoriesCategory']);
 
 Route::post('/location/food/category/sort' , [FoodController::class , 'getFoodByCategorySorted']);
 Route::post('/location/drinks/category/sort' , [DrinkController::class , 'getDrinksByCategorySorted']);
 Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
 
-Route::post('/location/get/cart/sort' , [CartController::class , 'getCartItemSorted']);
+
 
 
 

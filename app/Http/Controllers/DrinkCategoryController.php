@@ -2,14 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\HostDrinkCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DrinkCategoryController extends Controller
 {
     public function getDrinksCategory($host_id): JsonResponse
     {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exists = HostDrinkCategory::query()->find($host_id);
 
         if (!$exists) {
@@ -29,11 +43,20 @@ class DrinkCategoryController extends Controller
 
         $response = [];
         $index = 0 ;
+
+        $translate = [];
+        foreach ($Categories as $category)
+        {
+            $translate [] =  $category->drinkCategory->category ;
+        }
+
+        $names = TranslateTextHelper::batchTranslate($translate);
+
         foreach ($Categories as $category)
         {
             $response [] = [
                 'id' => $category->drinkCategory->id ,
-                'name' => $category->drinkCategory->category ,
+                'name' => $names[$category->drinkCategory->category] ,
                 'logo' => $category->drinkCategory->logo ,
                 'number' => $category->drinkCategory->drinks->count(),
                 'color' => $color[$index]

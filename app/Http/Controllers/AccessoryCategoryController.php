@@ -2,15 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccessoryCategoryController extends Controller
 {
     public function getAccessoriesCategory($event_id , $host_id): JsonResponse
     {
+
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exists = MainEventHost::query()->find($host_id);
 
         if (!$exists) {
@@ -44,12 +59,20 @@ class AccessoryCategoryController extends Controller
         $color = ['#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696' , '#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696'];
         $index = 0 ;
 
+        $translate = [];
+        foreach ($mehacs as $mehac)
+        {
+            $translate [] =  $mehac->category->category ;
+        }
+
+        $names = TranslateTextHelper::batchTranslate($translate);
+
         $response = [];
         foreach ($mehacs as $mehac)
         {
             $response [] = [
                 'id' => $mehac->category->id ,
-                'name' => $mehac->category->category ,
+                'name' => $names[$mehac->category->category] ,
                 'logo' => $mehac->category->logo ,
                 'number' => $mehac->category->accessories->count() ,
                 'color' => $color[$index]
