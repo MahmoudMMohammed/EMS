@@ -90,4 +90,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         return $this->hasOne(Cart::class , 'user_id' , 'id');
     }
 
+    public function searches()
+    {
+        return $this->hasMany(Search::class , 'user_id' , 'id');
+    }
 }

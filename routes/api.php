@@ -20,6 +20,7 @@ use App\Http\Controllers\MainEventHostController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
@@ -351,18 +352,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
+Route::get('/get/history/search' , [SearchController::class , 'getSearchHistory']);
 
 
 //test
