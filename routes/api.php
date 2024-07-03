@@ -295,6 +295,15 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //delete all items from cart
     Route::delete('/location/delete/all/cart' , [CartController::class , 'DeleteAllItemsCart']);
+
+    //get user history search
+    Route::get('/history/search' , [SearchController::class , 'getSearchHistory']);
+
+    //delete specific search history from search history list
+    Route::delete('/delete/one/search/{history_id}' , [SearchController::class , 'deleteOneSearch']);
+
+    //delete all search history of user
+    Route::delete('/delete/all/search' , [SearchController::class , 'deleteAllSearch']);
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -352,7 +361,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
-Route::get('/get/history/search' , [SearchController::class , 'getSearchHistory']);
+
 
 
 //test
