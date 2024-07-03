@@ -217,7 +217,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/user/event/{userEventId}/qr', [ReceiptController::class, 'generateQRForReceipt']);
 
 
-    Route::get('/download-receipt', [ReceiptController::class, 'downloadReceipt']);
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -231,7 +231,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 /*..................APIs for guests.....................*/
 
 
-
+Route::get('/download-receipt', [ReceiptController::class, 'downloadReceipt']);
 
 
 

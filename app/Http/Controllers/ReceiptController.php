@@ -7,18 +7,18 @@ use App\Models\EventSupplement;
 use App\Models\Receipt;
 use App\Models\UserEvent;
 use Barryvdh\DomPDF\Facade;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-
-
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
 class ReceiptController extends Controller
 {
-    public function generateQRForReceipt($userEventId)
+    public function generateQRForReceipt($userEventId): JsonResponse
     {
         $user = Auth::user();
         $event = UserEvent::find($userEventId);
@@ -123,11 +123,8 @@ class ReceiptController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////
 
-    public function downloadReceipt(Request $request)
+    public function downloadReceipt(Request $request): StreamedResponse|JsonResponse
     {
-        $user = Auth::user();
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
-
         $path = $request->query('path');
 
         if (Storage::exists($path)) {
@@ -135,7 +132,8 @@ class ReceiptController extends Controller
         }
 
         return response()->json([
-            'message' => TranslateTextHelper::translate('Receipt not found')
+            'message' => 'Receipt not found',
+            'status_code' => 404,
         ], 404);
     }
     ////////////////////////////////////////////////////////////////////////////////////
