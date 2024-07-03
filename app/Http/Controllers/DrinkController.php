@@ -99,6 +99,18 @@ class DrinkController extends Controller
     ////////////////////////////////////////////////////////////////////////////////
     public function getDrinksByCategorySorted(Request $request): JsonResponse
     {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all() , [
             "category_id" => 'required|integer|exists:drink_categories,id',
             "type" => 'required|integer|between:-1,999999'
@@ -119,7 +131,7 @@ class DrinkController extends Controller
         if(!$query->count() > 0)
         {
             return response()->json([
-                "error" => "No drinks found for the specified category",
+                "error" => TranslateTextHelper::translate("No drinks found for the specified category"),
                 "status_code" => 404,
             ], 404);
         }
@@ -134,19 +146,25 @@ class DrinkController extends Controller
         if($drinks->isEmpty() && $request->type && !$isTypeNull )
         {
             return response()->json([
-                'error' =>"No drinks found for the specified price",
+                'error' =>TranslateTextHelper::translate("No drinks found for the specified price"),
                 'status_code' => 404,
             ], 404);
         }
+
+        $name = $drinks->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $drinks->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
 
         $response = [];
         foreach ($drinks as $drink)
         {
             $response [] = [
                 'id' => $drink->id ,
-                'name' => $drink->name ,
+                'name' => $name[$drink->name] ,
                 'price' => $drink->price ,
-                'description' => $drink->description ,
+                'description' => $description[$drink->description] ,
                 'picture' => $drink->picture
             ];
         }

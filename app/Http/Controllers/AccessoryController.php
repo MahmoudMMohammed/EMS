@@ -99,6 +99,18 @@ class AccessoryController extends Controller
     ////////////////////////////////////////////////////////////////////////////////
     public function getAccessoriesByCategorySorted(Request $request): JsonResponse
     {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
             "category_id" => 'required|integer|exists:drink_categories,id',
             "location_id" => 'required|integer|exists:locations,id',
@@ -127,7 +139,7 @@ class AccessoryController extends Controller
 
         if (!$accessories->count() > 0) {
             return response()->json([
-                "error" => "No accessory found for the specified category",
+                "error" => TranslateTextHelper::translate("No accessory found for the specified category"),
                 "status_code" => 404,
             ], 404);
         }
@@ -140,10 +152,16 @@ class AccessoryController extends Controller
 
         if ($items->isEmpty() && $request->type && !$isTypeNull) {
             return response()->json([
-                'error' => "No accessory found for the specified price",
+                'error' => TranslateTextHelper::translate("No accessory found for the specified price"),
                 'status_code' => 404,
             ], 404);
         }
+
+        $name = $items->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $items->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
 
         $response = [];
         foreach ($items as $item) {
@@ -152,9 +170,9 @@ class AccessoryController extends Controller
 
             $response[] = [
                 'id' => $item->id,
-                'name' => $item->name,
+                'name' => $name[$item->name],
                 'price' => $item->price,
-                'description' => $item->description,
+                'description' => $description[$item->description],
                 'picture' => $item->picture,
                 'quantity' => $quantity
             ];

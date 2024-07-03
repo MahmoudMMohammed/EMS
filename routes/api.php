@@ -253,7 +253,17 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get Drink category
     Route::get('/location/drinks/category/{host_id}' , [DrinkCategoryController::class , 'getDrinksCategory']);
 
+    //get Accessory category
+    Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCategoryController::class , 'getAccessoriesCategory']);
 
+    //get food by his category
+    Route::post('/location/food/category/sort' , [FoodController::class , 'getFoodByCategorySorted']);
+
+    //get drink by his category
+    Route::post('/location/drinks/category/sort' , [DrinkController::class , 'getDrinksByCategorySorted']);
+
+    //get accessory by his category
+    Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -312,15 +322,13 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 });
 
 
-//mobile without translate
 
 
-//get Accessory category
-Route::get('/location/accessory/category/{event_id}/{host_id}' , [AccessoryCategoryController::class , 'getAccessoriesCategory']);
 
-Route::post('/location/food/category/sort' , [FoodController::class , 'getFoodByCategorySorted']);
-Route::post('/location/drinks/category/sort' , [DrinkController::class , 'getDrinksByCategorySorted']);
-Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
+
+
+
+
 
 
 

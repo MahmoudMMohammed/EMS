@@ -101,6 +101,18 @@ class FoodController extends Controller
     ////////////////////////////////////////////////////////////////////////////////
     public function getFoodByCategorySorted(Request $request): JsonResponse
     {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all(), [
             "category_id" => 'required|integer|exists:food_categories,id',
             "type" => 'required|integer|between:-1,999999'
@@ -119,7 +131,7 @@ class FoodController extends Controller
 
         if (!$query->count() > 0) {
             return response()->json([
-                "error" => "No food found for the specified category",
+                "error" => TranslateTextHelper::translate("No food found for the specified category"),
                 "status_code" => 404,
             ], 404);
         }
@@ -134,20 +146,29 @@ class FoodController extends Controller
 
         if ($foods->isEmpty() && $request->type  && !$isTypeNull) {
             return response()->json([
-                'error' =>"No food found for the specified price",
+                'error' =>TranslateTextHelper::translate("No food found for the specified price"),
                 'status_code' => 404,
             ], 404);
         }
+
+        $name = $foods->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $foods->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
+
+        $country_of_origin = $foods->pluck('country_of_origin')->toArray();
+        $country_of_origin = TranslateTextHelper::batchTranslate($country_of_origin);
 
         $response = [];
         foreach ($foods as $food)
         {
             $response [] = [
                 'id' => $food -> id ,
-                'name' => $food-> name ,
+                'name' => $name[$food-> name] ,
                 'price' => $food-> price ,
-                'description' => $food -> description ,
-                'country_of_origin' => $food -> country_of_origin ,
+                'description' => $description[$food -> description] ,
+                'country_of_origin' => $country_of_origin[$food -> country_of_origin] ,
                 'picture' => $food -> picture,
             ];
         }
