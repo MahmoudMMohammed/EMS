@@ -282,4 +282,45 @@ class CartController extends Controller
             'total_Items' => $totalItems ,
         ] , 200);
     }
+    //////////////////////////////////////////////////
+    public function DeleteAllItemsCart (): JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $Cart_id = Cart::query()->where('user_id' , $user->id)->pluck('id');
+
+        if(! $Cart_id->count() > 0)
+        {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("You don't have a cart yet"),
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $cart_item = CartItem::query()->where('cart_id' , $Cart_id)->get();
+        if(! $cart_item->count() > 0)
+        {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No item was found to be deleted"),
+                "status_code" => 404,
+            ], 404);
+        }
+
+        CartItem::query()->where('cart_id', $Cart_id)->delete();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("All items have been successfully deleted from your cart"),
+            "status_code" => 200,
+        ], 200);
+    }
 }

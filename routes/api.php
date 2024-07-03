@@ -264,6 +264,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //get accessory by his category
     Route::post('/location/accessories/category/sort' , [AccessoryController::class , 'getAccessoriesByCategorySorted']);
+
+    //delete all items from cart
+    Route::delete('/location/delete/all/cart' , [CartController::class , 'DeleteAllItemsCart']);
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
