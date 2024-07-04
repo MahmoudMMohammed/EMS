@@ -44,4 +44,8 @@ class Receipt extends Model
     {
         return $this->belongsTo(UserEvent::class, 'user_event_id', 'id');
     }
+    public function getQrCodeAttribute($value)
+    {
+        return env('APP_URL') . '/storage/' . $value;
+    }
 }

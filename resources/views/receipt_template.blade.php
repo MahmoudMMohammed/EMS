@@ -66,6 +66,7 @@
         <div>Date: {{ $event->date }}</div>
         <div>Time: {{ $event->start_time }} - {{ $event->end_time }}</div>
         <div>Description: {{ $event->description }}</div>
+        <div>Reservation Price: {{ $reservationPrice }}</div>
         <div>Number of People Invited: {{ $event->num_people_invited }}</div>
     </div>
 

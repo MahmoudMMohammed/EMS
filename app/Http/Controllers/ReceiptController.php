@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
 use App\Models\EventSupplement;
+use App\Models\Location;
 use App\Models\Receipt;
 use App\Models\UserEvent;
 use Barryvdh\DomPDF\Facade;
@@ -23,6 +24,7 @@ class ReceiptController extends Controller
         $user = Auth::user();
         $event = UserEvent::find($userEventId);
         $supplements = $event->supplements;
+        $location = Location::find($event->location_id);
 
 
         $foodDetails = $supplements->food_details;
@@ -59,7 +61,7 @@ class ReceiptController extends Controller
         })->toArray();
 
 
-        $pdfPath = 'public/receipts/' . uniqid() . '.pdf';
+        $pdfPath = 'public/receipts/' . $userEventId . '.pdf';
 
 
         // Generate the QR code with the download link using endroid/qr-code
@@ -88,6 +90,7 @@ class ReceiptController extends Controller
             'totalAccessories' => $totalAccessories,
             'grandTotal' => $supplements->total_price,
             'qrCodeBase64' => $qrCodeBase64,
+            'reservationPrice' => $location->reservation_price,
         ];
 
         // Generate the PDF using the instance method
@@ -116,7 +119,7 @@ class ReceiptController extends Controller
 
         return response()->json([
             "message" => TranslateTextHelper::translate("Receipt generated successfully. Scan the QR to download it or click the button below."),
-            "receipt" => $receipt,
+            "qr_code" => $receipt->qr_code,
             "status_code" => 200
         ], 200);
     }
