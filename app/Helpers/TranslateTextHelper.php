@@ -14,17 +14,20 @@ class TranslateTextHelper
     private static string $source = 'en';
     private static string $target = 'ar';
 
+    /////////////////////////////////////////////////////////////////////
     public static function setSource(string $source): self
     {
         self::$source = $source;
         return new self();
     }
+    /////////////////////////////////////////////////////////////////////
 
     public static function setTarget(string $target): self
     {
         self::$target = $target;
         return new self();
     }
+    /////////////////////////////////////////////////////////////////////
 
     public static function translate(string $text): string
     {
@@ -62,6 +65,7 @@ class TranslateTextHelper
             return 'Translation error';
         }
     }
+    /////////////////////////////////////////////////////////////////////
 
     public static function batchTranslate(array $texts): array
     {
@@ -99,6 +103,7 @@ class TranslateTextHelper
 
         return $translatedTexts;
     }
+    /////////////////////////////////////////////////////////////////////
 
 
     public static function batchTranslateArray(array $texts): array
@@ -137,42 +142,25 @@ class TranslateTextHelper
 
         return $translatedTexts;
     }
+    /////////////////////////////////////////////////////////////////////
 
     public static function translateToEnglishOnly(string $text): string
     {
-        $cacheKey = 'translation_' . self::$source . '_' . self::$target . '_' . $text;
+        $cacheKey = 'translation_auto_en_' . $text;
 
         // Check if translation exists in cache
         if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
+            $translatedText = Cache::get($cacheKey);
         }
 
-        try {
-            // Initialize GoogleTranslate instance
-            $translator = new GoogleTranslate();
+        TranslateTextHelper::setSource('auto')->setTarget('en');
 
-            // Set source and target languages
-            $translator->setSource(self::$source);
-            $translator->setTarget('en');
+        $translatedText = TranslateTextHelper::translate($text);
+        Cache::put($cacheKey, $translatedText, now()->addHours(72));
 
-            // Translate text
-            $translatedText = $translator->translate($text);
+        return $translatedText;
 
-            // Cache translated text for future use
-            Cache::put($cacheKey, $translatedText, now()->addHours(72));
-
-            return $translatedText;
-        } catch (LargeTextException|RateLimitException|TranslationRequestException $ex) {
-            Log::error('TranslateTextHelperException', [
-                'message' => $ex->getMessage(),
-            ]);
-            return 'Translation error';
-        } catch (\Exception $e) {
-            Log::error('TranslateTextHelperException', [
-                'message' => $e->getMessage(),
-            ]);
-            return 'Translation error';
-        }
     }
+    /////////////////////////////////////////////////////////////////////
 
 }
