@@ -230,7 +230,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 
 //download an event receipt
-Route::get('/download-receipt', [ReceiptController::class, 'downloadReceipt']);
+Route::get('/download-receipt/event-id/{eventId}', [ReceiptController::class, 'downloadReceipt']);
 
 
 

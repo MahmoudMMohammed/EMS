@@ -46,7 +46,7 @@
             align-items: center;
             flex-direction: column;
             text-align: center;
-            height: 50%; /* Ensure it takes full height of parent container */
+            height: 40%; /* Ensure it takes full height of parent container */
         }
     </style>
 </head>
