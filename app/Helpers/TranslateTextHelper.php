@@ -138,4 +138,41 @@ class TranslateTextHelper
         return $translatedTexts;
     }
 
+    public static function translateToEnglishOnly(string $text): string
+    {
+        $cacheKey = 'translation_' . self::$source . '_' . self::$target . '_' . $text;
+
+        // Check if translation exists in cache
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
+        try {
+            // Initialize GoogleTranslate instance
+            $translator = new GoogleTranslate();
+
+            // Set source and target languages
+            $translator->setSource(self::$source);
+            $translator->setTarget('en');
+
+            // Translate text
+            $translatedText = $translator->translate($text);
+
+            // Cache translated text for future use
+            Cache::put($cacheKey, $translatedText, now()->addHours(72));
+
+            return $translatedText;
+        } catch (LargeTextException|RateLimitException|TranslationRequestException $ex) {
+            Log::error('TranslateTextHelperException', [
+                'message' => $ex->getMessage(),
+            ]);
+            return 'Translation error';
+        } catch (\Exception $e) {
+            Log::error('TranslateTextHelperException', [
+                'message' => $e->getMessage(),
+            ]);
+            return 'Translation error';
+        }
+    }
+
 }
