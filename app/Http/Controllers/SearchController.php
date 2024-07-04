@@ -30,7 +30,10 @@ class SearchController extends Controller
 
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
-        $histories = Search::query()->where('user_id' , $user->id)->orderBy('updated_at')->get();
+        $histories = Search::query()
+            ->where('user_id' , $user->id)
+            ->orderBy('updated_at' , 'desc')
+            ->get();
 
         if($histories->isEmpty())
         {
@@ -39,6 +42,16 @@ class SearchController extends Controller
                 'status_code' => 404
             ]);
         }
+
+        if($histories->count() > 12)
+        {
+            $historiesToDelete = $histories->slice(12);
+
+            Search::destroy($historiesToDelete->pluck('id')->toArray());
+
+            $histories = $histories->where('user_id' , $user->id)->take(12);
+        }
+
 
         $response = [];
         foreach ($histories as $history)
@@ -120,7 +133,7 @@ class SearchController extends Controller
 
     }
     //////////////////////////////////////////////////////////////
-    public function Search(Request $request)
+    public function Search(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -147,14 +160,14 @@ class SearchController extends Controller
             ] , 422);
         }
 
-        $input = TranslateTextHelper::translateToEnglishOnly($request->input('search'));
+        $input = $request->input('search');
+
 
         $exists = Search::query()->where('history' , $request->search)->first();
 
         if($exists) {
-            $exists->update([
-                'updated_at' => Carbon::now()
-            ]);
+            //touch() : update the updated at value
+            $exists->touch();
         }
 
         else {
@@ -174,6 +187,14 @@ class SearchController extends Controller
                     ->orderBy('price')
                     ->get();
 
+                if(!$results->count() > 0)
+                {
+                    return response()->json([
+                        'massage' => TranslateTextHelper::translate("There are no search results in food category for ") . "($request->search)" ,
+                        'status_code' => 404
+                    ] , 404);
+                }
+
                 $names = $results->pluck('name')->toArray();
                 $names = TranslateTextHelper::batchTranslate($names);
 
@@ -187,7 +208,7 @@ class SearchController extends Controller
                 {
                     $response [] = [
                         'id' => $result->id ,
-                        'name' => $names[$result->price] ,
+                        'name' => $names[$result->name] ,
                         'price' => $result->price ,
                         'picture' => $result->picture ,
                         'description' => $description[$result->description] ,
@@ -203,14 +224,28 @@ class SearchController extends Controller
                     ->orderBy('price')
                     ->get();
 
+                if(!$results->count() > 0)
+                {
+                    return response()->json([
+                        'massage' => TranslateTextHelper::translate("There are no search results in drinks category for ") . "($request->search)" ,
+                        'status_code' => 404
+                    ] , 404);
+                }
+
+                $names = $results->pluck('name')->toArray();
+                $names = TranslateTextHelper::batchTranslate($names);
+
+                $description = $results->pluck('description')->toArray();
+                $description = TranslateTextHelper::batchTranslate($description);
+
                 foreach ($results as $result)
                 {
                     $response [] = [
                         'id' => $result->id ,
-                        'name' => $result->name ,
+                        'name' => $names[$result->name] ,
                         'price' => $result->price ,
                         'picture' => $result->picture ,
-                        'description' => $result->description
+                        'description' => $description[$result->description]
                     ];
                 }
                     break;
@@ -220,6 +255,31 @@ class SearchController extends Controller
                     ->where('name' , 'LIKE' , '%' . $input . '%')
                     ->orderBy('price')
                     ->get();
+
+                if(!$results->count() > 0)
+                {
+                    return response()->json([
+                        'massage' => TranslateTextHelper::translate("There are no search results in accessories category for ") . "($request->search)" ,
+                        'status_code' => 404
+                    ] , 404);
+                }
+
+                $names = $results->pluck('name')->toArray();
+                $names = TranslateTextHelper::batchTranslate($names);
+
+                $description = $results->pluck('description')->toArray();
+                $description = TranslateTextHelper::batchTranslate($description);
+
+                foreach ($results as $result)
+                {
+                    $response [] = [
+                        'id' => $result->id ,
+                        'name' => $names[$result->name] ,
+                        'picture' => $result->picture ,
+                        'price' => $result->price ,
+                        'description' => $description[$result->description]
+                    ];
+                }
                     break;
 
             case 'location' :
@@ -227,6 +287,32 @@ class SearchController extends Controller
                     ->where('name' , 'LIKE' , '%' . $input . '%')
                     ->orderBy('reservation_price')
                     ->get();
+
+                if(!$results->count() > 0)
+                {
+                    return response()->json([
+                        'massage' => TranslateTextHelper::translate("There are no search results in locations category for ") . "($request->search)" ,
+                        'status_code' => 404
+                    ] , 404);
+                }
+
+                $names = $results->pluck('name')->toArray();
+                $names = TranslateTextHelper::batchTranslate($names);
+
+                $governorate = $results->pluck('governorate')->toArray();
+                $governorate = TranslateTextHelper::batchTranslate($governorate);
+
+                foreach ($results as $result)
+                {
+                    $response [] = [
+                        'id' => $result->id ,
+                        'name' => $names[$result->name] ,
+                        'governorate' => $governorate[$result->governorate] ,
+                        'open_time' => $result->open_time ,
+                        'close_time' => $result->close_time
+                    ];
+                }
+
                     break;
 
             default :
@@ -234,5 +320,6 @@ class SearchController extends Controller
         }
 
 
+        return response()->json($response , 200);
     }
 }

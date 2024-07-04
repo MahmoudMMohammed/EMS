@@ -689,7 +689,7 @@
 							"formdata": [
 								{
 									"key": "code",
-									"value": "839899",
+									"value": "248030",
 									"type": "text"
 								}
 							]
@@ -2798,7 +2798,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxODM2NDA5MywiZXhwIjoxNzE4NDUwNDkzLCJuYmYiOjE3MTgzNjQwOTMsImp0aSI6IktxVTZrbnZXT0JXSk5LR3kiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.58zPYLG0J_IiEGJSfOUxWcGj0pA2mE78Nl5jY26t7U0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
 											"type": "string"
 										}
 									]
@@ -3336,7 +3336,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxODM2NDA5MywiZXhwIjoxNzE4NDUwNDkzLCJuYmYiOjE3MTgzNjQwOTMsImp0aSI6IktxVTZrbnZXT0JXSk5LR3kiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.58zPYLG0J_IiEGJSfOUxWcGj0pA2mE78Nl5jY26t7U0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
 											"type": "string"
 										}
 									]
@@ -3366,81 +3366,6 @@
 								}
 							},
 							"response": [
-								{
-									"name": "success",
-									"originalRequest": {
-										"method": "GET",
-										"header": [],
-										"body": {
-											"mode": "formdata",
-											"formdata": []
-										},
-										"url": {
-											"raw": "http://127.0.0.1:8000/api/user/profile/favorites",
-											"protocol": "http",
-											"host": [
-												"127",
-												"0",
-												"0",
-												"1"
-											],
-											"port": "8000",
-											"path": [
-												"api",
-												"user",
-												"profile",
-												"favorites"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Host",
-											"value": "127.0.0.1:8000"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 14 Jun 2024 11:56:49 GMT"
-										},
-										{
-											"key": "Date",
-											"value": "Fri, 14 Jun 2024 11:56:49 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "close"
-										},
-										{
-											"key": "X-Powered-By",
-											"value": "PHP/8.2.4"
-										},
-										{
-											"key": "Cache-Control",
-											"value": "no-cache, private"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json"
-										},
-										{
-											"key": "X-RateLimit-Limit",
-											"value": "60"
-										},
-										{
-											"key": "X-RateLimit-Remaining",
-											"value": "59"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										}
-									],
-									"cookie": [],
-									"body": "[\n    {\n        \"type\": \"drink\",\n        \"name\": \"Space Drink\",\n        \"price\": \"37,000.00S.P\",\n        \"description\": \"Soda , Orange , Lemon , Syrup mixture\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\"\n    },\n    {\n        \"type\": \"drink\",\n        \"name\": \"Ginger Drink\",\n        \"price\": \"40,000.00S.P\",\n        \"description\": \"Soda , ginger , Lemon\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/129.jpg\"\n    },\n    {\n        \"type\": \"food\",\n        \"name\": \"Eggplant Kebab\",\n        \"price\": \"91,000.00 S.P\",\n        \"description\": \"200g of Meat Kebab , Onion slices with lettuce , Eggplant\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/2.jpg\"\n    },\n    {\n        \"type\": \"location\",\n        \"name\": \"LETO Restaurant\",\n        \"governorate\": \"Homs\",\n        \"open_time\": \"9:00 AM\",\n        \"close_time\": \"12:00 PM\",\n        \"logo\": \"http://localhost:8000/Location/5.jpg\"\n    }\n]"
-								},
 								{
 									"name": "no favorites added",
 									"originalRequest": {
@@ -3515,6 +3440,81 @@
 									],
 									"cookie": [],
 									"body": "{\n    \"error\": \"You have not added anything to favorites yet!\",\n    \"status_code\": 404\n}"
+								},
+								{
+									"name": "success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/user/profile/favorites",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"user",
+												"profile",
+												"favorites"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 10:24:10 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 10:24:10 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "56"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"type\": \"food\",\n        \"name\": \"Khashkhash Kebab\",\n        \"price\": \"89,000.00 S.P\",\n        \"description\": \"200g of Meat Kebab , Tomato Sauce with especially spicy\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/1.jpg\"\n    },\n    {\n        \"id\": 1,\n        \"type\": \"drink\",\n        \"name\": \"Space Drink\",\n        \"price\": \"37,000.00S.P\",\n        \"description\": \"Soda , Orange , Lemon , Syrup mixture\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\"\n    },\n    {\n        \"id\": 1,\n        \"type\": \"location\",\n        \"name\": \"Oriental Restaurant\",\n        \"governorate\": \"Damascus\",\n        \"open_time\": \"9:00 AM\",\n        \"close_time\": \"12:00 PM\",\n        \"logo\": \"http://localhost:8000/Location/4.jpg\"\n    },\n    {\n        \"id\": 1,\n        \"type\": \"accessory\",\n        \"name\": \"Tulip Flower Vase\",\n        \"price\": \"14,000.00\",\n        \"description\": \"1 vase of artificial white tulips flowers placed on the table with green veins , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/1.jpg\"\n    }\n]"
 								}
 							]
 						}
@@ -3531,7 +3531,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxODM2NDA5MywiZXhwIjoxNzE4NDUwNDkzLCJuYmYiOjE3MTgzNjQwOTMsImp0aSI6IktxVTZrbnZXT0JXSk5LR3kiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.58zPYLG0J_IiEGJSfOUxWcGj0pA2mE78Nl5jY26t7U0",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE5ODYyMTEyLCJleHAiOjE3MTk5NDg1MTIsIm5iZiI6MTcxOTg2MjExMiwianRpIjoiNXFWUEhwMVFKU2xlYU5hbyIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.rdCLzwWwfmOYAeAn7s_7mVja6QITrJnd8gm0iCsP6d8",
 											"type": "string"
 										}
 									]
@@ -3543,7 +3543,7 @@
 									"formdata": [
 										{
 											"key": "preferred_language",
-											"value": "en",
+											"value": "ar",
 											"type": "text"
 										}
 									]
@@ -5605,7 +5605,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxODM2ODIzNiwiZXhwIjoxNzE4NDU0NjM2LCJuYmYiOjE3MTgzNjgyMzYsImp0aSI6Im1hNEZSSFROWVRUMzl6RHgiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.Q_AuTXEAdVHxYIY5lHJGAzsIzswe1hBO97Duz93Rnzc",
+													"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDkxMTc4LCJleHAiOjE3MjAxNzc1NzgsIm5iZiI6MTcyMDA5MTE3OCwianRpIjoiTVFCaGlvbWlQY2ttUXZGUCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.iW4WeuaaBl6AH2XTNmgGZDNE8rmAnZjyRWat_9zskTU",
 													"type": "string"
 												}
 											]
@@ -8960,7 +8960,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2ODg4ODA5LCJleHAiOjE3MTY5NzUyMDksIm5iZiI6MTcxNjg4ODgwOSwianRpIjoiMlhNVHNQVUpGcEV4WUZRZyIsInN1YiI6IjM2IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.9DL05KrUO3tYpvBoel5M-TM80q13gjjFfkfwHJXNsBE",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
 									"type": "string"
 								}
 							]
@@ -8982,7 +8982,7 @@
 								},
 								{
 									"key": "quantity",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								}
 							]
@@ -9289,15 +9289,25 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2NzExMjA0LCJleHAiOjE3MTY3OTc2MDQsIm5iZiI6MTcxNjcxMTIwNCwianRpIjoiQ0dFY1ZLbzNYRkx4TnRvOSIsInN1YiI6IjI5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.XWtf78ncWGPVWGd9R0i3zh8YirRF9sDWgdpK3TeclQc",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
 									"type": "string"
 								}
 							]
 						},
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "all",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/user/cart/get-items",
+							"raw": "http://127.0.0.1:8000/api/location/get/cart/sort",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -9308,20 +9318,31 @@
 							"port": "8000",
 							"path": [
 								"api",
-								"user",
+								"location",
+								"get",
 								"cart",
-								"get-items"
+								"sort"
 							]
 						}
 					},
 					"response": [
 						{
-							"name": "success",
+							"name": "No item in cart",
 							"originalRequest": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type",
+											"value": "all",
+											"type": "text"
+										}
+									]
+								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/user/cart/get-items",
+									"raw": "http://127.0.0.1:8000/api/location/get/cart/sort",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -9332,14 +9353,15 @@
 									"port": "8000",
 									"path": [
 										"api",
-										"user",
+										"location",
+										"get",
 										"cart",
-										"get-items"
+										"sort"
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
+							"status": "Not Found",
+							"code": 404,
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
@@ -9348,11 +9370,11 @@
 								},
 								{
 									"key": "Date",
-									"value": "Sat, 25 May 2024 09:39:44 GMT"
+									"value": "Wed, 03 Jul 2024 14:06:44 GMT"
 								},
 								{
 									"key": "Date",
-									"value": "Sat, 25 May 2024 09:39:44 GMT"
+									"value": "Wed, 03 Jul 2024 14:06:44 GMT"
 								},
 								{
 									"key": "Connection",
@@ -9376,7 +9398,7 @@
 								},
 								{
 									"key": "X-RateLimit-Remaining",
-									"value": "58"
+									"value": "56"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -9384,7 +9406,89 @@
 								}
 							],
 							"cookie": [],
-							"body": "[\n    {\n        \"id\": 2,\n        \"name\": \"Eggplant Kebab\",\n        \"price\": \"91,000.00 S.P\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/2.jpg\",\n        \"category_name\": \"Oriental Meals\",\n        \"quantity\": 6,\n        \"total_price\": \"546,000.00 S.P\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Indian Kebab\",\n        \"price\": \"92,000.00 S.P\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/3.jpg\",\n        \"category_name\": \"Oriental Meals\",\n        \"quantity\": 3,\n        \"total_price\": \"276,000.00 S.P\"\n    }\n]"
+							"body": "{\n    \"error\": \"No Items found , Add some\",\n    \"status_code\": 404\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type",
+											"value": "all",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/get/cart/sort",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"get",
+										"cart",
+										"sort"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 14:08:56 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 14:08:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "54"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Space Drink\",\n            \"quantity\": 12,\n            \"price\": \"444,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Ginger Drink\",\n            \"quantity\": 44,\n            \"price\": \"1,760,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/129.jpg\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"Shakriya\",\n            \"quantity\": 143,\n            \"price\": \"12,584,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Food/Oriental_meals/5.jpg\"\n        },\n        {\n            \"id\": 12,\n            \"name\": \"Blue Table Cloths\",\n            \"quantity\": 300,\n            \"price\": \"2,400,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Accessories/Decoration/12.jpg\"\n        }\n    ],\n    \"total_price\": \"17,188,000.00 S.P\",\n    \"total_Items\": 4\n}"
 						}
 					]
 				},
@@ -9396,7 +9500,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2NjIyMjgwLCJleHAiOjE3MTY3MDg2ODAsIm5iZiI6MTcxNjYyMjI4MCwianRpIjoiQ1hyV2Q4VU03V2ZORDh6cSIsInN1YiI6IjI5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.bQCKSKT6RR1wtXpZp-tRi7RYPAvJmALy8k9yRJUYTi0",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxOTgyNDc4OCwiZXhwIjoxNzE5OTExMTg4LCJuYmYiOjE3MTk4MjQ3ODgsImp0aSI6IjZDV2VyaEdaSmx3bFM2b3IiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c1zdhg6dXsE3v6BT-bCgfYJZwxMo--_CccYmWkqq1Kw",
 									"type": "string"
 								}
 							]
@@ -9408,12 +9512,12 @@
 							"formdata": [
 								{
 									"key": "item_id",
-									"value": "2",
+									"value": "1",
 									"type": "text"
 								},
 								{
 									"key": "type",
-									"value": "food",
+									"value": "accessory",
 									"type": "text"
 								}
 							]
@@ -9757,12 +9861,1229 @@
 							"body": "{\n    \"message\": \"Item quantity updated\",\n    \"status_code\": 200\n}"
 						}
 					]
+				},
+				{
+					"name": "Delete all items",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/location/delete/all/cart",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"location",
+								"delete",
+								"all",
+								"cart"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/delete/all/cart",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"delete",
+										"all",
+										"cart"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 17:18:56 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 17:18:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "57"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"All items have been successfully deleted from your cart\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "empty cart",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/delete/all/cart",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"delete",
+										"all",
+										"cart"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 17:19:17 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 17:19:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "56"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"No item was found to be deleted\",\n    \"status_code\": 404\n}"
+						}
+					]
 				}
 			]
 		},
 		{
 			"name": "User Events",
 			"item": [
+				{
+					"name": "User choose items",
+					"item": [
+						{
+							"name": "Food category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/food/category/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"food",
+										"category",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/food/category/1",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"food",
+												"category",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:05:36 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:05:36 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Oriental Meals\",\n        \"logo\": \"http://localhost:8000/Food/Logo/1.png\",\n        \"number\": 6,\n        \"color\": \"#443391\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Western Meals\",\n        \"logo\": \"http://localhost:8000/Food/Logo/2.png\",\n        \"number\": 8,\n        \"color\": \"#3E5EAB\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Grills\",\n        \"logo\": \"http://localhost:8000/Food/Logo/3.png\",\n        \"number\": 8,\n        \"color\": \"#1495CF\"\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Seafood\",\n        \"logo\": \"http://localhost:8000/Food/Logo/4.png\",\n        \"number\": 11,\n        \"color\": \"#60B246\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Hot Appetizers\",\n        \"logo\": \"http://localhost:8000/Food/Logo/5.png\",\n        \"number\": 12,\n        \"color\": \"#D1DC36\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Cold Appetizers\",\n        \"logo\": \"http://localhost:8000/Food/Logo/6.png\",\n        \"number\": 6,\n        \"color\": \"#F2EB3B\"\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Pastries\",\n        \"logo\": \"http://localhost:8000/Food/Logo/7.png\",\n        \"number\": 13,\n        \"color\": \"#F8BD19\"\n    },\n    {\n        \"id\": 8,\n        \"name\": \"Soups\",\n        \"logo\": \"http://localhost:8000/Food/Logo/8.png\",\n        \"number\": 8,\n        \"color\": \"#F89C21\"\n    },\n    {\n        \"id\": 9,\n        \"name\": \"Salads\",\n        \"logo\": \"http://localhost:8000/Food/Logo/9.png\",\n        \"number\": 14,\n        \"color\": \"#F25427\"\n    },\n    {\n        \"id\": 10,\n        \"name\": \"Desserts\",\n        \"logo\": \"http://localhost:8000/Food/Logo/10.png\",\n        \"number\": 12,\n        \"color\": \"#F33128\"\n    },\n    {\n        \"id\": 11,\n        \"name\": \"Eastern Sweets\",\n        \"logo\": \"http://localhost:8000/Food/Logo/11.png\",\n        \"number\": 13,\n        \"color\": \"#A71E4A\"\n    },\n    {\n        \"id\": 12,\n        \"name\": \"Cake\",\n        \"logo\": \"http://localhost:8000/Food/Logo/12.png\",\n        \"number\": 16,\n        \"color\": \"#7D3696\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Drink category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/drinks/category/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"drinks",
+										"category",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/drinks/category/1",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"drinks",
+												"category",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:28:13 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:28:13 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "58"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Cold Drinks\",\n        \"logo\": \"http://localhost:8000/Drinks/Logo/13.png\",\n        \"number\": 7,\n        \"color\": \"#443391\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Hot Drinks\",\n        \"logo\": \"http://localhost:8000/Drinks/Logo/14.png\",\n        \"number\": 9,\n        \"color\": \"#3E5EAB\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Natural juices\",\n        \"logo\": \"http://localhost:8000/Drinks/Logo/17.png\",\n        \"number\": 6,\n        \"color\": \"#1495CF\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Coffee\",\n        \"logo\": \"http://localhost:8000/Drinks/Logo/18.png\",\n        \"number\": 8,\n        \"color\": \"#60B246\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Accessory category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/accessory/category/1/4",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"accessory",
+										"category",
+										"1",
+										"4"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/accessory/category/1/4",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"accessory",
+												"category",
+												"1",
+												"4"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:36:36 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:36:36 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "58"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Decoration\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/19.png\",\n        \"number\": 29,\n        \"color\": \"#443391\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Religious\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/21.png\",\n        \"number\": 7,\n        \"color\": \"#3E5EAB\"\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Visual Presentations\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/22.png\",\n        \"number\": 6,\n        \"color\": \"#1495CF\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Electrical Equipment\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/23.png\",\n        \"number\": 3,\n        \"color\": \"#60B246\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Lighting Equipment\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/24.png\",\n        \"number\": 5,\n        \"color\": \"#D1DC36\"\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Audio Equipment\",\n        \"logo\": \"http://localhost:8000/Accessories/Logo/25.png\",\n        \"number\": 4,\n        \"color\": \"#F2EB3B\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "get food by category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "-1",
+											"description": "-1 : to get all food ",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/food/category/sort",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"food",
+										"category",
+										"sort"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "get all food",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "-1",
+													"description": "-1 : to get all food ",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/food/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"food",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:57:01 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:57:01 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "56"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 6,\n        \"name\": \"Shish Barak\",\n        \"price\": \"75,000.00 S.P\",\n        \"description\": \"150g of Shish , Yogurt , Onion slices with lettuce , Vermicelli rice\",\n        \"country_of_origin\": \"Iraq\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/6.jpg\"\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Kibbeh Labanieh\",\n        \"price\": \"84,000.00 S.P\",\n        \"description\": \"6 pieces of Kibbeh , Yogurt , Vermicelli rice with Onion slices\",\n        \"country_of_origin\": \"Palestine\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/4.jpg\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Shakriya\",\n        \"price\": \"88,000.00 S.P\",\n        \"description\": \"150g of Meat Lamb , Yogurt , Vermicelli rice with Onion slices\",\n        \"country_of_origin\": \"United Arab Emirates\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/5.jpg\"\n    },\n    {\n        \"id\": 1,\n        \"name\": \"Khashkhash Kebab\",\n        \"price\": \"89,000.00 S.P\",\n        \"description\": \"200g of Meat Kebab , Tomato Sauce with especially spicy\",\n        \"country_of_origin\": \"Syria\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/1.jpg\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Eggplant Kebab\",\n        \"price\": \"91,000.00 S.P\",\n        \"description\": \"200g of Meat Kebab , Onion slices with lettuce , Eggplant\",\n        \"country_of_origin\": \"Comoros\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/2.jpg\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Indian Kebab\",\n        \"price\": \"92,000.00 S.P\",\n        \"description\": \"200g of Meat Kebab , Green peppers and red peppers , Vermicelli rice with Onion slices\",\n        \"country_of_origin\": \"Jordan\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/3.jpg\"\n    }\n]"
+								},
+								{
+									"name": "get food by price",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "85000",
+													"description": "-1 : to get all food ",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/food/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"food",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:57:47 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 15:57:47 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 6,\n        \"name\": \"Shish Barak\",\n        \"price\": \"75,000.00 S.P\",\n        \"description\": \"150g of Shish , Yogurt , Onion slices with lettuce , Vermicelli rice\",\n        \"country_of_origin\": \"Iraq\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/6.jpg\"\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Kibbeh Labanieh\",\n        \"price\": \"84,000.00 S.P\",\n        \"description\": \"6 pieces of Kibbeh , Yogurt , Vermicelli rice with Onion slices\",\n        \"country_of_origin\": \"Palestine\",\n        \"picture\": \"http://localhost:8000/Food/Oriental_meals/4.jpg\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "get drink by category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "-1",
+											"description": "-1 : to get all drinks",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/drinks/category/sort",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"drinks",
+										"category",
+										"sort"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "get all drinks",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "-1",
+													"description": "-1 : to get all drinks",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/drinks/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"drinks",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:11:32 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:11:32 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "58"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"name\": \"Ice Tea Peach\",\n        \"price\": \"32,000.00S.P\",\n        \"description\": \"Peach flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/131.jpg\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Ice Tea Lemon\",\n        \"price\": \"32,000.00S.P\",\n        \"description\": \"Lemon flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/132.jpg\"\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Ice Tea Blue\",\n        \"price\": \"33,000.00S.P\",\n        \"description\": \"Blue flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/134.jpg\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Ice Tea Berry\",\n        \"price\": \"34,000.00S.P\",\n        \"description\": \"Berry flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/133.jpg\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Mojitio Drink\",\n        \"price\": \"35,000.00S.P\",\n        \"description\": \"Soda , Mint , Lemon , Mojito syrup\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/130.jpg\"\n    },\n    {\n        \"id\": 1,\n        \"name\": \"Space Drink\",\n        \"price\": \"37,000.00S.P\",\n        \"description\": \"Soda , Orange , Lemon , Syrup mixture\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Ginger Drink\",\n        \"price\": \"40,000.00S.P\",\n        \"description\": \"Soda , ginger , Lemon\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/129.jpg\"\n    }\n]"
+								},
+								{
+									"name": "get drink by price",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "34000",
+													"description": "-1 : to get all drinks",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/drinks/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"drinks",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:12:58 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:12:58 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"name\": \"Ice Tea Peach\",\n        \"price\": \"32,000.00S.P\",\n        \"description\": \"Peach flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/131.jpg\"\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Ice Tea Lemon\",\n        \"price\": \"32,000.00S.P\",\n        \"description\": \"Lemon flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/132.jpg\"\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Ice Tea Blue\",\n        \"price\": \"33,000.00S.P\",\n        \"description\": \"Blue flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/134.jpg\"\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Ice Tea Berry\",\n        \"price\": \"34,000.00S.P\",\n        \"description\": \"Berry flavored iced tea with ice cubes\",\n        \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/133.jpg\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "get accessory by category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAxMzk3MCwiZXhwIjoxNzIwMTAwMzcwLCJuYmYiOjE3MjAwMTM5NzAsImp0aSI6IndhZUhOM29hZEhpWmp2WEsiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.nnnvG-RNl_sQUwlH-hnTAnReGXtVwWlOuBxq3MId-Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "location_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "-1",
+											"description": "-1 : to get all accessory",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/location/accessories/category/sort",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"location",
+										"accessories",
+										"category",
+										"sort"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "get all accessory",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "location_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "-1",
+													"description": "-1 : to get all accessory",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/accessories/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"accessories",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:21:05 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:21:05 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 5,\n        \"name\": \"Table Runner(model:1)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/5.jpg\",\n        \"quantity\": 225\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Table Runner(model:2)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/6.jpg\",\n        \"quantity\": 355\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Table Runner(model:3)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/7.jpg\",\n        \"quantity\": 435\n    },\n    {\n        \"id\": 8,\n        \"name\": \"Table Runner(model:4)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/8.jpg\",\n        \"quantity\": 389\n    },\n    {\n        \"id\": 25,\n        \"name\": \"Pink Chair Sashes\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative pink chair sashes made of silk , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/25.jpg\",\n        \"quantity\": 418\n    },\n    {\n        \"id\": 26,\n        \"name\": \"Beige Chair Sashes\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative beige chair sashes made of silk , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/26.jpg\",\n        \"quantity\": 273\n    },\n    {\n        \"id\": 9,\n        \"name\": \"Navy Blue Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in navy blue color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/9.jpg\",\n        \"quantity\": 440\n    },\n    {\n        \"id\": 10,\n        \"name\": \"Purple Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in purple color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/10.jpg\",\n        \"quantity\": 312\n    },\n    {\n        \"id\": 11,\n        \"name\": \"White Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in white color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/11.jpg\",\n        \"quantity\": 351\n    },\n    {\n        \"id\": 12,\n        \"name\": \"Blue Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in blue color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/12.jpg\",\n        \"quantity\": 319\n    },\n    {\n        \"id\": 13,\n        \"name\": \"Pink Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in pink color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/13.jpg\",\n        \"quantity\": 415\n    },\n    {\n        \"id\": 14,\n        \"name\": \"Red Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in red color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/14.jpg\",\n        \"quantity\": 310\n    },\n    {\n        \"id\": 15,\n        \"name\": \"yellow Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in yellow color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/15.jpg\",\n        \"quantity\": 365\n    },\n    {\n        \"id\": 27,\n        \"name\": \"Dark Pink Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative dark pink chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/27.jpg\",\n        \"quantity\": 243\n    },\n    {\n        \"id\": 28,\n        \"name\": \"Brown Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative brown chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/28.jpg\",\n        \"quantity\": 359\n    },\n    {\n        \"id\": 29,\n        \"name\": \"Green Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative green chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/29.jpg\",\n        \"quantity\": 221\n    },\n    {\n        \"id\": 21,\n        \"name\": \"Table Candles(model:1)\",\n        \"price\": \"10,000.00\",\n        \"description\": \"1 Decorative table candles contains 1 candle , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/21.jpg\",\n        \"quantity\": 424\n    },\n    {\n        \"id\": 22,\n        \"name\": \"Table Candles(model:2)\",\n        \"price\": \"11,000.00\",\n        \"description\": \"1 Decorative table candles contains 1 candle , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/22.jpg\",\n        \"quantity\": 260\n    },\n    {\n        \"id\": 23,\n        \"name\": \"Table Candles(model:3)\",\n        \"price\": \"12,000.00\",\n        \"description\": \"1 Decorative table candles contains 1 candle , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/23.jpg\",\n        \"quantity\": 303\n    },\n    {\n        \"id\": 24,\n        \"name\": \"Table Candles(model:4)\",\n        \"price\": \"12,000.00\",\n        \"description\": \"1 Decorative table candles contains 1 candle , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/24.jpg\",\n        \"quantity\": 229\n    },\n    {\n        \"id\": 1,\n        \"name\": \"Tulip Flower Vase\",\n        \"price\": \"14,000.00\",\n        \"description\": \"1 vase of artificial white tulips flowers placed on the table with green veins , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/1.jpg\",\n        \"quantity\": 392\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Roses Vase\",\n        \"price\": \"16,000.00\",\n        \"description\": \"1 vase of artificial red roses placed on the table with green veins , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/3.jpg\",\n        \"quantity\": 417\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Lavender Flower Vase\",\n        \"price\": \"16,000.00\",\n        \"description\": \"1 vase of artificial yellow lavender flower placed on the table with green veins , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/4.jpg\",\n        \"quantity\": 392\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Basil Flower Vase\",\n        \"price\": \"18,000.00\",\n        \"description\": \"1 vase of artificial pink and white basil flowers placed on the table with green veins , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/2.jpg\",\n        \"quantity\": 252\n    },\n    {\n        \"id\": 20,\n        \"name\": \"Balloon Decorations(model:5)\",\n        \"price\": \"25,000.00\",\n        \"description\": \"25 balloons in different colors : blue , white , dark blue and different size\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/20.jpg\",\n        \"quantity\": 443\n    },\n    {\n        \"id\": 17,\n        \"name\": \"Balloon Decorations(model:2)\",\n        \"price\": \"38,000.00\",\n        \"description\": \"30 balloons in different colors : purple , white , dark purple and different size\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/17.jpg\",\n        \"quantity\": 221\n    },\n    {\n        \"id\": 19,\n        \"name\": \"Balloon Decorations(model:4)\",\n        \"price\": \"45,000.00\",\n        \"description\": \"40 balloons in different colors : blue , white , dark blue and different size\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/19.jpg\",\n        \"quantity\": 399\n    },\n    {\n        \"id\": 18,\n        \"name\": \"Balloon Decorations(model:3)\",\n        \"price\": \"50,000.00\",\n        \"description\": \"45 balloons in different colors : blue , white , dark blue and different size\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/18.jpg\",\n        \"quantity\": 279\n    },\n    {\n        \"id\": 16,\n        \"name\": \"Balloon Decorations(model:1)\",\n        \"price\": \"55,000.00\",\n        \"description\": \"50 balloons in different colors : pink , white , yellow and different size\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/16.jpg\",\n        \"quantity\": 418\n    }\n]"
+								},
+								{
+									"name": "get accessory by price",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "location_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "8000",
+													"description": "-1 : to get all accessory",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/api/location/accessories/category/sort",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"location",
+												"accessories",
+												"category",
+												"sort"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "127.0.0.1:8000"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:25:05 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 03 Jul 2024 16:25:05 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.2.4"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 5,\n        \"name\": \"Table Runner(model:1)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/5.jpg\",\n        \"quantity\": 225\n    },\n    {\n        \"id\": 6,\n        \"name\": \"Table Runner(model:2)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/6.jpg\",\n        \"quantity\": 355\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Table Runner(model:3)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/7.jpg\",\n        \"quantity\": 435\n    },\n    {\n        \"id\": 8,\n        \"name\": \"Table Runner(model:4)\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative white table runner 30cm * 275cm , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/8.jpg\",\n        \"quantity\": 389\n    },\n    {\n        \"id\": 25,\n        \"name\": \"Pink Chair Sashes\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative pink chair sashes made of silk , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/25.jpg\",\n        \"quantity\": 418\n    },\n    {\n        \"id\": 26,\n        \"name\": \"Beige Chair Sashes\",\n        \"price\": \"5,000.00\",\n        \"description\": \"1 Decorative beige chair sashes made of silk , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/26.jpg\",\n        \"quantity\": 273\n    },\n    {\n        \"id\": 9,\n        \"name\": \"Navy Blue Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in navy blue color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/9.jpg\",\n        \"quantity\": 440\n    },\n    {\n        \"id\": 10,\n        \"name\": \"Purple Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in purple color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/10.jpg\",\n        \"quantity\": 312\n    },\n    {\n        \"id\": 11,\n        \"name\": \"White Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in white color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/11.jpg\",\n        \"quantity\": 351\n    },\n    {\n        \"id\": 12,\n        \"name\": \"Blue Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in blue color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/12.jpg\",\n        \"quantity\": 319\n    },\n    {\n        \"id\": 13,\n        \"name\": \"Pink Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in pink color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/13.jpg\",\n        \"quantity\": 415\n    },\n    {\n        \"id\": 14,\n        \"name\": \"Red Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in red color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/14.jpg\",\n        \"quantity\": 310\n    },\n    {\n        \"id\": 15,\n        \"name\": \"yellow Table Cloths\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Tablecloths in yellow color and 2m * 2m size , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/15.jpg\",\n        \"quantity\": 365\n    },\n    {\n        \"id\": 27,\n        \"name\": \"Dark Pink Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative dark pink chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/27.jpg\",\n        \"quantity\": 243\n    },\n    {\n        \"id\": 28,\n        \"name\": \"Brown Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative brown chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/28.jpg\",\n        \"quantity\": 359\n    },\n    {\n        \"id\": 29,\n        \"name\": \"Green Chair Sashes\",\n        \"price\": \"8,000.00\",\n        \"description\": \"1 Decorative green chair sashes made of silk with flowers , NOTE : it is only for rent\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/29.jpg\",\n        \"quantity\": 221\n    }\n]"
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "create an event",
 					"request": {
@@ -9771,7 +11092,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2ODg4ODA5LCJleHAiOjE3MTY5NzUyMDksIm5iZiI6MTcxNjg4ODgwOSwianRpIjoiMlhNVHNQVUpGcEV4WUZRZyIsInN1YiI6IjM2IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.9DL05KrUO3tYpvBoel5M-TM80q13gjjFfkfwHJXNsBE",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDkxMTc4LCJleHAiOjE3MjAxNzc1NzgsIm5iZiI6MTcyMDA5MTE3OCwianRpIjoiTVFCaGlvbWlQY2ttUXZGUCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.iW4WeuaaBl6AH2XTNmgGZDNE8rmAnZjyRWat_9zskTU",
 									"type": "string"
 								}
 							]
@@ -9783,12 +11104,12 @@
 							"formdata": [
 								{
 									"key": "location_id",
-									"value": "1",
+									"value": "15",
 									"type": "text"
 								},
 								{
 									"key": "date",
-									"value": "2024-05-21",
+									"value": "2024-05-26",
 									"type": "text"
 								},
 								{
@@ -9803,12 +11124,12 @@
 								},
 								{
 									"key": "start_time",
-									"value": "10:00 AM",
+									"value": "10:00 PM",
 									"type": "text"
 								},
 								{
 									"key": "end_time",
-									"value": "12:00 PM",
+									"value": "01:00 AM",
 									"type": "text"
 								},
 								{
@@ -9836,116 +11157,6 @@
 						}
 					},
 					"response": [
-						{
-							"name": "some declined data",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "location_id",
-											"value": "1",
-											"type": "text"
-										},
-										{
-											"key": "date",
-											"value": "2024-05-11",
-											"type": "text"
-										},
-										{
-											"key": "invitation_type",
-											"value": "Public",
-											"type": "text"
-										},
-										{
-											"key": "description",
-											"value": "Test",
-											"type": "text"
-										},
-										{
-											"key": "start_time",
-											"value": "10:00 AM",
-											"type": "text"
-										},
-										{
-											"key": "end_time",
-											"value": "12:00 PM",
-											"type": "text"
-										},
-										{
-											"key": "num_people_invited",
-											"value": "50",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/user/events",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"user",
-										"events"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Host",
-									"value": "127.0.0.1:8000"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 26 May 2024 08:20:11 GMT"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 26 May 2024 08:20:11 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/8.2.4"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "X-RateLimit-Limit",
-									"value": "60"
-								},
-								{
-									"key": "X-RateLimit-Remaining",
-									"value": "59"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"message\": \"Event reserved successfully\",\n    \"event\": {\n        \"user_id\": 29,\n        \"location_id\": \"1\",\n        \"date\": \"2024-05-11\",\n        \"invitation_type\": \"Public\",\n        \"description\": \"Test\",\n        \"start_time\": \"10:00 AM\",\n        \"end_time\": \"12:00 PM\",\n        \"num_people_invited\": \"50\",\n        \"id\": 3\n    },\n    \"event_supplement\": {\n        \"user_event_id\": 3,\n        \"warehouse_id\": 1,\n        \"food_details\": \"[]\",\n        \"drinks_details\": \"[]\",\n        \"accessories_details\": \"[{\\\"id\\\":10,\\\"name\\\":\\\"Purple Table Cloths\\\",\\\"price\\\":\\\"8,000.00\\\",\\\"picture\\\":\\\"http:\\\\/\\\\/localhost:8000\\\\/Accessories\\\\/Decoration\\\\/10.jpg\\\",\\\"accessory_category_id\\\":1,\\\"description\\\":\\\"1 Tablecloths in purple color and 2m * 2m size , NOTE : it is only for rent\\\",\\\"category\\\":{\\\"id\\\":1,\\\"category\\\":\\\"Decoration\\\"}},{\\\"id\\\":20,\\\"name\\\":\\\"Balloon Decorations(model:5)\\\",\\\"price\\\":\\\"25,000.00\\\",\\\"picture\\\":\\\"http:\\\\/\\\\/localhost:8000\\\\/Accessories\\\\/Decoration\\\\/20.jpg\\\",\\\"accessory_category_id\\\":1,\\\"description\\\":\\\"25 balloons in different colors : blue , white , dark blue and different size\\\",\\\"category\\\":{\\\"id\\\":1,\\\"category\\\":\\\"Decoration\\\"}}]\",\n        \"total_price\": \"208,000.00\",\n        \"id\": 3\n    },\n    \"reservation\": {\n        \"user_id\": 29,\n        \"user_event_id\": 3,\n        \"verified\": false,\n        \"id\": 3\n    },\n    \"declined_food\": [],\n    \"declined_drinks\": [],\n    \"declined_accessories\": [\n        {\n            \"id\": 51,\n            \"name\": \"Father of Christians\",\n            \"price\": \"0.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Religious/51.jpg\",\n            \"accessory_category_id\": 3,\n            \"description\": \"1 person who reads the Bible to Christians , NOTE : He does not take money\",\n            \"category\": {\n                \"id\": 3,\n                \"category\": \"Religious\"\n            }\n        },\n        {\n            \"id\": 30,\n            \"name\": \"Gray Party Chair\",\n            \"price\": \"8,000.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Basics/30.jpg\",\n            \"accessory_category_id\": 2,\n            \"description\": \"1 Decorative gray party chair , height : 60cm , width : 35cm , NOTE : it is only for rent\",\n            \"category\": {\n                \"id\": 2,\n                \"category\": \"Basics\"\n            }\n        },\n        {\n            \"id\": 40,\n            \"name\": \"Black Plastic Table\",\n            \"price\": \"10,000.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Basics/40.jpg\",\n            \"accessory_category_id\": 2,\n            \"description\": \"1 Decorative black plastic table , height : 80cm , width : 35cm , NOTE : it is only for rent\",\n            \"category\": {\n                \"id\": 2,\n                \"category\": \"Basics\"\n            }\n        },\n        {\n            \"id\": 50,\n            \"name\": \"Mosque Preacher\",\n            \"price\": \"0.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Religious/50.jpg\",\n            \"accessory_category_id\": 3,\n            \"description\": \"1 person who prays for Muslims in mosque , NOTE : He does not take money\",\n            \"category\": {\n                \"id\": 3,\n                \"category\": \"Religious\"\n            }\n        },\n        {\n            \"id\": 60,\n            \"name\": \"Display Screen\",\n            \"price\": \"145,000.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Electrical_equipment/60.jpg\",\n            \"accessory_category_id\": 5,\n            \"description\": \"1 person who mixes tunes on a dedicated instrument\",\n            \"category\": {\n                \"id\": 5,\n                \"category\": \"Electrical Equipment\"\n            }\n        },\n        {\n            \"id\": 70,\n            \"name\": \"Wireless Microphone\",\n            \"price\": \"12,000.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Audio_equipment/70.jpg\",\n            \"accessory_category_id\": 7,\n            \"description\": \"1 Portable speaker system for playing music or speeches , NOTE : it is only for rent\",\n            \"category\": {\n                \"id\": 7,\n                \"category\": \"Audio Equipment\"\n            }\n        }\n    ],\n    \"status_code\": 201\n}"
-						},
 						{
 							"name": "time not available",
 							"originalRequest": {
@@ -10066,12 +11277,12 @@
 									"formdata": [
 										{
 											"key": "location_id",
-											"value": "1",
+											"value": "15",
 											"type": "text"
 										},
 										{
 											"key": "date",
-											"value": "2024-05-21",
+											"value": "2024-05-26",
 											"type": "text"
 										},
 										{
@@ -10086,12 +11297,12 @@
 										},
 										{
 											"key": "start_time",
-											"value": "10:00 AM",
+											"value": "10:00 PM",
 											"type": "text"
 										},
 										{
 											"key": "end_time",
-											"value": "12:00 PM",
+											"value": "01:00 AM",
 											"type": "text"
 										},
 										{
@@ -10128,11 +11339,11 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 27 May 2024 06:54:12 GMT"
+									"value": "Thu, 04 Jul 2024 11:06:46 GMT"
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 27 May 2024 06:54:12 GMT"
+									"value": "Thu, 04 Jul 2024 11:06:46 GMT"
 								},
 								{
 									"key": "Connection",
@@ -10156,7 +11367,7 @@
 								},
 								{
 									"key": "X-RateLimit-Remaining",
-									"value": "59"
+									"value": "58"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -10164,7 +11375,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"message\": \"Event reserved successfully\",\n    \"event\": {\n        \"user_id\": 29,\n        \"location_id\": \"1\",\n        \"date\": \"2024-05-21\",\n        \"invitation_type\": \"Public\",\n        \"description\": \"Test\",\n        \"start_time\": \"10:00 AM\",\n        \"end_time\": \"12:00 PM\",\n        \"num_people_invited\": \"50\",\n        \"id\": 10\n    },\n    \"event_supplement\": {\n        \"user_event_id\": 10,\n        \"warehouse_id\": 1,\n        \"food_details\": [\n            {\n                \"id\": 1,\n                \"name\": \"Khashkhash Kebab\",\n                \"price\": \"89,000.00 S.P\",\n                \"picture\": \"http://localhost:8000/Food/Oriental_meals/1.jpg\",\n                \"description\": \"200g of Meat Kebab , Tomato Sauce with especially spicy\",\n                \"country_of_origin\": \"United Arab Emirates\",\n                \"category\": \"Oriental Meals\"\n            }\n        ],\n        \"drinks_details\": [\n            {\n                \"id\": 1,\n                \"name\": \"Space Drink\",\n                \"price\": \"37,000.00S.P\",\n                \"drink_category_id\": 1,\n                \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\",\n                \"description\": \"Soda , Orange , Lemon , Syrup mixture\",\n                \"category\": \"Cold Drinks\"\n            }\n        ],\n        \"accessories_details\": [\n            {\n                \"id\": 1,\n                \"name\": \"Tulip Flower Vase\",\n                \"price\": \"14,000.00\",\n                \"picture\": \"http://localhost:8000/Accessories/Decoration/1.jpg\",\n                \"description\": \"1 vase of artificial white tulips flowers placed on the table with green veins , NOTE : it is only for rent\",\n                \"category\": \"Decoration\"\n            }\n        ],\n        \"total_price\": \"140,000.00\",\n        \"id\": 10\n    },\n    \"reservation\": {\n        \"user_id\": 29,\n        \"user_event_id\": 10,\n        \"verified\": false,\n        \"id\": 10\n    },\n    \"declined_items\": [],\n    \"status_code\": 201\n}"
+							"body": "{\n    \"message\": \"Event reserved successfully\",\n    \"event_id\": 16,\n    \"status_code\": 201\n}"
 						}
 					]
 				},
@@ -10459,7 +11670,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzE2ODg4ODA5LCJleHAiOjE3MTY5NzUyMDksIm5iZiI6MTcxNjg4ODgwOSwianRpIjoiMlhNVHNQVUpGcEV4WUZRZyIsInN1YiI6IjM2IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.9DL05KrUO3tYpvBoel5M-TM80q13gjjFfkfwHJXNsBE",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
 									"type": "string"
 								}
 							]
@@ -10467,7 +11678,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/user/events/1/supplements",
+							"raw": "http://127.0.0.1:8000/api/user/events/12/supplements",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -10480,7 +11691,7 @@
 								"api",
 								"user",
 								"events",
-								"1",
+								"12",
 								"supplements"
 							]
 						}
@@ -10557,6 +11768,1302 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"food_details\": [\n        {\n            \"id\": 2,\n            \"name\": \"Eggplant Kebab\",\n            \"price\": \"91,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Food/Oriental_meals/2.jpg\",\n            \"description\": \"200g of Meat Kebab , Onion slices with lettuce , Eggplant\",\n            \"country_of_origin\": \"Yemen\",\n            \"category\": \"Oriental Meals\"\n        },\n        {\n            \"id\": 1,\n            \"name\": \"Khashkhash Kebab\",\n            \"price\": \"89,000.00 S.P\",\n            \"picture\": \"http://localhost:8000/Food/Oriental_meals/1.jpg\",\n            \"description\": \"200g of Meat Kebab , Tomato Sauce with especially spicy\",\n            \"country_of_origin\": \"United Arab Emirates\",\n            \"category\": \"Oriental Meals\"\n        }\n    ],\n    \"drinks_details\": [\n        {\n            \"id\": 1,\n            \"name\": \"Space Drink\",\n            \"price\": \"37,000.00S.P\",\n            \"drink_category_id\": 1,\n            \"picture\": \"http://localhost:8000/Drinks/Cold_drinks/128.jpg\",\n            \"description\": \"Soda , Orange , Lemon , Syrup mixture\",\n            \"category\": \"Cold Drinks\"\n        }\n    ],\n    \"accessories_details\": [\n        {\n            \"id\": 1,\n            \"name\": \"Tulip Flower Vase\",\n            \"price\": \"14,000.00\",\n            \"picture\": \"http://localhost:8000/Accessories/Decoration/1.jpg\",\n            \"description\": \"1 vase of artificial white tulips flowers placed on the table with green veins , NOTE : it is only for rent\",\n            \"category\": \"Decoration\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "add food and drinks to event supplements",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/events/12/food&drinks",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"events",
+								"12",
+								"food&drinks"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/food&drinks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"food&drinks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:15:24 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:15:24 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Items added to event's supplements successfully\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "empty cart",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/food&drinks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"food&drinks"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:15:41 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:15:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Cart is empty\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "declined items",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/food&drinks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"food&drinks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:16:12 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:16:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "54"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Process saved, But there are 1 declined items because they are not suitable for the host, if you want to see them Click Here!\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "add accessories to event supplements",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDAyMDUyLCJleHAiOjE3MjAwODg0NTIsIm5iZiI6MTcyMDAwMjA1MiwianRpIjoiNWpDZThJdVUya1VtUldXTCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.KItrrXSJkRusO2HRHsUzJtR7fJ41yJ4FvdHveCAhRkE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/events/12/accessories",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"events",
+								"12",
+								"accessories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/accessories",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"accessories"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:17:22 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:17:22 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "56"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Items added to event's supplements successfully\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "empty cart",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/accessories",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"accessories"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:17:34 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:17:34 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "55"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Cart is empty\",\n    \"status_code\": 400\n}"
+						},
+						{
+							"name": "declined items",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/events/11/accessories",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"events",
+										"11",
+										"accessories"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:27:06 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:27:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Process saved, But there are 1 declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "get declined food and drinks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxOTgyNDc4OCwiZXhwIjoxNzE5OTExMTg4LCJuYmYiOjE3MTk4MjQ3ODgsImp0aSI6IjZDV2VyaEdaSmx3bFM2b3IiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c1zdhg6dXsE3v6BT-bCgfYJZwxMo--_CccYmWkqq1Kw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/cart/declined_food&drinks",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"cart",
+								"declined_food&drinks"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/cart/declined_food&drinks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"cart",
+										"declined_food&drinks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:46:17 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:46:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"food\": [],\n    \"drink\": [\n        {\n            \"id\": 30,\n            \"name\": \"Chocolate Cocktail\",\n            \"picture\": \"http://localhost:8000/Drinks/Cocktails/171.jpg\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get declined accessories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcxOTgyNDc4OCwiZXhwIjoxNzE5OTExMTg4LCJuYmYiOjE3MTk4MjQ3ODgsImp0aSI6IjZDV2VyaEdaSmx3bFM2b3IiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.c1zdhg6dXsE3v6BT-bCgfYJZwxMo--_CccYmWkqq1Kw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/cart/declined_accessories",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"cart",
+								"declined_accessories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/cart/declined_accessories",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"cart",
+										"declined_accessories"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:51:59 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 01 Jul 2024 09:51:59 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Tulip Flower Vase\",\n        \"picture\": \"http://localhost:8000/Accessories/Decoration/1.jpg\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "generate QR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzIwMDkxMTc4LCJleHAiOjE3MjAxNzc1NzgsIm5iZiI6MTcyMDA5MTE3OCwianRpIjoiTVFCaGlvbWlQY2ttUXZGUCIsInN1YiI6IjM5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.iW4WeuaaBl6AH2XTNmgGZDNE8rmAnZjyRWat_9zskTU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/event/12/qr",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"event",
+								"12",
+								"qr"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/user/event/12/qr",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"user",
+										"event",
+										"12",
+										"qr"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 04 Jul 2024 11:15:18 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 04 Jul 2024 11:15:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Receipt generated successfully. Scan the QR to download it or click the button below.\",\n    \"qr_code\": \"http://localhost:8000/storage/qr_codes/66868446518a5.png\",\n    \"status_code\": 200\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Search History",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAzNTAyMywiZXhwIjoxNzIwMTIxNDIzLCJuYmYiOjE3MjAwMzUwMjMsImp0aSI6Im9MY2JEN0NHVXZrT05pMTYiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.VvuoNUaiWE9d0XWV4vas6yyVUpoUoKAWbwgO3x8F3wk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/history/search",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"history",
+								"search"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Empty history search",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/history/search",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"history",
+										"search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 19:42:41 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 19:42:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"massage\": \"There is no search history yet, dear user, search for anything (food - drinks - accessories - locations)\",\n    \"status_code\": 404\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/history/search",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"history",
+										"search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 19:47:41 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 19:47:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"history\": \"serserser\"\n    },\n    {\n        \"id\": 2,\n        \"history\": \"trtr\"\n    },\n    {\n        \"id\": 3,\n        \"history\": \"ice\"\n    },\n    {\n        \"id\": 4,\n        \"history\": \"tea\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "delete one search from history",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAzNTAyMywiZXhwIjoxNzIwMTIxNDIzLCJuYmYiOjE3MjAwMzUwMjMsImp0aSI6Im9MY2JEN0NHVXZrT05pMTYiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.VvuoNUaiWE9d0XWV4vas6yyVUpoUoKAWbwgO3x8F3wk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/delete/one/search/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"delete",
+								"one",
+								"search",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/delete/one/search/2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"delete",
+										"one",
+										"search",
+										"2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:06:44 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:06:44 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "56"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"record deleted successfully\",\n    \"status_code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "delete all search history",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3ZlcmlmeS1lbWFpbCIsImlhdCI6MTcyMDAzNTAyMywiZXhwIjoxNzIwMTIxNDIzLCJuYmYiOjE3MjAwMzUwMjMsImp0aSI6Im9MY2JEN0NHVXZrT05pMTYiLCJzdWIiOiIzOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.VvuoNUaiWE9d0XWV4vas6yyVUpoUoKAWbwgO3x8F3wk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/delete/all/search",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"delete",
+								"all",
+								"search"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/delete/all/search",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"delete",
+										"all",
+										"search"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:15:38 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:15:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"All search history deleted successfully.\",\n    \"status_code\": 200\n}"
+						},
+						{
+							"name": "empty search history",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/delete/all/search",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"delete",
+										"all",
+										"search"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:16:06 GMT"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Jul 2024 20:16:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.4"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"massage\": \"There is no search history yet to be deleted\",\n    \"status_code\": 404\n}"
 						}
 					]
 				}
