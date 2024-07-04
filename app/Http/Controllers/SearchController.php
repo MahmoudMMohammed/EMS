@@ -145,7 +145,6 @@ class SearchController extends Controller
             ], 422);
         }
 
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
 
         $validator = Validator::make($request->all() , [
             'search' => 'required|string|max:100' ,
@@ -160,8 +159,7 @@ class SearchController extends Controller
             ] , 422);
         }
 
-        $input = $request->input('search');
-
+        $input = TranslateTextHelper::translateToEnglishOnly($request->input('search'));
 
         $exists = Search::query()->where('history' , $request->search)->first();
 
@@ -186,6 +184,8 @@ class SearchController extends Controller
                     ->where('name', 'LIKE', '%' . $input . '%')
                     ->orderBy('price')
                     ->get();
+
+                TranslateTextHelper::setTarget($user->profile->preferred_language);
 
                 if(!$results->count() > 0)
                 {
@@ -224,6 +224,8 @@ class SearchController extends Controller
                     ->orderBy('price')
                     ->get();
 
+                TranslateTextHelper::setTarget($user->profile->preferred_language);
+
                 if(!$results->count() > 0)
                 {
                     return response()->json([
@@ -256,6 +258,8 @@ class SearchController extends Controller
                     ->orderBy('price')
                     ->get();
 
+                TranslateTextHelper::setTarget($user->profile->preferred_language);
+
                 if(!$results->count() > 0)
                 {
                     return response()->json([
@@ -287,6 +291,8 @@ class SearchController extends Controller
                     ->where('name' , 'LIKE' , '%' . $input . '%')
                     ->orderBy('reservation_price')
                     ->get();
+
+                TranslateTextHelper::setTarget($user->profile->preferred_language);
 
                 if(!$results->count() > 0)
                 {
