@@ -305,6 +305,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //delete all search history of user
     Route::delete('/delete/all/search' , [SearchController::class , 'deleteAllSearch']);
+
+    //api for allowed to user searching
+    Route::post('/search' , [SearchController::class , 'Search']);
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
