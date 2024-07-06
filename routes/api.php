@@ -164,6 +164,8 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get the declined accessories for user
     Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
+    //update item quantity in event supplements
+    Route::post('/user/event/supplements', [EventSupplementController::class , 'updateSupplement']);
 
 
 

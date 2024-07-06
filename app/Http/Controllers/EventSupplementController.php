@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
+use App\Models\Accessory;
 use App\Models\AccessoryCategory;
 use App\Models\Cart;
+use App\Models\Drink;
 use App\Models\DrinkCategory;
 use App\Models\EventSupplement;
+use App\Models\Food;
 use App\Models\FoodCategory;
 use App\Models\HostDrinkCategory;
 use App\Models\HostFoodCategory;
@@ -19,6 +22,8 @@ use App\Models\WarehouseAccessory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use function Symfony\Component\String\s;
 
 class EventSupplementController extends Controller
 {
@@ -312,6 +317,70 @@ class EventSupplementController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public function updateSupplement(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|integer|exists:user_events,id',
+            'item_id' => 'required|integer',
+            'item_type' => 'required|string|in:food,drink,accessory',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422
+            ], 422);
+        }
+
+        $event = UserEvent::find($request->event_id);
+
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $supplements = $event->supplements;
+
+        $item = $this->getItem($request->item_type, $request->item_id);
+
+        if (!$item) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $itemSupplements = $this->getItemSupplements($item, $supplements);
+
+        foreach ($itemSupplements as &$supplement) {
+            if ($supplement['id'] == $item->id) {
+                $supplement['quantity'] = intval($request->quantity);
+                break;
+            }
+        }
+
+        $updated = $this->updateEventSupplements($itemSupplements, $supplements->id, $request->item_type);
+
+        if (!$updated) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Failed to update item quantity!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Item quantity updated successfully"),
+            "status_code" => 200
+        ], 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     private function parsePrice($priceString): float
     {
         $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
@@ -319,4 +388,44 @@ class EventSupplementController extends Controller
         return floatval($cleanedPrice);
     }
     /////////////////////////////////////////////////
+
+    private function getItem($type, $itemId)
+    {
+        return match ($type) {
+            'food' => Food::find($itemId),
+            'drink' => Drink::find($itemId),
+            'accessory' => Accessory::find($itemId),
+            default => null,
+        };
+    }
+    /////////////////////////////////////////////////
+
+    private function getItemSupplements($item, $supplements)
+    {
+        return match (class_basename($item)) {
+            'Food' => $supplements->food_details,
+            'Drink' => $supplements->drinks_details,
+            'Accessory' => $supplements->accessories_details,
+            default => [],
+        };
+    }
+    /////////////////////////////////////////////////
+
+    private function updateEventSupplements($updatedSupplements, $supplement_id, $type)
+    {
+        return match ($type) {
+            'food' => EventSupplement::where('id', $supplement_id)->update(
+                ["food_details" => json_encode($updatedSupplements)]
+            ),
+            'drink' => EventSupplement::where('id', $supplement_id)->update(
+                ["drinks_details" => json_encode($updatedSupplements)]
+            ),
+            'accessory' => EventSupplement::where('id', $supplement_id)->update(
+                ["accessories_details" => json_encode($updatedSupplements)]
+            ),
+            default => false,
+        };
+    }
+    /////////////////////////////////////////////////
+
 }
