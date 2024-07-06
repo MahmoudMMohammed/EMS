@@ -345,8 +345,6 @@ class EventSupplementController extends Controller
             ], 404);
         }
 
-        $supplements = $event->supplements;
-
         $item = $this->getItem($request->item_type, $request->item_id);
 
         if (!$item) {
@@ -356,11 +354,20 @@ class EventSupplementController extends Controller
             ], 404);
         }
 
+        $supplements = $event->supplements;
+
+        if (!$this->itemExistsInSupplements($item, $supplements)) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item does not exist in supplements!"),
+                "status_code" => 404
+            ], 404);
+        }
+
         $itemSupplements = $this->getItemSupplements($item, $supplements);
 
         foreach ($itemSupplements as &$supplement) {
             if ($supplement['id'] == $item->id) {
-                $supplement['quantity'] = intval($request->quantity);
+                $supplement['quantity'] = $request->quantity;
                 break;
             }
         }
@@ -376,6 +383,74 @@ class EventSupplementController extends Controller
 
         return response()->json([
             "message" => TranslateTextHelper::translate("Item quantity updated successfully"),
+            "status_code" => 200
+        ], 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function removeSupplement(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|integer|exists:user_events,id',
+            'item_id' => 'required|integer',
+            'item_type' => 'required|string|in:food,drink,accessory'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422
+            ], 422);
+        }
+
+        $event = UserEvent::find($request->event_id);
+
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $item = $this->getItem($request->item_type, $request->item_id);
+
+        if (!$item) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $supplements = $event->supplements;
+
+        if (!$this->itemExistsInSupplements($item, $supplements)) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item does not exist in supplements!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $itemSupplements = $this->getItemSupplements($item, $supplements);
+
+        // Filter out the item to be removed
+        $itemSupplements = array_filter($itemSupplements, function ($supplement) use ($item) {
+            return $supplement['id'] !== $item->id;
+        });
+
+        $updated = $this->updateEventSupplements($itemSupplements, $supplements->id, $request->item_type);
+
+        if (!$updated) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Failed to remove item!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Item removed successfully"),
             "status_code" => 200
         ], 200);
     }
@@ -428,4 +503,17 @@ class EventSupplementController extends Controller
     }
     /////////////////////////////////////////////////
 
+    private function itemExistsInSupplements($item, $supplements): bool
+    {
+        $itemSupplements = $this->getItemSupplements($item, $supplements);
+
+        foreach ($itemSupplements as $supplement) {
+            if ($supplement['id'] == $item->id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /////////////////////////////////////////////////
 }
