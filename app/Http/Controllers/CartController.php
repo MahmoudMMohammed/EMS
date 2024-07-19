@@ -8,6 +8,9 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Drink;
 use App\Models\Food;
+use App\Models\Location;
+use App\Models\Warehouse;
+use App\Models\WarehouseAccessory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-    public function addToCart(Request $request)
+    public function addToCart(Request $request): JsonResponse
     {
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
@@ -29,6 +32,14 @@ class CartController extends Controller
         $item = $this->getItem($data['type'], $data['item_id']);
 
         if ($item) {
+            // Check warehouse quantity if item type is accessory
+            if ($data['type'] === 'accessory' && !$this->checkWarehouseQuantity($data['item_id'], $data['location_id'], $data['quantity'])) {
+                return response()->json([
+                    "error" => "Insufficient quantity in warehouse",
+                    "status_code" => 422,
+                ], 422);
+            }
+
             $cartItem = $cart->items()
                 ->where('itemable_type', get_class($item))
                 ->where('itemable_id', $item->id)
@@ -41,7 +52,7 @@ class CartController extends Controller
                 return response()->json([
                     "message" => TranslateTextHelper::translate("Item quantity updated successfully"),
                     "status_code" => 200,
-                ],200);
+                ], 200);
             } else {
                 // Add new item to cart
                 $cartItem = new CartItem(['quantity' => $data['quantity']]);
@@ -50,16 +61,14 @@ class CartController extends Controller
                 return response()->json([
                     "message" => TranslateTextHelper::translate("Item added to cart successfully"),
                     "status_code" => 200,
-                ],200);
+                ], 200);
             }
-
         }
         return response()->json([
             "error" => "Item not found",
             "status_code" => 404,
         ], 404);
     }
-
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     public function removeFromCart(Request $request)
@@ -146,11 +155,18 @@ class CartController extends Controller
     //////////////////////////////////////////////////////////////////////////////////////////////
     private function validateCartItem(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'item_id' => 'required|integer|min:1',
             'type' => 'required|string|in:food,drink,accessory',
             'quantity' => 'sometimes|required|integer|min:1',
-        ]);
+        ];
+
+        // Add location_id validation if type is accessory
+        if ($request->type === 'accessory') {
+            $rules['location_id'] = 'required|integer|min:1|exists:locations,id';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return $validator->errors()->first();
@@ -161,16 +177,12 @@ class CartController extends Controller
     //////////////////////////////////////////////////
     private function getItem($type, $itemId)
     {
-        switch ($type) {
-            case 'food':
-                return Food::find($itemId);
-            case 'drink':
-                return Drink::find($itemId);
-            case 'accessory':
-                return Accessory::find($itemId);
-            default:
-                return null;
-        }
+        return match ($type) {
+            'food' => Food::find($itemId),
+            'drink' => Drink::find($itemId),
+            'accessory' => Accessory::find($itemId),
+            default => null,
+        };
     }
     //////////////////////////////////////////////////
     private function getCart()
@@ -178,8 +190,18 @@ class CartController extends Controller
         $user = Auth::user();
         return Cart::firstOrCreate(['user_id' => $user->id]);
     }
-
     //////////////////////////////////////////////////
+    private function checkWarehouseQuantity($itemId, $locationId, $quantity)
+    {
+        $location = Location::find($locationId);
+        $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
+        $availableQuantityInWarehouse = WarehouseAccessory::whereWarehouseId($warehouse->id)
+            ->whereAccessoryId($itemId)
+            ->pluck('quantity');
+
+        return $availableQuantityInWarehouse[0] >= $quantity;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getCartItemSorted(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -282,7 +304,7 @@ class CartController extends Controller
             'total_Items' => $totalItems ,
         ] , 200);
     }
-    //////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function DeleteAllItemsCart (): JsonResponse
     {
         $user = Auth::user();
