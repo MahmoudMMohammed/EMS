@@ -141,8 +141,8 @@ class EventSupplementController extends Controller
             $numberOfDeclinedItems = sizeof($declinedItems);
             return response()->json([
                 "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host, if you want to see them Click Here!"),
-                "status_code" => 200,
-            ], 200);
+                "status_code" => 202,
+            ], 202);
         }
 
         return response()->json([
@@ -224,8 +224,8 @@ class EventSupplementController extends Controller
             $numberOfDeclinedItems = sizeof($declinedItems);
             return response()->json([
                 "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!"),
-                "status_code" => 200,
-            ], 200);
+                "status_code" => 202,
+            ], 202);
         }
 
         return response()->json([
