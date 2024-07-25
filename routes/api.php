@@ -164,6 +164,12 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get the declined accessories for user
     Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
+    //update item quantity in event supplements
+    Route::post('/user/event/supplements/update', [EventSupplementController::class , 'updateSupplement']);
+
+    // remove item from event supplements
+    Route::post('/user/event/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
+
 
 
 
@@ -230,7 +236,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 
 //download an event receipt
-Route::get('/download-receipt', [ReceiptController::class, 'downloadReceipt']);
+Route::get('/download-receipt/event-id/{eventId}', [ReceiptController::class, 'downloadReceipt']);
 
 
 

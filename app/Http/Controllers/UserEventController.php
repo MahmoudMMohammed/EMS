@@ -55,6 +55,22 @@ class UserEventController extends Controller
         $startTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->start_time);
         $endTime = Carbon::createFromFormat('Y-m-d h:i A', $request->date . ' ' . $request->end_time);
 
+        // Check that the event duration is at least one hour
+        if ($endTime->diffInMinutes($startTime) < 60) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("The event duration must be at least one hour."),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        // Check that the event starts at least three hours from now
+        if ($startTime->diffInMinutes(Carbon::now()) < 180) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("The event start time must be at least three hours from now."),
+                "status_code" => 422,
+            ], 422);
+        }
+
         // Retrieve the location's open and close times and convert to 24-hour format
         $location = Location::findOrFail($request->location_id);
         $locationOpenTime = Carbon::createFromFormat('h:i A', $location->open_time)->setDateFrom($eventDate);

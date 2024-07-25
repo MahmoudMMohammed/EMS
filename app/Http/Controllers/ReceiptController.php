@@ -61,15 +61,15 @@ class ReceiptController extends Controller
         })->toArray();
 
 
-        $pdfPath = 'public/receipts/' . $userEventId . '.pdf';
+        $pdfPath = 'public/receipts/Event-' . $userEventId . '.pdf';
 
 
         // Generate the QR code with the download link using endroid/qr-code
-        $qrCode = new QrCode(url("/api/download-receipt?path={$pdfPath}"));
+        $qrCode = new QrCode(url("/api/download-receipt/event-id/$userEventId"));
         $writer = new PngWriter();
 
         // Generate a unique filename for the QR code image
-        $qrCodeFilename = 'qr_codes/' . uniqid() . '.png';
+        $qrCodeFilename = 'qr_codes/Event-' . $userEventId . '.png';
         $qrCodePath = storage_path('app/public/' . $qrCodeFilename);
 
         // Write the QR code to a file
@@ -126,9 +126,9 @@ class ReceiptController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////////
 
-    public function downloadReceipt(Request $request): StreamedResponse|JsonResponse
+    public function downloadReceipt($eventId): StreamedResponse|JsonResponse
     {
-        $path = $request->query('path');
+        $path = "public/receipts/Event-$eventId.pdf";
 
         if (Storage::exists($path)) {
             return Storage::download($path);
