@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\AccessoryCategory;
+use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
@@ -163,6 +164,14 @@ class AccessoryController extends Controller
         $description = $items->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
+
+        $accessoryIds = $items->pluck('id')->toArray();
+        $favorites = Favorite::query()
+            ->where('favoritable_type' , 'App\Models\Accessory')
+            ->whereIn('favoritable_id' , $accessoryIds)
+            ->pluck('favoritable_id')
+            ->toArray();
+
         $response = [];
         foreach ($items as $item) {
 
@@ -171,10 +180,12 @@ class AccessoryController extends Controller
             $response[] = [
                 'id' => $item->id,
                 'name' => $name[$item->name],
-                'price' => $item->price,
+                'price' => $item->RawPrice,
+                'currency' => 'S.P' ,
                 'description' => $description[$item->description],
                 'picture' => $item->picture,
-                'quantity' => $quantity
+                'numOfItem' => $quantity ,
+                'is_favorite' => in_array($item->id , $favorites),
             ];
         }
 

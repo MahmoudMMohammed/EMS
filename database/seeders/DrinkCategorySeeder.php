@@ -12,8 +12,8 @@ class DrinkCategorySeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {               //1              2              3             4              5                 6
-        $category = ['Cold Drinks' , 'Hot Drinks' , 'Milk shake' , 'Cocktails' , 'Natural juices' , 'Coffee'];
+    {               //1              2              3             4              5                 6            7
+        $category = ['Cold Drinks' , 'Hot Drinks' , 'Milk shake' , 'Cocktails' , 'Natural juices' , 'Coffee' , 'Alcohols'];
 
         $logo = [
             'Drinks/Logo/13.png' ,
@@ -22,6 +22,7 @@ class DrinkCategorySeeder extends Seeder
             'Drinks/Logo/16.png' ,
             'Drinks/Logo/17.png' ,
             'Drinks/Logo/18.png' ,
+            'Drinks/Logo/19.png' ,
         ];
 
         for($i = 0 ; $i<count($category) ; $i++)

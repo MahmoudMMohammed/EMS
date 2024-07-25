@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
+use App\Models\Favorite;
 use App\Models\Food;
 use App\Models\FoodCategory;
 use Illuminate\Http\JsonResponse;
@@ -160,16 +161,28 @@ class FoodController extends Controller
         $country_of_origin = $foods->pluck('country_of_origin')->toArray();
         $country_of_origin = TranslateTextHelper::batchTranslate($country_of_origin);
 
+
+        $foodsIds = $foods->pluck('id')->toArray();
+        $favorites = Favorite::query()
+            ->where('favoritable_type' , 'App\Models\Food')
+            ->whereIn('favoritable_id' , $foodsIds)
+            ->pluck('favoritable_id')
+            ->toArray();
+
+
         $response = [];
+
         foreach ($foods as $food)
         {
             $response [] = [
                 'id' => $food -> id ,
                 'name' => $name[$food-> name] ,
-                'price' => $food-> price ,
+                'price' => $food->RawPrice ,
+                'currency' => 'S.P' ,
                 'description' => $description[$food -> description] ,
                 'country_of_origin' => $country_of_origin[$food -> country_of_origin] ,
                 'picture' => $food -> picture,
+                'is_favorite' => in_array($food->id , $favorites),
             ];
         }
 
