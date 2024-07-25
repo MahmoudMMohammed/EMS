@@ -109,6 +109,15 @@ class LocationController extends Controller
 
         $locationPictures = LocationPicture::whereLocationId($location_id)->pluck('picture');
 
+        $isFavorite = false;
+
+        foreach ($user->favorites as $favorite){
+            if ($location_id == $favorite->favoritable_id && get_class($location) == $favorite->favoritable_type){
+                $isFavorite = true;
+                break;
+            }
+        }
+
         $locationData = [
             "id" => $location->id,
             "name" => TranslateTextHelper::translate($location->name),
@@ -127,6 +136,7 @@ class LocationController extends Controller
             "admin_name" => $admin->name,
             "admin_email" => $admin->email,
             "admin_phone_number" => $admin->profile->phone_number,
+            "is_favorite" => $isFavorite,
         ];
         return response()->json($locationData, 200);
     }
