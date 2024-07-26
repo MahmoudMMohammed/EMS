@@ -19,7 +19,8 @@ class DrinkSeeder extends Seeder
             'Vanilla Milkshake' , 'Chocolate Milkshake' , 'Strawberry Milkshake' , 'Blue Milkshake' , 'Cookies Milkshake' , 'Mint Milkshake' , 'Berry Milkshake' , 'Brownis Milkshake' , 'Mango Milkshake' , 'Caramel Milkshake' ,     //Milkshake
             'Banana and Milk Cocktail' , 'Vanilla Cocktail' , 'Nutella Cocktail' , 'Chocolate Cocktail' , 'Strawberry Cocktail' , 'Mango Cocktail' , 'Berry Cocktail' , 'Brownis Cocktail' ,                                           //Cocktails
             'Strawberry Juices' , 'Polo Juices' , 'Blueberry Juices' , 'Mango Juices' , 'Carrots Juices' , 'Orange Juices' ,                                                                                                           //Juices
-            'Cafe Latte Mocha' , 'Turkish Coffee' , 'Bitter Coffee' , 'American Coffee' , 'Ice Coffee' , 'Ice Latte Coffee' , 'Ice Coffee Caramel' , 'Ice Coffee Vanilla' ,
+            'Cafe Latte Mocha' , 'Turkish Coffee' , 'Bitter Coffee' , 'American Coffee' , 'Ice Coffee' , 'Ice Latte Coffee' , 'Ice Coffee Caramel' , 'Ice Coffee Vanilla' ,                                                            //coffee
+            'Aurva wine' , 'jnoon wine' , 'KRSMA wine' , 'RASA wine' , 'SULA wine' , 'VALLONNE wine' , 'Reveilo wine' , 'SIGNET wine' ,
         ];
 
         $price = [
@@ -29,6 +30,7 @@ class DrinkSeeder extends Seeder
             35000 , 36000 , 39000 , 36000 , 36000 , 37000 , 38000 , 40000 ,
             20000 , 20000 , 22000 , 32000 , 20000 , 20000 ,
             19000 , 21000 , 12000 , 24000 , 32000 , 34000 , 38000 , 38000 ,
+            180000 , 200000 , 240000 , 220000 , 250000 , 290000 , 210000 , 200000 ,
         ];
 
         $category_id = [
@@ -38,6 +40,7 @@ class DrinkSeeder extends Seeder
             4 , 4 , 4 , 4 , 4 , 4 , 4 , 4 ,
             5 , 5 , 5 , 5 , 5 , 5 ,
             6 , 6 , 6 , 6 , 6 , 6 , 6 , 6 ,
+            7 , 7 , 7 , 7 , 7 , 7 , 7 , 7 ,
         ];
 
         $picture = [
@@ -94,6 +97,16 @@ class DrinkSeeder extends Seeder
             'Drinks/Coffee/149.jpg' ,
             'Drinks/Coffee/150.jpg' ,
             'Drinks/Coffee/151.jpg' ,
+
+            'Drinks/Alcohols/1.jpg' ,
+            'Drinks/Alcohols/2.jpg' ,
+            'Drinks/Alcohols/3.jpg' ,
+            'Drinks/Alcohols/4.jpg' ,
+            'Drinks/Alcohols/5.jpg' ,
+            'Drinks/Alcohols/6.jpg' ,
+            'Drinks/Alcohols/7.jpg' ,
+            'Drinks/Alcohols/8.jpg' ,
+
         ];
 
         $description = [
@@ -150,6 +163,15 @@ class DrinkSeeder extends Seeder
             '350ml of Ice latte coffee with foam , Milk' ,
             '350ml of Ice coffee with foam , Milk , Caramel' ,
             '350ml of Ice coffee with foam , Milk , Vanilla' ,
+
+            "Water forms the majority of beer's composition, providing the base for all other ingredients." ,
+            'Malted barley is the primary grain used in beer, contributing to its color, flavor, and fermentable sugars.' ,
+            'Hops are flowers that add bitterness, aroma, and preservative qualities to beer.' ,
+            'Adjunct grains like corn, rice, or wheat can be added to beer for varied flavors and textures' ,
+            'Different strains of yeast can significantly affect the taste, aroma, and mouthfeel of the final beer.' ,
+            'Carbon dioxide, produced during fermentation, gives beer its characteristic fuzziness and helps in forming a frothy head' ,
+            "Specialty grains, such as oats or rye, can be included to impart unique flavors and improve the beer's body and mouthfeel." ,
+            'Additives like spices, fruit, or herbs can be incorporated to create distinct and innovative beer flavors.' ,
         ];
 
 

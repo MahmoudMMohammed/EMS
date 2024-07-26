@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Drink;
 use App\Models\DrinkCategory;
+use App\Models\Favorite;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -157,15 +158,25 @@ class DrinkController extends Controller
         $description = $drinks->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
+        $drinksIds = $drinks->pluck('id')->toArray();
+
+        $favorites = Favorite::query()
+            ->where('favoritable_type' , 'App\Models\Drink')
+            ->whereIn('favoritable_id' , $drinksIds)
+            ->pluck('favoritable_id')
+            ->toArray();
+
         $response = [];
         foreach ($drinks as $drink)
         {
             $response [] = [
                 'id' => $drink->id ,
                 'name' => $name[$drink->name] ,
-                'price' => $drink->price ,
+                'price' => $drink->RawPrice ,
+                'currency' => 'S.P' ,
                 'description' => $description[$drink->description] ,
-                'picture' => $drink->picture
+                'picture' => $drink->picture ,
+                'is_favorite' => in_array($drink->id , $favorites)
             ];
         }
 

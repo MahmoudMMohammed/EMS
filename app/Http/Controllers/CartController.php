@@ -292,7 +292,7 @@ class CartController extends Controller
             $response [] = [
                 'id' => $item->itemable->id ,
                 'name' => $translate[$item->itemable->name] ,
-                'quantity' => $item->quantity ,
+                'numOfItem' => $item->quantity ,
                 'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
                 'picture' => $item->itemable->picture ,
             ];
