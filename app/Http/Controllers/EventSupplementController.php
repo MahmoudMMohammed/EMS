@@ -145,6 +145,13 @@ class EventSupplementController extends Controller
             ], 202);
         }
 
+        if (empty($foodDetails) && empty($drinksDetails)){
+            return response()->json([
+                "message" => TranslateTextHelper::translate("No food or drinks found in cart to add them!"),
+                "status_code" => 404,
+            ], 404);
+        }
+
         return response()->json([
             "message" => TranslateTextHelper::translate("Items added to event's supplements successfully"),
             "status_code" => 200,
@@ -226,6 +233,13 @@ class EventSupplementController extends Controller
                 "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host or quantity not available, if you want to see them Click Here!"),
                 "status_code" => 202,
             ], 202);
+        }
+
+        if (empty($accessoriesDetails)){
+            return response()->json([
+                "message" => TranslateTextHelper::translate("No accessories found in cart to add them!"),
+                "status_code" => 404,
+            ], 404);
         }
 
         return response()->json([
