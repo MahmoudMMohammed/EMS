@@ -108,7 +108,7 @@ class UserEventController extends Controller
         }
 
         $isLocationHasSpaceForPeople = $this->checkLocationCapacity($location->id, $request->num_people_invited);
-        if (!$isLocationHasSpaceForPeople){
+        if (!$isLocationHasSpaceForPeople) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("The number of invited people is bigger than location capacity, Please choose a different location."),
                 "status_code" => 422,
@@ -136,6 +136,7 @@ class UserEventController extends Controller
             "status_code" => 201
         ], 201);
     }
+
     /////////////////////////////////////
     private function checkForOverlappingEvents($locationId, $eventDate, $startTime, $endTime): bool
     {
@@ -151,6 +152,7 @@ class UserEventController extends Controller
             })
             ->exists();
     }
+
     /////////////////////////////////////
     private function getLatestEvent($locationId, $eventDate, $startTime)
     {
@@ -160,6 +162,7 @@ class UserEventController extends Controller
             ->orderBy('end_time', 'desc')
             ->first();
     }
+
     /////////////////////////////////////
     private function createUserEvent($userId, $request, $startTime, $endTime)
     {
@@ -174,6 +177,7 @@ class UserEventController extends Controller
             'num_people_invited' => $request->num_people_invited,
         ]);
     }
+
     /////////////////////////////////////
     private function createEventSupplement($eventId, $governorate)
     {
@@ -189,6 +193,7 @@ class UserEventController extends Controller
             'total_price' => $location->reservation_price, // add the reservation price for start,other supplements later
         ]);
     }
+
     /////////////////////////////////////
     private function createReceipt($userId, $eventSupplementsId, $userEventId)
     {
@@ -198,33 +203,35 @@ class UserEventController extends Controller
             'user_event_id' => $userEventId,
         ]);
     }
+
     /////////////////////////////////////
     private function checkLocationCapacity($location_id, $people_invited): bool
     {
         $location = Location::find($location_id);
-        if ( $location->capacity < $people_invited){
+        if ($location->capacity < $people_invited) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getEventById($event_id): JsonResponse
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
         TranslateTextHelper::setTarget($user->profile->preferred_language);
-        if (!$event){
+        if (!$event) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("Event not found!"),
                 "status_code" => 404
-            ],404);
+            ], 404);
         }
-        if ($event->user_id != $user->id){
+        if ($event->user_id != $user->id) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("Event is no yours to show!"),
                 "status_code" => 403
-            ],403);
+            ], 403);
         }
         return response()->json($event);
     }
@@ -235,11 +242,11 @@ class UserEventController extends Controller
         $user = Auth::user();
         $events = UserEvent::whereUserId($user->id)->get();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
-        if ($events->count() == 0){
+        if ($events->count() == 0) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("You have not created any event yet!"),
                 "status_code" => 404
-            ],404);
+            ], 404);
         }
         return response()->json($events);
     }
@@ -274,7 +281,19 @@ class UserEventController extends Controller
             ];
         }
 
-        return response()->json($monthlyEventCounts , 200);
+        return response()->json($monthlyEventCounts, 200);
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////
+    public function getUserEvent()
+    {
+        $user = Auth::user();
+        if($user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+    }
 }

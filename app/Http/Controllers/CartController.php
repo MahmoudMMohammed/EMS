@@ -289,12 +289,26 @@ class CartController extends Controller
             $totalPrice += $itemTotalPrice;
             $totalItems ++;
 
+            $type = '' ;
+            switch ($item->itemable_type){
+                case 'App\Models\Food' :
+                    $type = 'food' ;
+                    break ;
+                case 'App\Models\Drink' :
+                    $type = 'drink';
+                    break ;
+                case 'App\Models\Accessory' :
+                    $type = 'accessory' ;
+                    break ;
+            }
+
             $response [] = [
                 'id' => $item->itemable->id ,
                 'name' => $translate[$item->itemable->name] ,
                 'numOfItem' => $item->quantity ,
                 'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
                 'picture' => $item->itemable->picture ,
+                'type' => $type
             ];
         }
 
@@ -304,6 +318,7 @@ class CartController extends Controller
             'total_Items' => $totalItems ,
         ] , 200);
     }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function DeleteAllItemsCart (): JsonResponse
     {
