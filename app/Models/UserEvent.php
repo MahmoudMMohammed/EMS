@@ -28,6 +28,7 @@ class UserEvent extends Model
         'start_time',
         'end_time',
         'num_people_invited',
+        'verified'
     ];
 
     /**
@@ -39,6 +40,36 @@ class UserEvent extends Model
         'created_at',
         'updated_at',
     ];
+
+    const STATUS_VALUES = [
+        'Pending' => 0,
+        'Confirmed' => 1,
+        'Rejected' => 2,
+        'Finished' => 3,
+    ];
+
+    const STATUS_KEYS = [
+        0 => 'Pending',
+        1 => 'Confirmed',
+        2 => 'Rejected',
+        3 => 'Finished'
+    ];
+
+    // Convert status to index
+    public function getVerifiedAttribute()
+    {
+        return self::STATUS_VALUES[$this->verified];
+    }
+
+    // Convert index to status
+    public function setStatusByIndex($index)
+    {
+        if (array_key_exists($index, self::STATUS_KEYS)) {
+            $this->verified = self::STATUS_KEYS[$index];
+        } else {
+            throw new \InvalidArgumentException("Invalid status index: $index");
+        }
+    }
 
     public function receipt(): HasOne
     {
