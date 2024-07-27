@@ -56,9 +56,9 @@ class UserEvent extends Model
     ];
 
     // Convert status to index
-    public function getVerifiedAttribute()
+    public function getVerifiedAttribute($value)
     {
-        return self::STATUS_VALUES[$this->verified];
+        return self::STATUS_VALUES[$value];
     }
 
     // Convert index to status
