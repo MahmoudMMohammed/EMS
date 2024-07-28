@@ -262,6 +262,16 @@ class UserEventController extends Controller
             $currentTime = Carbon::now();
             $diff = $startTime->diff($currentTime);
 
+            $remaining_days = sprintf('%03d', $diff->days);
+            $remaining_hours = sprintf('%02d', $diff->h);
+            $remaining_minutes = sprintf('%02d', $diff->i);
+
+            if ($currentTime->isAfter($startTime) || $event->verified == 2){
+                $remaining_days = sprintf('%03d', 000);
+                $remaining_hours = sprintf('%02d', 00);
+                $remaining_minutes = sprintf('%02d', 00);
+            }
+
             return [
                 'id' => $event->id,
                 'date' => $event->date,
@@ -270,9 +280,9 @@ class UserEventController extends Controller
                 'verified' => UserEvent::STATUS_KEYS[$event->verified],
                 'location_name' => $location->name,
                 'location_logo' => $location->logo,
-                'remaining_days' => sprintf('%03d', $diff->days),
-                'remaining_hours' => sprintf('%02d', $diff->h),
-                'remaining_minutes' => sprintf('%02d', $diff->i)
+                'remaining_days' => $remaining_days,
+                'remaining_hours' => $remaining_hours,
+                'remaining_minutes' => $remaining_minutes
             ];
         });
 
@@ -368,6 +378,13 @@ class UserEventController extends Controller
             $remaining_days = sprintf('%03d', $diff->days);
             $remaining_hours = sprintf('%02d', $diff->h);
             $remaining_minutes = sprintf('%02d', $diff->i);
+
+            if ($currentTime->isAfter($startTime) || $reservation->verified == 2){
+                $remaining_days = sprintf('%03d', 000);
+                $remaining_hours = sprintf('%02d', 00);
+                $remaining_minutes = sprintf('%02d', 00);
+            }
+
 
             $response[] = [
                 'id' => $reservation->id,
