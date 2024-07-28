@@ -459,6 +459,38 @@ class UserEventController extends Controller
     }
     //////////////////////////////////////////////////////////////////////////////////////
 
+    public function deleteEvent($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $event = UserEvent::find($event_id);
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+        $currentTime = Carbon::now();
+
+        if ($currentTime->diffInHours($startTime) <= 24) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event cannot be deleted within 24 hours of the start time!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        // Proceed to delete the event if validation passes
+        $event->delete();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Event deleted successfully"),
+            "status_code" => 200
+        ], 200);
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////
+
     private function validateEvent($event, $user): ?JsonResponse
     {
         if (!$event) {

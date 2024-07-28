@@ -685,6 +685,11 @@ class EventSupplementController extends Controller
     {
         $itemSupplements = $this->getItemSupplements($item, $supplements);
 
+        // Check if the item supplements are empty
+        if (empty($itemSupplements)) {
+            return false; // Indicates that the supplements are empty
+        }
+
         foreach ($itemSupplements as $supplement) {
             if ($supplement['id'] == $item->id) {
                 return true;

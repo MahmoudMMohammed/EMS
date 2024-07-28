@@ -152,6 +152,10 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
 
 
+    //delete an event
+    Route::delete('/user/events/{event_id}', [UserEventController::class , 'deleteEvent']);
+
+
 
 
 
