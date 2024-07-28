@@ -355,11 +355,9 @@ class EventSupplementController extends Controller
 
         $event = UserEvent::find($request->event_id);
 
-        if (!$event) {
-            return response()->json([
-                "error" => TranslateTextHelper::translate("Event not found!"),
-                "status_code" => 404
-            ], 404);
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
         }
 
         $item = $this->getItem($request->item_type, $request->item_id);
@@ -425,11 +423,9 @@ class EventSupplementController extends Controller
 
         $event = UserEvent::find($request->event_id);
 
-        if (!$event) {
-            return response()->json([
-                "error" => TranslateTextHelper::translate("Event not found!"),
-                "status_code" => 404
-            ], 404);
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
         }
 
         $item = $this->getItem($request->item_type, $request->item_id);
@@ -471,6 +467,94 @@ class EventSupplementController extends Controller
             "status_code" => 200
         ], 200);
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function addSupplement(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        // Validation rules
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|integer|exists:user_events,id',
+            'item_id' => 'required|integer',
+            'item_type' => 'required|string|in:food,drink,accessory',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        // Handle validation errors
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422
+            ], 422);
+        }
+
+        // Find the event
+        $event = UserEvent::find($request->event_id);
+
+        // Check if the event exists
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        // Retrieve the item
+        $item = $this->getItem($request->item_type, $request->item_id);
+
+        // Check if the item exists
+        if (!$item) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $type = strtolower(class_basename($item));
+        $itemCategoryId = $type . "_category_id";
+
+        $category = $this->getItemCategory($request->item_type, $item[$itemCategoryId]);
+
+        unset($item["$itemCategoryId"]);
+
+        $item['category'] = $category->category;
+        $item['quantity'] = intval($request->quantity);
+
+
+        // Retrieve supplements
+        $supplements = $event->supplements;
+
+        // Check if the item already exists in the supplements
+        if ($this->itemExistsInSupplements($item, $supplements)) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Item already exists in supplements!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        // Retrieve the existing item supplements
+        $itemSupplements = $this->getItemSupplements($item, $supplements);
+
+        // Add the new item to the supplements
+        $itemSupplements[] = $item;
+
+        // Update the event supplements
+        $updated = $this->updateEventSupplements($itemSupplements, $supplements->id, $request->item_type);
+
+        // Check if the update was successful
+        if (!$updated) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Failed to add item!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Item added successfully"),
+            "status_code" => 200
+        ], 200);
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function getFoodSupplementsForEvent($event_id): JsonResponse
@@ -554,6 +638,16 @@ class EventSupplementController extends Controller
             'food' => Food::find($itemId),
             'drink' => Drink::find($itemId),
             'accessory' => Accessory::find($itemId),
+            default => null,
+        };
+    }
+    /////////////////////////////////////////////////
+    private function getItemCategory($type, $itemCategoryId)
+    {
+        return match ($type) {
+            'food' => FoodCategory::find($itemCategoryId),
+            'drink' => DrinkCategory::find($itemCategoryId),
+            'accessory' => AccessoryCategory::find($itemCategoryId),
             default => null,
         };
     }
