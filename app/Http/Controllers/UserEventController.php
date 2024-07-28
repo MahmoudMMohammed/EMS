@@ -365,6 +365,10 @@ class UserEventController extends Controller
             $currentTime = Carbon::now();
             $diff = $startTime->diff($currentTime);
 
+            $remaining_days = sprintf('%03d', $diff->days);
+            $remaining_hours = sprintf('%02d', $diff->h);
+            $remaining_minutes = sprintf('%02d', $diff->i);
+
             $response[] = [
                 'id' => $reservation->id,
                 'name' => $reservation->location->name,
@@ -373,9 +377,9 @@ class UserEventController extends Controller
                 'end_time' => $reservation->end_time,
                 'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
                 'logo' => $reservation->location->logo ,
-                'days' => $diff->days,
-                'hours' => $diff->h,
-                'minutes' => $diff->i
+                'days' => $remaining_days,
+                'hours' => $remaining_hours,
+                'minutes' => $remaining_minutes
             ];
         }
 
