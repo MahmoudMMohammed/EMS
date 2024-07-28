@@ -336,6 +336,7 @@ class UserEventController extends Controller
                 'start_time' => $reservation->start_time,
                 'end_time' => $reservation->end_time,
                 'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'logo' => $reservation->location->logo ,
             ];
         }
 
