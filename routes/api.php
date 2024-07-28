@@ -141,7 +141,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::post('/user/events', [UserEventController::class , 'createEvent']);
 
     //get event by its id
-    Route::get('/user/events/{event_id}', [UserEventController::class , 'getEventById']);
+    Route::get('/user/events/{event_id}/details', [UserEventController::class , 'getEventDetails']);
 
     //get all events for user
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
@@ -151,6 +151,19 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //get supplements for user event
     Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
+
+
+    //get food supplements for user event
+    Route::get('/user/events/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForEvent']);
+
+
+    //get drinks supplements for user event
+    Route::get('/user/events/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForEvent']);
+
+
+    //get accessories supplements for user event
+    Route::get('/user/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForEvent']);
+
 
     //add food and drinks to user's event supplements
     Route::post('/user/events/{event_id}/food&drinks', [EventSupplementController::class , 'processFoodAndDrinksSupplements']);

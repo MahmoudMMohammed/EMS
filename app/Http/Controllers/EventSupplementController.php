@@ -473,6 +473,73 @@ class EventSupplementController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public function getFoodSupplementsForEvent($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $foodSupplements = $event->supplements->food_details;
+        if (!$foodSupplements) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No food supplements added to this event!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        return response()->json($foodSupplements);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getDrinksSupplementsForEvent($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $drinksSupplements = $event->supplements->drinks_details;
+        if (!$drinksSupplements){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No drinks supplements added to this event!"),
+                "status_code" => 404
+            ],404);
+        }
+        return response()->json($drinksSupplements);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getAccessoriesSupplementsForEvent($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $accessoriesSupplements = $event->supplements->accessories_details;
+        if (!$accessoriesSupplements){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No accessories supplements added to this event!"),
+                "status_code" => 404
+            ],404);
+        }
+        return response()->json($accessoriesSupplements);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     private function parsePrice($priceString): float
     {
         $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
@@ -533,4 +600,24 @@ class EventSupplementController extends Controller
         return false;
     }
     /////////////////////////////////////////////////
+    private function validateEvent($event, $user): ?JsonResponse
+    {
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        if ($event->user_id != $user->id) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event is no yours to show!"),
+                "status_code" => 403
+            ], 403);
+        }
+
+        return null; // Indicating validation passed
+    }
+    /////////////////////////////////////////////////
+
 }

@@ -217,7 +217,7 @@ class UserEventController extends Controller
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function getEventById($event_id): JsonResponse
+    public function getEventDetails($event_id): JsonResponse
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
@@ -234,6 +234,15 @@ class UserEventController extends Controller
                 "status_code" => 403
             ], 403);
         }
+        $event->makeHidden([
+            'id',
+            'user_id',
+            'location_id',
+            'date',
+            'start_time',
+            'end_time',
+            'verified',
+        ]);
         return response()->json($event);
     }
 
