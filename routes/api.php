@@ -371,7 +371,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
-
+Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 
 
 //test

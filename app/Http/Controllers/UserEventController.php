@@ -25,6 +25,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\Switch_;
 
 class UserEventController extends Controller
 {
@@ -285,15 +286,59 @@ class UserEventController extends Controller
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    public function getUserEvent()
+    public function getUserEvent(Request $request): JsonResponse
     {
         $user = Auth::user();
-        if($user)
+        if(!$user)
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",
                 "status_code" => 422,
             ], 422);
         }
+
+        $validator = Validator::make($request->all() , [
+            'type' => 'required|in:1,2'
+        ]);
+
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        switch ($request->type)
+        {
+            case 1 :
+                $reservations = UserEvent::query()->where('invitation_type' , 'Private')->get();
+
+                break;
+            case 2 :
+                $reservations = UserEvent::query()->where('invitation_type' , 'Public')->get();
+
+                break;
+            default :
+                return response()->json(['error' => 'Invalid type' , 'status_code'=> 400], 400);
+        }
+
+
+        $response = [];
+
+        foreach ($reservations as $reservation) {
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+            ];
+        }
+
+        return response()->json($response, 200);
     }
 }
