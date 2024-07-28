@@ -350,15 +350,35 @@ class UserEventController extends Controller
         switch ($request->type)
         {
             case 1 :
-                $reservations = UserEvent::query()->where('invitation_type' , 'Private')
-                    ->whereUserId($user->id)
+                $reservations = UserEvent::query()
+                    ->where('user_id' , $user->id)
+                    ->orderBy('date' , 'desc')
                     ->get();
+
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        'massage' => "Dear user,you do not have any reservations of your own yet, create some." ,
+                        'status_code' => 404
+                    ] , 404);
+                }
 
                 break;
             case 2 :
-                $reservations = UserEvent::query()->where('invitation_type' , 'Public')
-                    ->whereUserId($user->id)
+                $reservations = UserEvent::query()
+                    ->where('invitation_type' , 'Public')
+                    ->where( 'verified' , 'Confirmed')
+                    ->where('user_id' , '!=' , $user->id)
+                    ->orderBy('date' , 'desc')
                     ->get();
+
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        'massage' => "Dear user,there are no public events to join, create some." ,
+                        'status_code' => 404
+                    ] , 404);
+                }
 
                 break;
             default :
@@ -367,6 +387,11 @@ class UserEventController extends Controller
 
 
         $response = [];
+
+                //Pending          //Confirmed      //Rejected       //Finished
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
 
         foreach ($reservations as $reservation) {
 
@@ -385,6 +410,31 @@ class UserEventController extends Controller
                 $remaining_minutes = sprintf('%02d', 00);
             }
 
+            $i = '';
+            $c = '';
+
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
 
             $response[] = [
                 'id' => $reservation->id,
@@ -395,13 +445,12 @@ class UserEventController extends Controller
                 'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
                 'logo' => $reservation->location->logo ,
                 'days' => $remaining_days,
-                'hours' => $remaining_hours,
-                'minutes' => $remaining_minutes
+                'time' => $remaining_hours  . ':' . $remaining_minutes,
+                'icon' => $i ,
+                'color' => $c
             ];
         }
 
         return response()->json($response, 200);
     }
-    //////////////////////////////////////////////////////////////////////////////////////
-
 }
