@@ -236,7 +236,7 @@ class UserEventController extends Controller
         TranslateTextHelper::setTarget($user->profile->preferred_language);
 
         $events = UserEvent::whereUserId($user->id)
-            ->select('id', 'date', 'start_time', 'end_time', 'location_id') // Select only necessary fields
+            ->select('id', 'date', 'start_time', 'end_time', 'location_id', 'verified') // Select only necessary fields
             ->get();
 
         if ($events->isEmpty()) {
@@ -259,6 +259,7 @@ class UserEventController extends Controller
                 'date' => $event->date,
                 'start_time' => $event->start_time,
                 'end_time' => $event->end_time,
+                'status' => UserEvent::STATUS_KEYS[$event->verified],
                 'location_name' => $location->name,
                 'location_logo' => $location->logo,
                 'remaining_days' => $diff->days,
