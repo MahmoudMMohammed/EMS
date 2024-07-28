@@ -140,17 +140,40 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //create an event for user
     Route::post('/user/events', [UserEventController::class , 'createEvent']);
 
-    //get event by its id
-    Route::get('/user/events/{event_id}', [UserEventController::class , 'getEventById']);
+    //get event details
+    Route::get('/user/events/{event_id}/details', [UserEventController::class , 'getEventDetails']);
+
+
+    //update event details
+    Route::post('/user/events/details', [UserEventController::class , 'updateEventDetails']);
+
 
     //get all events for user
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
+
+
+    //delete an event
+    Route::delete('/user/events/{event_id}', [UserEventController::class , 'deleteEvent']);
+
 
 
 
 
     //get supplements for user event
     Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
+
+
+    //get food supplements for user event
+    Route::get('/user/events/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForEvent']);
+
+
+    //get drinks supplements for user event
+    Route::get('/user/events/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForEvent']);
+
+
+    //get accessories supplements for user event
+    Route::get('/user/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForEvent']);
+
 
     //add food and drinks to user's event supplements
     Route::post('/user/events/{event_id}/food&drinks', [EventSupplementController::class , 'processFoodAndDrinksSupplements']);
@@ -163,6 +186,11 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //get the declined accessories for user
     Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
+
+
+    //add item to event supplements
+    Route::post('/user/event/supplements/add', [EventSupplementController::class , 'addSupplement']);
+
 
     //update item quantity in event supplements
     Route::post('/user/event/supplements/update', [EventSupplementController::class , 'updateSupplement']);
