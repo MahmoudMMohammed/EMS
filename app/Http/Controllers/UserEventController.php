@@ -233,15 +233,41 @@ class UserEventController extends Controller
     public function getUserEvents(): JsonResponse
     {
         $user = Auth::user();
-        $events = UserEvent::whereUserId($user->id)->get();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
-        if ($events->count() == 0){
+
+        $events = UserEvent::whereUserId($user->id)
+            ->select('id', 'date', 'start_time', 'end_time', 'location_id') // Select only necessary fields
+            ->get();
+
+        if ($events->isEmpty()) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("You have not created any event yet!"),
                 "status_code" => 404
-            ],404);
+            ], 404);
         }
-        return response()->json($events);
+
+        $eventsDetails = $events->map(function($event) {
+            $location = Location::find($event->location_id, ['name', 'logo']); // Select only necessary fields from Location
+
+            // Calculate the remaining time
+            $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+            $currentTime = Carbon::now();
+            $diff = $startTime->diff($currentTime);
+
+            return [
+                'id' => $event->id,
+                'date' => $event->date,
+                'start_time' => $event->start_time,
+                'end_time' => $event->end_time,
+                'location_name' => $location->name,
+                'location_logo' => $location->logo,
+                'remaining_days' => $diff->days,
+                'remaining_hours' => $diff->h,
+                'remaining_minutes' => $diff->i
+            ];
+        });
+
+        return response()->json($eventsDetails);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
