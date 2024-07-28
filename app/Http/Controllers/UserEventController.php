@@ -267,12 +267,12 @@ class UserEventController extends Controller
                 'date' => $event->date,
                 'start_time' => $event->start_time,
                 'end_time' => $event->end_time,
-                'status' => UserEvent::STATUS_KEYS[$event->verified],
+                'verified' => UserEvent::STATUS_KEYS[$event->verified],
                 'location_name' => $location->name,
                 'location_logo' => $location->logo,
-                'remaining_days' => $diff->days,
-                'remaining_hours' => $diff->h,
-                'remaining_minutes' => $diff->i
+                'remaining_days' => sprintf('%03d', $diff->days),
+                'remaining_hours' => sprintf('%02d', $diff->h),
+                'remaining_minutes' => sprintf('%02d', $diff->i)
             ];
         });
 
