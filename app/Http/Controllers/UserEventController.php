@@ -247,6 +247,52 @@ class UserEventController extends Controller
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function updateEventDetails(Request $request)
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|integer|exists:user_events,id',
+            'invitation_type' => 'sometimes|nullable|string',
+            'description' => 'sometimes|nullable|string',
+            'num_people_invited' => 'sometimes|nullable|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        // Retrieve the validated data
+        $validatedData = $validator->validated();
+
+        // Find the event
+        $event = UserEvent::find($validatedData['event_id']);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        // Filter out null values to prevent overwriting with null
+        $filteredData = array_filter($validatedData, function($value) {
+            return !is_null($value);
+        });
+
+        // Update the event with only the provided data
+        $event->update($filteredData);
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Event updated successfully!"),
+            "status_code" => 200,
+        ], 200);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function getUserEvents(): JsonResponse
     {
         $user = Auth::user();
@@ -412,5 +458,25 @@ class UserEventController extends Controller
         return response()->json($response, 200);
     }
     //////////////////////////////////////////////////////////////////////////////////////
+
+    private function validateEvent($event, $user): ?JsonResponse
+    {
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        if ($event->user_id != $user->id) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event is no yours to show!"),
+                "status_code" => 403
+            ], 403);
+        }
+
+        return null; // Indicating validation passed
+    }
+    /////////////////////////////////////////////////
 
 }

@@ -140,8 +140,13 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //create an event for user
     Route::post('/user/events', [UserEventController::class , 'createEvent']);
 
-    //get event by its id
+    //get event details
     Route::get('/user/events/{event_id}/details', [UserEventController::class , 'getEventDetails']);
+
+
+    //update event details
+    Route::post('/user/events/details', [UserEventController::class , 'updateEventDetails']);
+
 
     //get all events for user
     Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
