@@ -28,6 +28,7 @@ class UserEvent extends Model
         'start_time',
         'end_time',
         'num_people_invited',
+        'num_people_joined',
         'verified'
     ];
 

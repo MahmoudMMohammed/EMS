@@ -137,8 +137,11 @@ class EventSupplementController extends Controller
         $eventSupplements->save();
 
 
-        if (!empty($declinedItems)) {
-            $numberOfDeclinedItems = sizeof($declinedItems);
+        // Merging all arrays into one
+        $allItems = array_merge($declinedItems['food'], $declinedItems['drink']);
+
+        if (!empty($allItems)) {
+            $numberOfDeclinedItems = count($allItems);
             return response()->json([
                 "message" => TranslateTextHelper::translate("Process saved, But there are $numberOfDeclinedItems declined items because they are not suitable for the host, if you want to see them Click Here!"),
                 "status_code" => 202,
