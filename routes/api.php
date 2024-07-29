@@ -400,6 +400,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 });
 
 Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
+Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 
 
 //test
