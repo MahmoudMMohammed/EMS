@@ -12,6 +12,7 @@ use App\Models\FoodCategory;
 use App\Models\HostDrinkCategory;
 use App\Models\HostFoodCategory;
 use App\Models\Location;
+use App\Models\LocationPicture;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
 use App\Models\Receipt;
@@ -217,7 +218,7 @@ class UserEventController extends Controller
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function getEventById($event_id): JsonResponse
+    public function getEventDetails($event_id): JsonResponse
     {
         $user = Auth::user();
         $event = UserEvent::find($event_id);
@@ -234,59 +235,62 @@ class UserEventController extends Controller
                 "status_code" => 403
             ], 403);
         }
+        $event->makeHidden([
+            'id',
+            'user_id',
+            'location_id',
+            'date',
+            'start_time',
+            'end_time',
+            'verified',
+        ]);
         return response()->json($event);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function getUserEvents(): JsonResponse
+
+    public function updateEventDetails(Request $request)
     {
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
 
-        $events = UserEvent::whereUserId($user->id)
-            ->select('id', 'date', 'start_time', 'end_time', 'location_id', 'verified') // Select only necessary fields
-            ->get();
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|integer|exists:user_events,id',
+            'invitation_type' => 'sometimes|nullable|string',
+            'description' => 'sometimes|nullable|string',
+            'num_people_invited' => 'sometimes|nullable|integer|min:1'
+        ]);
 
-        if ($events->isEmpty()) {
+        if ($validator->fails()) {
             return response()->json([
-                "error" => TranslateTextHelper::translate("You have not created any event yet!"),
-                "status_code" => 404
-            ], 404);
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
         }
 
-        $eventsDetails = $events->map(function($event) {
-            $location = Location::find($event->location_id, ['name', 'logo']); // Select only necessary fields from Location
+        // Retrieve the validated data
+        $validatedData = $validator->validated();
 
-            // Calculate the remaining time
-            $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
-            $currentTime = Carbon::now();
-            $diff = $startTime->diff($currentTime);
+        // Find the event
+        $event = UserEvent::find($validatedData['event_id']);
 
-            $remaining_days = sprintf('%03d', $diff->days);
-            $remaining_hours = sprintf('%02d', $diff->h);
-            $remaining_minutes = sprintf('%02d', $diff->i);
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
 
-            if ($currentTime->isAfter($startTime) || $event->verified == 2){
-                $remaining_days = sprintf('%03d', 000);
-                $remaining_hours = sprintf('%02d', 00);
-                $remaining_minutes = sprintf('%02d', 00);
-            }
-
-            return [
-                'id' => $event->id,
-                'date' => $event->date,
-                'start_time' => $event->start_time,
-                'end_time' => $event->end_time,
-                'verified' => UserEvent::STATUS_KEYS[$event->verified],
-                'location_name' => $location->name,
-                'location_logo' => $location->logo,
-                'remaining_days' => $remaining_days,
-                'remaining_hours' => $remaining_hours,
-                'remaining_minutes' => $remaining_minutes
-            ];
+        // Filter out null values to prevent overwriting with null
+        $filteredData = array_filter($validatedData, function($value) {
+            return !is_null($value);
         });
 
-        return response()->json($eventsDetails);
+        // Update the event with only the provided data
+        $event->update($filteredData);
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Event updated successfully!"),
+            "status_code" => 200,
+        ], 200);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,6 +326,59 @@ class UserEventController extends Controller
         return response()->json($monthlyEventCounts, 200);
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    public function deleteEvent($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $event = UserEvent::find($event_id);
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+        $currentTime = Carbon::now();
+
+        if ($currentTime->diffInHours($startTime) <= 24) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event cannot be deleted within 24 hours of the start time!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        // Proceed to delete the event if validation passes
+        $event->delete();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Event deleted successfully"),
+            "status_code" => 200
+        ], 200);
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    private function validateEvent($event, $user): ?JsonResponse
+    {
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        if ($event->user_id != $user->id) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event is no yours to show!"),
+                "status_code" => 403
+            ], 403);
+        }
+
+        return null; // Indicating validation passed
+    }
     //////////////////////////////////////////////////////////////////////////////////////
     public function getUserEvent(Request $request): JsonResponse
     {
@@ -388,7 +445,7 @@ class UserEventController extends Controller
 
         $response = [];
 
-                //Pending          //Confirmed      //Rejected       //Finished
+        //Pending          //Confirmed      //Rejected       //Finished
         $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
 
         $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
@@ -453,4 +510,79 @@ class UserEventController extends Controller
 
         return response()->json($response, 200);
     }
+    //////////////////////////////////////////////////////////////////////////
+    public function getUserPrivateEventDetails($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $event = UserEvent::query()->find($event_id);
+        if(!$event)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $event = UserEvent::query()->where('id' , $event_id)->first();
+        if(!$event)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time)->subHours(24);
+        $currentTime = Carbon::now();
+        $diff = $startTime->diff($currentTime);
+
+        $remaining_days = sprintf('%03d', $diff->days);
+        $remaining_hours = sprintf('%02d', $diff->h);
+        $remaining_minutes = sprintf('%02d', $diff->i);
+
+        if ($currentTime->isAfter($startTime) || $event->verified == 2) {
+            $remaining_days = sprintf('%03d', 0);
+            $remaining_hours = sprintf('%02d', 0);
+            $remaining_minutes = sprintf('%02d', 0);
+        }
+
+        $pictures = LocationPicture::query()
+            ->where('location_id', $event->location_id)
+            ->pluck('picture')
+            ->toArray();
+
+        if (!$pictures) {
+            return response()->json([
+                "error" => "Something went wrong, try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $status = !($remaining_days == '000' && $remaining_hours == '00' && $remaining_minutes == '00');
+
+        $response = [
+            'id' => $event->id,
+            'date' => $event->date,
+            'verified' => UserEvent::STATUS_KEYS[$event->verified],
+            'start_time' => $event->start_time,
+            'end_time' => $event->end_time,
+            'picture_1' => $pictures[0] ,
+            'picture_2' => $pictures[1] ,
+            'picture_3' => $pictures[2] ,
+            'days' => $remaining_days,
+            'time' => $remaining_hours . ':' . $remaining_minutes,
+            'status' => $status
+        ];
+
+        return response()->json($response, 200);
+    }
+
 }
