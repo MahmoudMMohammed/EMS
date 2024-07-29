@@ -23,23 +23,10 @@ class EventSupplementsFactory extends Factory
     {
         static $counter = 1;
 
-        $food_details = [
-        Food::find($this->faker->numberBetween(1,127)),
-        Food::find($this->faker->numberBetween(1,127)),
-        Food::find($this->faker->numberBetween(1,127))
-        ];
+        $food_details = $this->addItemsWithQuantity(Food::class, 127);
+        $drinks_details = $this->addItemsWithQuantity(Drink::class, 56);
+        $accessories_details = $this->addItemsWithQuantity(Accessory::class, 71);
 
-        $drinks_details = [
-        Drink::find($this->faker->numberBetween(1,48)),
-        Drink::find($this->faker->numberBetween(1,48)),
-        Drink::find($this->faker->numberBetween(1,48)),
-        ];
-
-        $accessories_details = [
-        Accessory::find($this->faker->numberBetween(1,71)),
-        Accessory::find($this->faker->numberBetween(1,71)),
-        Accessory::find($this->faker->numberBetween(1,71)),
-        ];
         return [
             'user_event_id' => $counter++,
             'warehouse_id' => $this->faker->numberBetween(1,7),
@@ -49,4 +36,17 @@ class EventSupplementsFactory extends Factory
             'total_price' => $this->faker->randomFloat('2', 100000, 10000000),
         ];
     }
+    /////////////////////////////////////////////////////////////////////////////
+    private function addItemsWithQuantity($modelClass, $maxId): array
+    {
+        $items = [];
+        for ($i = 0; $i < 3; $i++) {
+            $item = $modelClass::find($this->faker->numberBetween(1, $maxId));
+            $item['quantity'] = $this->faker->numberBetween(1, 10); // Add the quantity attribute
+            $items[] = $item;
+        }
+        return $items;
+    }
+    /////////////////////////////////////////////////////////////////////////////
+
 }
