@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Feedback;
 use App\Models\User;
+use App\Models\UserEvent;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -160,6 +162,42 @@ class OwnerController extends Controller
             'status_code' => 200,
         ], 200);
     }
+    ////////////////////////////////////////////////////////////////
+    public function deleteReservation($event_id): JsonResponse
+    {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+
+
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        $user = User::findOrFail($event->user_id);
+
+        if ($event->verified == 1 || $event->verified == 0){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Action cannot be done!, Reservation can be deleted only if they are Rejected or Finished."),
+                "status_code" => 400
+            ], 400);
+        }
+
+        $event->delete();
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been deleted"),TranslateTextHelper::translate("Reservation Deleted")));
+
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Event deleted successfully"),
+            "status_code" => 204
+        ], 204);
+    }
+    ////////////////////////////////////////////////////////////////
 
 
 }

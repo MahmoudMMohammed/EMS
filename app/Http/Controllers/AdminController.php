@@ -212,7 +212,7 @@ class AdminController extends Controller
 
         if ($event->verified == 2 || $event->verified == 3 ){
             return response()->json([
-                "error" => TranslateTextHelper::translate("This action cannot be done!"),
+                "error" => TranslateTextHelper::translate("This action cannot be done!, You cannot accept Rejected or Finished reservation."),
                 "status_code" => 400
             ], 400);
         }
@@ -221,7 +221,7 @@ class AdminController extends Controller
         $event->save();
 
         TranslateTextHelper::setTarget($user->profile->preferred_language);
-        event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been approved"),TranslateTextHelper::translate("Reservation Approved")));
+        event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been approved."),TranslateTextHelper::translate("Reservation Approved")));
 
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         return response()->json([
@@ -255,7 +255,7 @@ class AdminController extends Controller
 
         if ($event->verified == 1 || $event->verified == 3 ){
             return response()->json([
-                "error" => TranslateTextHelper::translate("This action cannot be done!"),
+                "error" => TranslateTextHelper::translate("This action cannot be done!, You cannot reject Confirmed or Finished reservations."),
                 "status_code" => 400
             ], 400);
         }

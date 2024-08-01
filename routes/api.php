@@ -193,17 +193,19 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
 
     //add item to event supplements
-    Route::post('/user/event/supplements/add', [EventSupplementController::class , 'addSupplement']);
+    Route::post('/user/events/supplements/add', [EventSupplementController::class , 'addSupplement']);
 
 
     //update item quantity in event supplements
-    Route::post('/user/event/supplements/update', [EventSupplementController::class , 'updateSupplement']);
+    Route::post('/user/events/supplements/update', [EventSupplementController::class , 'updateSupplement']);
 
 
     // remove item from event supplements
-    Route::post('/user/event/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
+    Route::post('/user/events/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
 
 
+    //generate QR code for event receipt
+    Route::get('/user/events/{user_event_id}/qr', [ReceiptController::class, 'generateQRForReceipt']);
 
 
 
@@ -249,37 +251,54 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //find accessory by its id
     Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
 
-
-    //generate QR code for event receipt
-    Route::get('/user/event/{userEventId}/qr', [ReceiptController::class, 'generateQRForReceipt']);
-
-
-
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
 
-    //get food supplements details for a user event
-    Route::get('/admin/events/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForSomeUserEvent']);
+    Route::prefix("admin")->group(function (){
 
-    //get drinks supplements details for a user event
-    Route::get('/admin/events/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForSomeUserEvent']);
+        Route::prefix("events/{event_id}")->group(function () {
 
-    //get accessories supplements details for a user event
-    Route::get('/admin/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForSomeUserEvent']);
+            Route::prefix("supplements")->group(function () {
+
+                //get food supplements details for a user event
+                Route::get('/food', [EventSupplementController::class , 'getFoodSupplementsForSomeUserEvent']);
+
+                //get drinks supplements details for a user event
+                Route::get('/drinks', [EventSupplementController::class , 'getDrinksSupplementsForSomeUserEvent']);
+
+                //get accessories supplements details for a user event
+                Route::get('/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForSomeUserEvent']);
+
+            });
 
 
+            //accept user reservation
+            Route::post('/accept', [AdminController::class , 'acceptReservation']);
 
-    //accept user reservation
-    Route::get('/admin/events/{event_id}/accept', [AdminController::class , 'acceptReservation']);
+            //reject user reservation
+            Route::post('/reject', [AdminController::class , 'rejectReservation']);
 
-    //reject user reservation
-    Route::get('/admin/events/{event_id}/reject', [AdminController::class , 'rejectReservation']);
+        });
+
+
+    });
+
 
 
 });
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
+
+    Route::prefix("owner")->group(function () {
+
+        Route::prefix("events/{event_id}")->group(function () {
+
+            Route::delete('/delete', [OwnerController::class , 'deleteReservation']);
+
+        });
+
+    });
 
 });
 
