@@ -629,11 +629,12 @@ class EventSupplementController extends Controller
         $admin = Auth::user();
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         $event = UserEvent::find($event_id);
-        $user = User::find($event->user_id);
 
-        $validationResponse = $this->validateEvent($event, $user);
-        if ($validationResponse !== null) {
-            return $validationResponse;
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
         }
 
         $foodSupplements = $event->supplements->food_details;
@@ -658,11 +659,12 @@ class EventSupplementController extends Controller
         $admin = Auth::user();
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         $event = UserEvent::find($event_id);
-        $user = User::find($event->user_id);
 
-        $validationResponse = $this->validateEvent($event, $user);
-        if ($validationResponse !== null) {
-            return $validationResponse;
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
         }
 
         $drinksSupplements = $event->supplements->drinks_details;
@@ -686,11 +688,12 @@ class EventSupplementController extends Controller
         $admin = Auth::user();
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         $event = UserEvent::find($event_id);
-        $user = User::find($event->user_id);
 
-        $validationResponse = $this->validateEvent($event, $user);
-        if ($validationResponse !== null) {
-            return $validationResponse;
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
         }
 
         $accessoriesSupplements = $event->supplements->accessories_details;
@@ -706,7 +709,7 @@ class EventSupplementController extends Controller
             return $item;
         });
 
-        return response()->json($accessoriesSupplements);
+        return response()->json($supplements);
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Drink;
@@ -10,6 +11,7 @@ use App\Models\Food;
 use App\Models\Location;
 use App\Models\MainEvent;
 use App\Models\User;
+use App\Models\UserEvent;
 use App\Models\Warehouse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -186,5 +188,92 @@ class AdminController extends Controller
 
         return response()->json($response , 200);
     }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    public function acceptReservation($event_id): JsonResponse
+    {
+        $admin = Auth::user();
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+        $user = User::findOrFail($event->user_id);
+
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        if ($event->verified == 1){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event already accepted!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        if ($event->verified == 2 || $event->verified == 3 ){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("This action cannot be done!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        $event->setStatusByIndex(1);
+        $event->save();
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been approved"),TranslateTextHelper::translate("Reservation Approved")));
+
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Event accepted successfully"),
+            "status_code" => 200
+        ], 200);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    public function rejectReservation($event_id): JsonResponse
+    {
+        $admin = Auth::user();
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+        $user = User::findOrFail($event->user_id);
+
+        if (!$event) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event not found!"),
+                "status_code" => 404
+            ], 404);
+        }
+
+        if ($event->verified == 2){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event already Rejected!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        if ($event->verified == 1 || $event->verified == 3 ){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("This action cannot be done!"),
+                "status_code" => 400
+            ], 400);
+        }
+
+        $event->setStatusByIndex(2);
+        $event->save();
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been rejected"),TranslateTextHelper::translate("Reservation Rejected")));
+
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Event Rejected successfully"),
+            "status_code" => 200
+        ], 200);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
 }
 

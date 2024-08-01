@@ -52,10 +52,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 
 //login for user
-Route::post('login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
 //login for admin
-Route::post('login/admin', [AuthController::class, 'login']);
+Route::post('/login/admin', [AuthController::class, 'login']);
 
 
 
@@ -267,6 +267,15 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
     //get accessories supplements details for a user event
     Route::get('/admin/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForSomeUserEvent']);
+
+
+
+    //accept user reservation
+    Route::get('/admin/events/{event_id}/accept', [AdminController::class , 'acceptReservation']);
+
+    //reject user reservation
+    Route::get('/admin/events/{event_id}/reject', [AdminController::class , 'rejectReservation']);
+
 
 });
 
