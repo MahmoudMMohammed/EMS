@@ -16,6 +16,7 @@ use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
+use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
@@ -621,6 +622,91 @@ class EventSupplementController extends Controller
         }
         return response()->json($accessoriesSupplements);
 
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getFoodSupplementsForSomeUserEvent($event_id): JsonResponse
+    {
+        $admin = Auth::user();
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+        $user = User::find($event->user_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $foodSupplements = $event->supplements->food_details;
+        if (!$foodSupplements) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No food supplements added to this event!"),
+                "status_code" => 404
+            ], 404);
+        }
+        $supplements = collect($foodSupplements)->map(function ($item){
+            unset($item['country_of_origin']);
+            unset($item['category']);
+            return $item;
+        });
+
+        return response()->json($supplements);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function getDrinksSupplementsForSomeUserEvent($event_id): JsonResponse
+    {
+        $admin = Auth::user();
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+        $user = User::find($event->user_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $drinksSupplements = $event->supplements->drinks_details;
+        if (!$drinksSupplements){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No drinks supplements added to this event!"),
+                "status_code" => 404
+            ],404);
+        }
+
+        $supplements = collect($drinksSupplements)->map(function ($item){
+            unset($item['category']);
+            return $item;
+        });
+
+        return response()->json($supplements);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getAccessoriesSupplementsForSomeUserEvent($event_id): JsonResponse
+    {
+        $admin = Auth::user();
+        TranslateTextHelper::setTarget($admin->profile->preferred_language);
+        $event = UserEvent::find($event_id);
+        $user = User::find($event->user_id);
+
+        $validationResponse = $this->validateEvent($event, $user);
+        if ($validationResponse !== null) {
+            return $validationResponse;
+        }
+
+        $accessoriesSupplements = $event->supplements->accessories_details;
+        if (!$accessoriesSupplements){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("No accessories supplements added to this event!"),
+                "status_code" => 404
+            ],404);
+        }
+
+        $supplements = collect($accessoriesSupplements)->map(function ($item){
+            unset($item['category']);
+            return $item;
+        });
+
+        return response()->json($accessoriesSupplements);
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 

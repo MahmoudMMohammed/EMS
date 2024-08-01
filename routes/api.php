@@ -120,7 +120,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::post('/user/profile/favorites/remove', [FavoriteController::class , 'removeFromFavorites']);
 
     //delete user account
-    Route::delete('/user/delete-account', [ProfileController::class , 'deleteAccount']);
+    Route::delete('/user/profile/delete-account', [ProfileController::class , 'deleteAccount']);
 
 
 
@@ -128,13 +128,21 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //add item to user cart
     Route::post('/user/cart/add-items', [CartController::class , 'addToCart']);
 
+
     //remove item from user cart
     Route::post('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
+
 
     //update item quantity in cart
     Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
 
 
+    //get the declined food and drinks for user
+    Route::get('/user/cart/declined_food&drinks',[EventSupplementController::class, 'getDeclinedFoodAndDrinks']);
+
+
+    //get the declined accessories for user
+    Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
 
     //create an event for user
@@ -181,11 +189,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //add accessories to user's event supplements
     Route::post('/user/events/{event_id}/accessories', [EventSupplementController::class , 'processAccessoriesSupplements']);
 
-    //get the declined food and drinks for user
-    Route::get('/user/cart/declined_food&drinks',[EventSupplementController::class, 'getDeclinedFoodAndDrinks']);
 
-    //get the declined accessories for user
-    Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
 
 
     //add item to event supplements
@@ -194,6 +198,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //update item quantity in event supplements
     Route::post('/user/event/supplements/update', [EventSupplementController::class , 'updateSupplement']);
+
 
     // remove item from event supplements
     Route::post('/user/event/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
@@ -253,6 +258,15 @@ Route::middleware([UserMiddleware::class])->group(function () {
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
+
+    //get food supplements details for a user event
+    Route::get('/admin/events/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForSomeUserEvent']);
+
+    //get drinks supplements details for a user event
+    Route::get('/admin/events/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForSomeUserEvent']);
+
+    //get accessories supplements details for a user event
+    Route::get('/admin/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForSomeUserEvent']);
 
 });
 
