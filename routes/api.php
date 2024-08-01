@@ -209,6 +209,8 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
 
 
+
+
     //explore all locations available
     Route::get('/locations', [LocationController::class, 'getLocations']);
 
@@ -281,6 +283,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
         });
 
+        Route::get('/weekly-statistics', [AdminController::class, 'getWeeklyStatistics']);
 
     });
 
@@ -307,6 +310,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 //download an event receipt
 Route::get('/download-receipt/event-id/{eventId}', [ReceiptController::class, 'downloadReceipt']);
+
 
 
 

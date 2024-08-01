@@ -57,13 +57,13 @@ class UserEvent extends Model
     ];
 
     // Convert status to index
-    public function getVerifiedAttribute($value)
+    public function getVerifiedAttribute($value): int
     {
         return self::STATUS_VALUES[$value];
     }
 
     // Convert index to status
-    public function setStatusByIndex($index)
+    public function setStatusByIndex($index): void
     {
         if (array_key_exists($index, self::STATUS_KEYS)) {
             $this->verified = self::STATUS_KEYS[$index];
