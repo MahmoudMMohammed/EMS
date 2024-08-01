@@ -402,7 +402,7 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 
-
+Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);

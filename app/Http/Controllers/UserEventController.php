@@ -584,5 +584,93 @@ class UserEventController extends Controller
 
         return response()->json($response, 200);
     }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getBill($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
+        $exist = UserEvent::query()->find($event_id)->first();
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $foods = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->pluck('food_details');
+
+        $foodTotalPrice = 0;
+        foreach ($foods as $foodDetails) {
+            foreach ($foodDetails as $food) {
+
+                    $price = (float)str_replace(['S.P', ',', ' '], '', $food['price']);
+                    $quantity = $food['quantity'];
+                    $foodTotalPrice += $price * $quantity;
+            }
+        }
+
+        $drinks = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->pluck('drinks_details');
+
+        $drinksTotalPrice = 0;
+        foreach ($drinks as $drinksDetails) {
+            foreach ($drinksDetails as $drink) {
+
+                $price = (float)str_replace(['S.P', ',', ' '], '', $drink['price']);
+                $quantity = $drink['quantity'];
+                $drinksTotalPrice += $price * $quantity;
+            }
+        }
+
+        $accessories = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->pluck('accessories_details');
+
+        $accessoriesTotalPrice = 0;
+        foreach ($accessories as $accessoriesDetails) {
+            foreach ($accessoriesDetails as $accessory) {
+
+                $price = (float)str_replace(['S.P', ',', ' '], '', $accessory['price']);
+                $quantity = $accessory['quantity'];
+                $accessoriesTotalPrice += $price * $quantity;
+            }
+        }
+
+        $reservation = UserEvent::query()->where('id' , $event_id)->pluck('location_id');
+        $reservation_price = Location::query()->where('id' , $reservation)->first();
+        if(!$reservation_price)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);        }
+
+        $total_price = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->first();
+
+        $tax = ($foodTotalPrice + $drinksTotalPrice + $accessoriesTotalPrice + $reservation_price->reservation_price) * 0.05 ;
+        $total_price = (float)str_replace(['S.P', ',', ' '], '',$total_price->total_price);
+
+        $response = [
+            'Food' => number_format($foodTotalPrice , 2 ).' S.P' ,
+            'Drinks' => number_format($drinksTotalPrice , 2 ).' S.P' ,
+            'accessories' => number_format($accessoriesTotalPrice , 2 ).' S.P' ,
+            'Reservation price' => number_format($reservation_price->reservation_price , 2 ).' S.P' ,
+            'Reconstruction tax' =>number_format($tax , 2 ).' S.P' ,
+            'total_price' => number_format($total_price+$tax , 2).' S.P'];
+
+        return response()->json($response ,200);
+    }
 }
