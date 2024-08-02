@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
+use App\Models\Favorite;
+use App\Models\Feedback;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -149,4 +151,46 @@ class UserController extends Controller
 
         return response() -> json($response , 200);
     }
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function StatisticsUserExperience() :JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        $deleted_at = Feedback::query()->withTrashed()->whereNotNull('deleted_at')->count();
+
+        $blocked = User::query()
+            ->where('role' , '=' ,'User')
+            ->where('is_blocked' , '=' , 1)
+            ->count();
+
+        $favorites = Favorite::query()->count();
+
+        $response1 = [
+            'number of deleted comments' => $deleted_at ,
+            'color' => '#443391' ,
+            'icon' => env('APP_URL') . '/Icon/3.png'
+            ];
+
+        $response2 = [
+            'number of blocked user' => $blocked ,
+            'color' => '#3E5EAB',
+            'icon' => env('APP_URL') . '/Icon/1.png'
+            ];
+        $response3 = [
+            'number of favorite item' => $favorites ,
+            'color' => '#1495CF' ,
+            'icon' => env('APP_URL') . '/Icon/2.png'
+            ];
+
+        $response = [$response1 , $response2 ,$response3];
+
+        return response()->json($response , 200);
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
 }

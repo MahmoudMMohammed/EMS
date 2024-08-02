@@ -21,7 +21,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->unsignedInteger('num_people_invited');
-            $table->unsignedInteger('num_people_joined')->nullable();
+            $table->unsignedInteger('num_people_joined')->default(0);
             $table->enum('verified', ['Pending', 'Confirmed', 'Rejected', 'Finished'])->default('Pending');
             $table->timestamps();
         });

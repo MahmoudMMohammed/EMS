@@ -245,6 +245,7 @@ class UserEventController extends Controller
             'start_time',
             'end_time',
             'verified',
+            'num_people_joined'
         ]);
         return response()->json($event);
     }
@@ -529,8 +530,8 @@ class UserEventController extends Controller
         {
             return response()->json([
                 "error" => "invalid event id",
-                "status_code" => 404,
-            ], 404);
+                "status_code" => 422,
+            ], 422);
         }
 
         $event = UserEvent::query()->where('id' , $event_id)->first();
@@ -1500,4 +1501,96 @@ class UserEventController extends Controller
         return response()->json($response , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////
+    public function getUserGeneralEventDetails($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $event = UserEvent::query()->find($event_id);
+        if(!$event)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $event = UserEvent::query()->where('id' , $event_id)->first();
+        if(!$event)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+        $currentTime = Carbon::now();
+        $diff = $startTime->diff($currentTime);
+
+        $remaining_days = sprintf('%03d', $diff->days);
+        $remaining_hours = sprintf('%02d', $diff->h);
+        $remaining_minutes = sprintf('%02d', $diff->i);
+
+        if ($currentTime->isAfter($startTime) || $event->verified == 2){
+            $remaining_days = sprintf('%03d', 000);
+            $remaining_hours = sprintf('%02d', 00);
+            $remaining_minutes = sprintf('%02d', 00);
+        }
+
+        $response = [
+            'id' => $event->id,
+            'date' => $event->date,
+            'verified' => UserEvent::STATUS_KEYS[$event->verified],
+            'start_time' => $event->start_time,
+            'end_time' => $event->end_time,
+            'days' => $remaining_days,
+            'time' => $remaining_hours . ':' . $remaining_minutes,
+        ];
+
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function StatisticsReservation(): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $confirmed = UserEvent::query()->where('verified' , 'Confirmed')->count();
+        $rejected = UserEvent::query()->where('verified' , 'Rejected')->count();
+        $pending = UserEvent::query()->where('verified' , 'Pending')->count();
+
+        $response1 = [
+            'confirmed reservations' => $confirmed ,
+            'color' => '#60B246' ,
+            'icon' => env('APP_URL') . '/Icon/7.png'
+        ];
+
+        $response2 = [
+            'rejected reservations' => $rejected ,
+            'color' => '#D1DC36',
+            'icon' => env('APP_URL') . '/Icon/6.png'
+        ];
+        $response3 = [
+            'pending reservations' => $pending ,
+            'color' => '#F2EB3B' ,
+            'icon' => env('APP_URL') . '/Icon/5.png'
+        ];
+
+        $response = [$response1 , $response2 ,$response3];
+
+        return response()->json($response ,200);
+    }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
 use App\Helpers\TranslateTextHelper;
+use App\Models\EventSupplement;
 use App\Models\Feedback;
+use App\Models\Location;
 use App\Models\User;
 use App\Models\UserEvent;
 use Carbon\Carbon;
@@ -198,6 +200,149 @@ class OwnerController extends Controller
         ], 204);
     }
     ////////////////////////////////////////////////////////////////
+    public function StatisticsSales() : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong, try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $user_event_ids = UserEvent::query()
+            ->whereIn('verified', ['Finished', 'Confirmed'])
+            ->pluck('id')
+            ->toArray();
+
+        $eventSupplements = EventSupplement::query()
+            ->whereIn('user_event_id', $user_event_ids)
+            ->get();
+
+        $foodTotalSales = 0;
+        $drinksTotalSales = 0;
+        $accessoriesTotalSales = 0;
 
 
+        foreach ($eventSupplements as $eventSupplement) {
+
+            foreach ($eventSupplement->food_details as $foodSale) {
+                $foodTotalSales += $foodSale['quantity'];
+            }
+
+            foreach ($eventSupplement->drinks_details as $drinksSale) {
+                $drinksTotalSales += $drinksSale['quantity'];
+            }
+
+            foreach ($eventSupplement->accessories_details as $accessoriesSale) {
+                $accessoriesTotalSales += $accessoriesSale['quantity'];
+            }
+        }
+
+        $response = [
+            [
+                'number of food sold' => $foodTotalSales,
+                'color' => '#F8BD19',
+                'icon' => env('APP_URL') . '/Icon/4.png'
+            ],
+            [
+                'number of drinks sold' => $drinksTotalSales,
+                'color' => '#F69B21',
+                'icon' => env('APP_URL') . '/Icon/9.png'
+            ],
+            [
+                'number of accessories sold' => $accessoriesTotalSales,
+                'color' => '#F25427',
+                'icon' => env('APP_URL') . '/Icon/8.png'
+            ],
+        ];
+
+        return response()->json($response);
+    }
+
+    public function StatisticsProfits() : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong, try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $user_event = UserEvent::query()
+            ->whereIn('verified', ['Finished', 'Confirmed'])
+            ->pluck('location_id')
+            ->toArray();
+
+        $locations = Location::query()->whereIn('id' , $user_event)->get();
+
+        $location_reservations = 0 ;
+        foreach ($locations as $location)
+        {
+            $price = (float)str_replace(['S.P', ',', ' '], '', $location['reservation_price']);
+            $location_reservations += $price ;
+        }
+
+        $user_event_ids = UserEvent::query()
+            ->whereIn('verified', ['Finished', 'Confirmed'])
+            ->pluck('id')
+            ->toArray();
+
+        $eventSupplements = EventSupplement::query()
+            ->whereIn('user_event_id', $user_event_ids)
+            ->get();
+
+        $foodTotalSales = 0;
+        $drinksTotalSales = 0;
+        $accessoriesTotalSales = 0;
+
+        foreach ($eventSupplements as $eventSupplement) {
+
+            foreach ($eventSupplement->food_details as $foodSale) {
+                $price = (float)str_replace(['S.P', ',', ' '], '', $foodSale['price']);
+                $quantity = $foodSale['quantity'];
+                $foodTotalSales += $price * $quantity;
+            }
+
+            foreach ($eventSupplement->drinks_details as $drinksSale) {
+                $price = (float)str_replace(['S.P', ',', ' '], '', $drinksSale['price']);
+                $quantity = $drinksSale['quantity'];
+                $drinksTotalSales += $price * $quantity;
+            }
+
+            foreach ($eventSupplement->accessories_details as $accessoriesSale) {
+                $price = (float)str_replace(['S.P', ',', ' '], '', $accessoriesSale['price']);
+                $quantity = $accessoriesSale['quantity'];
+                $accessoriesTotalSales += $price * $quantity;
+            }
+        }
+        $supplementTotalPrice = $foodTotalSales + $drinksTotalSales + $accessoriesTotalSales ;
+        $tax = ($supplementTotalPrice + $location_reservations) * 0.05 ;
+
+        $total_profit = $supplementTotalPrice + $location_reservations ;
+
+        $response = [
+            [
+                'location reservations' => number_format($location_reservations , 2 ).' S.P',
+                'color' => '#F33128',
+            ],
+            [
+                'supplement reservations' => number_format($supplementTotalPrice , 2 ).' S.P',
+                'color' => '#A71E4A',
+            ],
+            [
+                'taxes reservations' => number_format($tax , 2 ).' S.P',
+                'color' => '#7D3696',
+            ],
+            [
+                'total profits'=> number_format($total_profit , 2 ).' S.P',
+                'color'=> '#989898'
+            ]
+        ];
+
+        return response()->json($response , 200);
+    }
 }
