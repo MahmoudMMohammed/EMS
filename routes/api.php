@@ -91,122 +91,129 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
 
 
+    Route::prefix("user")->group(function (){
 
-    //getting user general info
-    Route::get('/user/profile/general', [ProfileController::class, 'getGeneralInfo']);
+        Route::prefix("profile")->group(function (){
 
-    //updating user general info
-    Route::post('/user/profile/general', [ProfileController::class , 'updateProfileGeneralInfo']);
+            //getting user general info
+            Route::get('/general', [ProfileController::class, 'getGeneralInfo']);
 
-    //updating user profile picture
-    Route::post('/user/profile/picture', [ProfileController::class , 'updateProfilePicture']);
+            //updating user general info
+            Route::post('/general', [ProfileController::class , 'updateProfileGeneralInfo']);
 
-    //getting user privacy info
-    Route::get('/user/profile/privacy', [ProfileController::class, 'getPrivacyInfo']);
+            //updating user profile picture
+            Route::post('/picture', [ProfileController::class , 'updateProfilePicture']);
 
-    //updating user privacy info
-    Route::post('/user/profile/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
+            //getting user privacy info
+            Route::get('/privacy', [ProfileController::class, 'getPrivacyInfo']);
 
-    //updating user preferred language
-    Route::post('/user/profile/language', [ProfileController::class , 'updatePreferredLanguage']);
+            //updating user privacy info
+            Route::post('/privacy', [ProfileController::class , 'updateProfilePrivacyInfo']);
 
-    //get user favorites
-    Route::get('/user/profile/favorites', [FavoriteController::class, 'getUserFavorites']);
+            //updating user preferred language
+            Route::post('/language', [ProfileController::class , 'updatePreferredLanguage']);
 
-    //add location to user favorites
-    Route::post('/user/profile/favorites', [FavoriteController::class , 'addToFavorites']);
+            //get user favorites
+            Route::get('/favorites', [FavoriteController::class, 'getUserFavorites']);
 
-    //remove location from user favorites
-    Route::post('/user/profile/favorites/remove', [FavoriteController::class , 'removeFromFavorites']);
+            //add location to user favorites
+            Route::post('/favorites', [FavoriteController::class , 'addToFavorites']);
 
-    //delete user account
-    Route::delete('/user/profile/delete-account', [ProfileController::class , 'deleteAccount']);
+            //remove location from user favorites
+            Route::post('/favorites/remove', [FavoriteController::class , 'removeFromFavorites']);
 
+            //delete user account
+            Route::delete('/delete-account', [ProfileController::class , 'deleteAccount']);
 
-
-
-    //add item to user cart
-    Route::post('/user/cart/add-items', [CartController::class , 'addToCart']);
-
-
-    //remove item from user cart
-    Route::post('/user/cart/remove-item', [CartController::class , 'removeFromCart']);
+        });
 
 
-    //update item quantity in cart
-    Route::post('/user/cart/update-item', [CartController::class , 'updateCartQuantity']);
+        Route::prefix("cart")->group(function (){
+
+            //add item to user cart
+            Route::post('/add-items', [CartController::class , 'addToCart']);
 
 
-    //get the declined food and drinks for user
-    Route::get('/user/cart/declined_food&drinks',[EventSupplementController::class, 'getDeclinedFoodAndDrinks']);
+            //remove item from user cart
+            Route::post('/remove-item', [CartController::class , 'removeFromCart']);
 
 
-    //get the declined accessories for user
-    Route::get('/user/cart/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
+            //update item quantity in cart
+            Route::post('/update-item', [CartController::class , 'updateCartQuantity']);
 
 
-    //create an event for user
-    Route::post('/user/events', [UserEventController::class , 'createEvent']);
-
-    //get event details
-    Route::get('/user/events/{event_id}/details', [UserEventController::class , 'getEventDetails']);
+            //get the declined food and drinks for user
+            Route::get('/declined_food&drinks',[EventSupplementController::class, 'getDeclinedFoodAndDrinks']);
 
 
-    //update event details
-    Route::post('/user/events/details', [UserEventController::class , 'updateEventDetails']);
+            //get the declined accessories for user
+            Route::get('/declined_accessories',[EventSupplementController::class, 'getDeclinedAccessories']);
+
+        });
+
+        Route::prefix("events")->group(function (){
+
+            //create an event for user
+            Route::post('/', [UserEventController::class , 'createEvent']);
+
+            //get event details
+            Route::get('/{event_id}/details', [UserEventController::class , 'getEventDetails']);
 
 
-    //get all events for user
-    Route::get('/user/events', [UserEventController::class , 'getUserEvents']);
+            //update event details
+            Route::post('/details', [UserEventController::class , 'updateEventDetails']);
 
 
-    //delete an event
-    Route::delete('/user/events/{event_id}', [UserEventController::class , 'deleteEvent']);
-
-
-
-
-
-    //get supplements for user event
-    Route::get('/user/events/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
-
-
-    //get food supplements for user event
-    Route::get('/user/events/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForEvent']);
-
-
-    //get drinks supplements for user event
-    Route::get('/user/events/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForEvent']);
-
-
-    //get accessories supplements for user event
-    Route::get('/user/events/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForEvent']);
-
-
-    //add food and drinks to user's event supplements
-    Route::post('/user/events/{event_id}/food&drinks', [EventSupplementController::class , 'processFoodAndDrinksSupplements']);
-
-    //add accessories to user's event supplements
-    Route::post('/user/events/{event_id}/accessories', [EventSupplementController::class , 'processAccessoriesSupplements']);
+            //delete an event
+            Route::delete('/{event_id}', [UserEventController::class , 'deleteEvent']);
 
 
 
 
-    //add item to event supplements
-    Route::post('/user/events/supplements/add', [EventSupplementController::class , 'addSupplement']);
+
+            //get supplements for user event
+            Route::get('/{event_id}/supplements', [EventSupplementController::class , 'getSupplementsForEvent']);
 
 
-    //update item quantity in event supplements
-    Route::post('/user/events/supplements/update', [EventSupplementController::class , 'updateSupplement']);
+            //get food supplements for user event
+            Route::get('/{event_id}/supplements/food', [EventSupplementController::class , 'getFoodSupplementsForEvent']);
 
 
-    // remove item from event supplements
-    Route::post('/user/events/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
+            //get drinks supplements for user event
+            Route::get('/{event_id}/supplements/drinks', [EventSupplementController::class , 'getDrinksSupplementsForEvent']);
 
 
-    //generate QR code for event receipt
-    Route::get('/user/events/{user_event_id}/qr', [ReceiptController::class, 'generateQRForReceipt']);
+            //get accessories supplements for user event
+            Route::get('/{event_id}/supplements/accessories', [EventSupplementController::class , 'getAccessoriesSupplementsForEvent']);
 
+
+            //add food and drinks to user's event supplements
+            Route::post('/{event_id}/food&drinks', [EventSupplementController::class , 'processFoodAndDrinksSupplements']);
+
+            //add accessories to user's event supplements
+            Route::post('/{event_id}/accessories', [EventSupplementController::class , 'processAccessoriesSupplements']);
+
+            //generate QR code for event receipt
+            Route::get('/{event_id}/qr', [ReceiptController::class, 'generateQRForReceipt']);
+
+
+
+            //add item to event supplements
+            Route::post('/supplements/add', [EventSupplementController::class , 'addSupplement']);
+
+
+            //update item quantity in event supplements
+            Route::post('/supplements/update', [EventSupplementController::class , 'updateSupplement']);
+
+
+            // remove item from event supplements
+            Route::post('/supplements/remove', [EventSupplementController::class , 'removeSupplement']);
+
+
+        });
+
+
+    });
 
 
 
