@@ -449,6 +449,17 @@ Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 
 Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
+
+
+Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);
+Route::post('/get/reservation/byHost' , [UserEventController::class , 'getReservationByHost']);
+Route::post('/get/reservation/byGovernorate' , [UserEventController::class , 'getReservationByGovernorate']);
+Route::post('/get/reservation/byState' , [UserEventController::class , 'getReservationByState']);
+Route::get('/get/reservation/mine' , [UserEventController::class , 'getMineReservation']);
+
+
+
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);

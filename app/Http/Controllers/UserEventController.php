@@ -9,6 +9,7 @@ use App\Models\Cart;
 use App\Models\DrinkCategory;
 use App\Models\EventSupplement;
 use App\Models\FoodCategory;
+use App\Models\Host;
 use App\Models\HostDrinkCategory;
 use App\Models\HostFoodCategory;
 use App\Models\Location;
@@ -22,6 +23,7 @@ use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
 use App\Services\NotificationService;
 use Carbon\Carbon;
+use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -673,4 +675,829 @@ class UserEventController extends Controller
 
         return response()->json($response ,200);
     }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getReservationByDate(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            //1:all , 2:today , 3:week , 4:month , 5:year
+            'type'=>'required|in:1,2,3,4,5'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'message' => $validator->errors()->first() ,
+                'status_code'=>422
+            ] , 422);
+        }
+
+        $response = [];
+        $now = Carbon::now();
+        $today = $now->toDateString();
+
+        switch ($request->type)
+        {
+            case 1 :
+                //all
+                $reservations = UserEvent::query()->orderBy('date' , 'desc')->get();
+
+                if ($reservations->isEmpty()) {
+                    return response()->json([
+                        "message" => "There are no reservations registered yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 2 ;
+                //today
+                $reservations = UserEvent::query()
+                    ->whereDate('date', $today)
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if ($reservations->isEmpty()) {
+                    return response()->json([
+                        "message" => "There are no reservations registered today.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break;
+
+            case 3 ;
+                //week
+                $startOfWeek = $now->startOfWeek()->toDateString();
+                $endOfWeek = $now->endOfWeek()->toDateString();
+                $reservations = UserEvent::query()->whereBetween('date', [$startOfWeek, $endOfWeek])
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if ($reservations->isEmpty()) {
+                    return response()->json([
+                        "message" => "There are no reservations registered this week.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break;
+
+            case 4 ;
+                //month
+                $startOfMonth = $now->startOfMonth()->toDateString();
+                $endOfMonth = $now->endOfMonth()->toDateString();
+
+                $reservations = UserEvent::query()->whereBetween('date', [$startOfMonth, $endOfMonth])
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if ($reservations->isEmpty()) {
+                    return response()->json([
+                        "message" => "There are no reservations registered this month.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break;
+
+            case 5 ;
+                //year
+                $startOfYear = Carbon::createFromDate($now->year, 1, 1)->toDateString();
+                $endOfYear = Carbon::createFromDate($now->year, 12, 31)->toDateString();
+
+                $reservations = UserEvent::query()->whereBetween('date', [$startOfYear, $endOfYear])
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if ($reservations->isEmpty()) {
+                    return response()->json([
+                        "message" => "There are no reservations registered this year.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break;
+
+            default:
+                return response()->json([ "message" => "Invalid type provided", "status_code" => 422,], 422);
+        }
+
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
+        $i = '';
+        $c = '';
+
+        foreach ($reservations as $reservation) {
+
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'num_people_invited' => $reservation->num_people_invited,
+                'logo' => $reservation->location->logo,
+                'icon' => $i ,
+                'color' => $c
+            ];
+        }
+
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getReservationByHost(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            //1:all , 2:restaurant , 3:cafe , 4:Bar , 5:Lounge , 6:Park , 7:Theater , 8:Stadium
+            'type'=>'required|in:1,2,3,4,5,6,7,8'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+                'status_code' => 422
+            ] , 422);
+        }
+
+        $response = [];
+        $hosts = [];
+
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
+        $i = '';
+        $c = '';
+
+        switch ($request->type)
+        {
+            case 1 :
+                //all
+                $reservations = UserEvent::query()->orderBy('date' , 'desc')->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no reservations registered yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                foreach ($reservations as $reservation)
+                {
+                    switch($reservation->verified)
+                    {
+                        case 0 :
+                            $i = env('APP_URL') . '/' . $icon[0] ;
+                            $c = $color[0] ;
+                            break ;
+
+                        case 1 :
+                            $i = env('APP_URL') . '/' . $icon[1] ;
+                            $c = $color[1] ;
+                            break ;
+
+                        case 2 :
+                            $i = env('APP_URL') . '/' . $icon[2] ;
+                            $c = $color[2] ;
+                            break ;
+
+                        case 3 :
+                            $i = env('APP_URL') . '/' . $icon[3] ;
+                            $c = $color[3] ;
+                            break ;
+                    }
+
+                    $response[] = [
+                        'id' => $reservation->id,
+                        'name' => $reservation->location->name,
+                        'date' => $reservation->date,
+                        'start_time' => $reservation->start_time,
+                        'end_time' => $reservation->end_time,
+                        'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                        'num_people_invited' => $reservation->num_people_invited,
+                        'logo' => $reservation->location->logo,
+                        'icon' => $i ,
+                        'color' => $c
+                    ];
+                }
+                return response()->json($response , 200);
+
+            case 2 :
+                //restaurant
+                $hosts = Host::query()->where('name' , 'Restaurant')->pluck('id');
+
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 3 ;
+                //cafe
+                $hosts = Host::query()->where('name' , 'Cafe')->pluck('id');
+
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 4 ;
+                //Bar
+                $hosts = Host::query()->where('name' , 'Bar')->pluck('id');
+
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 5 ;
+                //Lounge
+                $hosts = Host::query()->where('name' , 'Lounge')->pluck('id');
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 6 :
+                //Park
+                $hosts = Host::query()->where('name' , 'Park')->pluck('id');
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 7 :
+                //Theater
+                $hosts = Host::query()->where('name' , 'Theater')->pluck('id');
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            case 8 :
+                //Stadium
+                $hosts = Host::query()->where('name' , 'Stadium')->pluck('id');
+                if(!$hosts)
+                {
+                    return response()->json([
+                        "error" => "Something went wrong , try again later",
+                        "status_code" => 422,
+                    ], 422);
+                }
+                break ;
+
+            default :
+                return response()->json([ "message" => "Invalid type provided", "status_code" => 422,], 422);
+
+        }
+
+        $locations = Location::query()->where('host_id' , $hosts)->pluck('id');
+        if(!$locations)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $reservations = UserEvent::query()
+            ->whereIn('location_id' , $locations)
+            ->orderBy('date' , 'desc')
+            ->get();
+
+        if($reservations->isEmpty())
+        {
+            return response()->json([
+                "message" => "There are no reservations registered for the selected host.",
+                "status_code" => 404,
+            ], 404);
+        }
+
+
+        foreach ($reservations as $reservation)
+        {
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'num_people_invited' => $reservation->num_people_invited,
+                'logo' => $reservation->location->logo,
+                'icon' => $i ,
+                'color' => $c
+            ];
+        }
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getReservationByGovernorate(Request $request) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            //1:all , 2:Damascus , 3:Homs , 4:Tartus , 5:Aleppo , 6:Suwayda , 7:Daraa , 8:Raqqa
+            'type'=>'required|in:1,2,3,4,5,6,7,8'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+                'status_code' => 422
+            ] , 422);
+        }
+
+        $response = [];
+        $locations = [];
+
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
+        $i = '';
+        $c = '';
+
+        switch($request->type)
+        {
+            case 1 :
+                //all
+                $reservations = UserEvent::query()->orderBy('date' , 'desc')->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no reservations registered yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+
+                foreach ($reservations as $reservation)
+                {
+                    switch($reservation->verified)
+                    {
+                        case 0 :
+                            $i = env('APP_URL') . '/' . $icon[0] ;
+                            $c = $color[0] ;
+                            break ;
+
+                        case 1 :
+                            $i = env('APP_URL') . '/' . $icon[1] ;
+                            $c = $color[1] ;
+                            break ;
+
+                        case 2 :
+                            $i = env('APP_URL') . '/' . $icon[2] ;
+                            $c = $color[2] ;
+                            break ;
+
+                        case 3 :
+                            $i = env('APP_URL') . '/' . $icon[3] ;
+                            $c = $color[3] ;
+                            break ;
+                    }
+
+                    $response[] = [
+                        'id' => $reservation->id,
+                        'name' => $reservation->location->name,
+                        'date' => $reservation->date,
+                        'start_time' => $reservation->start_time,
+                        'end_time' => $reservation->end_time,
+                        'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                        'num_people_invited' => $reservation->num_people_invited,
+                        'logo' => $reservation->location->logo,
+                        'icon' => $i ,
+                        'color' => $c
+                    ];
+                }
+
+                return response()->json($response , 200);
+
+            case 2 :
+                //Damascus
+                $locations = Location::query()->where('governorate' , 'Damascus')->pluck('id');
+                break ;
+
+            case 3 :
+                //Homs
+                $locations = Location::query()->where('governorate' , 'Homs')->pluck('id');
+                break ;
+
+            case 4 :
+                //Tartus
+                $locations = Location::query()->where('governorate' , 'Tartus')->pluck('id');
+                break ;
+
+            case 5 :
+                //Aleppo
+                $locations = Location::query()->where('governorate' , 'Aleppo')->pluck('id');
+                break ;
+
+            case 6 :
+                //Suwayda
+                $locations = Location::query()->where('governorate' , 'Suwayda')->pluck('id');
+                break ;
+
+            case 7 :
+                //Daraa
+                $locations = Location::query()->where('governorate' , 'Daraa')->pluck('id');
+                break ;
+
+            case 8 :
+                //Daraa
+                $locations = Location::query()->where('governorate' , 'Raqqa')->pluck('id');
+                break ;
+
+            default :
+                return response()->json([ "message" => "Invalid type provided", "status_code" => 422,], 422);
+        }
+
+        $reservations = UserEvent::query()
+            ->whereIn('location_id' , $locations)
+            ->orderBy('date' , 'desc')
+            ->get();
+
+        if($reservations->isEmpty())
+        {
+            return response()->json([
+                "message" => "There are no reservations registered for the selected governorate.",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        foreach ($reservations as $reservation)
+        {
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'num_people_invited' => $reservation->num_people_invited,
+                'logo' => $reservation->location->logo,
+                'icon' => $i ,
+                'color' => $c
+            ];
+        }
+
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getReservationByState(Request $request) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            //1:all , 2:Pending , 3:Confirmed , 4:Rejected , 5:Finished
+            'type' => 'required|in:1,2,3,4,5'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+                'status_code' => 422
+            ] , 422);
+        }
+
+        $response = [];
+        switch ($request->type)
+        {
+            case 1 :
+                //all
+                $reservations = UserEvent::query()->orderBy('date' , 'desc')->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no reservations registered yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 2 :
+                //Pending
+                $reservations = UserEvent::query()
+                    ->where('verified' , 'Pending')
+                    ->orderBy('date' , 'desc')
+                    ->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no pending reservations.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 3 :
+                //Confirmed
+                $reservations = UserEvent::query()
+                    ->where('verified' , 'Confirmed')
+                    ->orderBy('date' , 'desc')
+                    ->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no confirmed reservations.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 4 :
+                //Rejected
+                $reservations = UserEvent::query()
+                    ->where('verified' , 'Rejected')
+                    ->orderBy('date' , 'desc')
+                    ->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no rejected reservations.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 5 :
+                //Finished
+                $reservations = UserEvent::query()
+                    ->where('verified' , 'Finished')
+                    ->orderBy('date' , 'desc')
+                    ->get();
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no finished reservations.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            default :
+                return response()->json([ "message" => "Invalid type provided", "status_code" => 422,], 422);
+        }
+
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
+        $i = '';
+        $c = '';
+
+        foreach ($reservations as $reservation)
+        {
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'num_people_invited' => $reservation->num_people_invited,
+                'logo' => $reservation->location->logo,
+                'icon' => $i ,
+                'color' => $c
+            ];
+        }
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getMineReservation(): JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $role = User::query()->where('id' , $user->id)->first();
+
+        $response = [];
+        switch($role->role)
+        {
+            case 'Admin' :
+                $location = Location::query()->where('user_id' , $user->id)->pluck('id');
+
+                $reservations = UserEvent::query()
+                    ->whereIn('location_id' , $location)
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no reservations registered in your location yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            case 'Owner' :
+                $reservations = UserEvent::query()
+                    ->orderBy('date' , 'desc')
+                    ->get();
+
+                if($reservations->isEmpty())
+                {
+                    return response()->json([
+                        "message" => "There are no reservations registered in your application yet.",
+                        "status_code" => 404,
+                    ], 404);
+                }
+                break ;
+
+            default :
+                return response()->json([ "message" => "Invalid type provided", "status_code" => 422,], 422);
+        }
+        $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
+        $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
+        $i = '';
+        $c = '';
+
+        foreach ($reservations as $reservation)
+        {
+            switch($reservation->verified)
+            {
+                case 0 :
+                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $c = $color[0] ;
+                    break ;
+
+                case 1 :
+                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $c = $color[1] ;
+                    break ;
+
+                case 2 :
+                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $c = $color[2] ;
+                    break ;
+
+                case 3 :
+                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $c = $color[3] ;
+                    break ;
+            }
+
+            $response[] = [
+                'id' => $reservation->id,
+                'name' => $reservation->location->name,
+                'date' => $reservation->date,
+                'start_time' => $reservation->start_time,
+                'end_time' => $reservation->end_time,
+                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'num_people_invited' => $reservation->num_people_invited,
+                'logo' => $reservation->location->logo,
+                'icon' => $i ,
+                'color' => $c
+            ];
+        }
+        return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
 }
