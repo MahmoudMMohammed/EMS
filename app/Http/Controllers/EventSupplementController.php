@@ -85,7 +85,11 @@ class EventSupplementController extends Controller
 
         $foodDetails = [];
         $drinksDetails = [];
-        $declinedItems = [];
+        $declinedItems = [
+            'food' => [],
+            'drink' => [],
+        ];
+
         $totalPrice = 0;
 
         foreach ($cart->items as $cartItem) {
