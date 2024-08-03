@@ -291,8 +291,10 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
         });
 
+        //get weekly statistics about food, drinks and accessories for web charts
         Route::get('/weekly-statistics', [StatisticsController::class, 'getWeeklyStatistics']);
 
+        //get weekly report as PDF
         Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
     });
