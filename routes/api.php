@@ -22,6 +22,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEventController;
@@ -290,7 +291,9 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
         });
 
-        Route::get('/weekly-statistics', [AdminController::class, 'getWeeklyStatistics']);
+        Route::get('/weekly-statistics', [StatisticsController::class, 'getWeeklyStatistics']);
+
+        Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
     });
 
@@ -317,7 +320,6 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 //download an event receipt
 Route::get('/download-receipt/event-id/{eventId}', [ReceiptController::class, 'downloadReceipt']);
-
 
 
 

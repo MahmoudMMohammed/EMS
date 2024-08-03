@@ -292,52 +292,5 @@ class AdminController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function getWeeklyStatistics(): JsonResponse
-    {
-        // Calculate the start and end dates for the previous week
-        $startOfWeek = Carbon::now()->subWeek()->startOfWeek();
-        $endOfWeek = Carbon::now()->subWeek()->endOfWeek();
-
-        // Fetch all events where verified == 3
-        $events = UserEvent::whereVerified("Finished")
-            ->whereBetween('date', [$startOfWeek, $endOfWeek])
-            ->get();
-
-        // Initialize an array to store results for each day of the week
-        $weeklyStatistics = [
-            'Sunday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Monday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Tuesday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Wednesday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Thursday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Friday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-            'Saturday' => ['food' => 0, 'drinks' => 0, 'accessories' => 0],
-        ];
-
-        // Loop through each event and their supplements
-        foreach ($events as $event) {
-            $dayOfWeek = Carbon::parse($event->date)->format('l'); // Get the day of the week
-
-            $food = $event->supplements->food_details;
-            $drinks = $event->supplements->drinks_details;
-            $accessories = $event->supplements->accessories_details;
-
-            foreach ($food as $item){
-                $weeklyStatistics[$dayOfWeek]['food'] += $item['quantity'];
-            }
-
-            foreach ($drinks as $item){
-                $weeklyStatistics[$dayOfWeek]['drinks'] += $item['quantity'];
-            }
-
-            foreach ($accessories as $item){
-                $weeklyStatistics[$dayOfWeek]['accessories'] += $item['quantity'];
-            }
-        }
-
-        return response()->json($weeklyStatistics);
-    }
-    ///////////////////////////////////////////////////////////////////////////////////////
-
 }
 
