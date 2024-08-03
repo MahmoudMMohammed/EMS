@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Favorite;
 use App\Models\Feedback;
+use App\Models\Profile;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -193,4 +194,57 @@ class UserController extends Controller
         return response()->json($response , 200);
     }
     /////////////////////////////////////////////////////////////////////////////////////
+    public function StatisticsMasculinity(): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        $user = User::query()->where('role' , 'User')->pluck('id')->toArray();
+
+        $gender = Profile::query()
+            ->whereIn('user_id' , $user)
+            ->where('gender' , 'male')
+            ->count();
+
+        $total_users = count($user);
+
+        if ($total_users == 0) {
+            $malePercentage = 0;
+        } else {
+            $malePercentage = round(($gender / $total_users) * 100 , 2) ;
+        }
+        return response()->json(['Masculinity'=>$malePercentage] ,200);
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function StatisticsFemininity(): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        $user = User::query()->where('role' , 'User')->pluck('id')->toArray();
+
+        $gender = Profile::query()
+            ->whereIn('user_id' , $user)
+            ->where('gender' , 'female')
+            ->count();
+
+        $total_users = count($user);
+
+        if ($total_users == 0) {
+            $femalePercentage = 0;
+        } else {
+            $femalePercentage = round(($gender / $total_users) * 100 ,2) ;
+        }
+        return response()->json(['Femininity'=>$femalePercentage] ,200);
+    }
 }

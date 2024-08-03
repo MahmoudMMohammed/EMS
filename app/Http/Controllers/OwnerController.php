@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
 use App\Helpers\TranslateTextHelper;
+use App\Models\AppRating;
 use App\Models\EventSupplement;
 use App\Models\Feedback;
 use App\Models\Location;
@@ -260,7 +261,7 @@ class OwnerController extends Controller
 
         return response()->json($response);
     }
-
+    ////////////////////////////////////////////////////////////////
     public function StatisticsProfits() : JsonResponse
     {
         $user = Auth::user();
@@ -344,5 +345,54 @@ class OwnerController extends Controller
         ];
 
         return response()->json($response , 200);
+
+    }
+    ////////////////////////////////////////////////////////////////
+    public function StatisticsRating(): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong, try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $ratings = AppRating::query()->pluck('rate');
+
+        $ratingCounts = array_fill(1, 5, 0);
+
+        if ($ratings->isEmpty()) {
+            $ratingPercentages = array_map(function () {
+                return 0.0;
+            }, $ratingCounts);
+
+            $ratingPercentages['total_ratings'] = 0;
+            $ratingPercentages['average_rating'] = 0.0;
+
+            return response()->json($ratingPercentages , 200);
+        }
+
+        $totalRatings = $ratings->count();
+        $sumOfRatings = $ratings->sum();
+
+        foreach ($ratings as $rating) {
+            if (isset($ratingCounts[$rating])) {
+                $ratingCounts[$rating]++;
+            }
+        }
+
+        $ratingPercentages = [];
+        foreach ($ratingCounts as $rating => $count) {
+            $ratingPercentages[$rating] = (double) number_format(($count / $totalRatings) * 100, 2);
+        }
+
+        $averageRating = (double) number_format($sumOfRatings / $totalRatings , 2);
+
+        $ratingPercentages['total_ratings'] = $totalRatings;
+        $ratingPercentages['average_rating'] = $averageRating;
+
+        return response()->json($ratingPercentages , 200);
     }
 }

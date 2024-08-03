@@ -469,7 +469,9 @@ Route::get('/get/statistics/UserExperience' , [UserController::class , 'Statisti
 Route::get('/get/statistics/reservation' , [UserEventController::class , 'StatisticsReservation']);
 Route::get('/get/statistics/sales' , [OwnerController::class , 'StatisticsSales']);
 Route::get('/get/statistics/profits' , [OwnerController::class , 'StatisticsProfits']);
-
+Route::get('/get/statistics/masculinity' , [UserController::class , 'StatisticsMasculinity']);
+Route::get('/get/statistics/femininity' , [UserController::class , 'StatisticsFemininity']);
+Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRating']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
