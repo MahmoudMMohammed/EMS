@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +30,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Exception|Throwable $e): \Illuminate\Http\Response|JsonResponse|RedirectResponse|Response
+    {
+        if(get_class($e) == "Illuminate\Database\Eloquent\ModelNotFoundException") {
+            return \response()->json([
+                "error" => "Model not Found!",
+                "status_code" => 404
+            ],404);
+        }
+        return parent::render($request, $e);
     }
 }
