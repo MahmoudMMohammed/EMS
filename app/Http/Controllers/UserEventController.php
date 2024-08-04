@@ -238,17 +238,16 @@ class UserEventController extends Controller
                 "status_code" => 403
             ], 403);
         }
-        $event->makeHidden([
-            'id',
-            'user_id',
-            'location_id',
-            'date',
-            'start_time',
-            'end_time',
-            'verified',
-            'num_people_joined'
-        ]);
-        return response()->json($event);
+
+        $response = [
+            'id' => $event->id ,
+            'invitation_type' => $event->invitation_type ,
+            'description' => $event->description ,
+            'num_people_invited' => $event->num_people_invited ,
+            'num_people_joined' => $event->num_people_joined.'/'.$event->num_people_invited
+        ];
+
+        return response()->json($response);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
