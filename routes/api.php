@@ -461,6 +461,12 @@ Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
 
+Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::class , 'getGeneralDetails']);
+Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
+Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
+Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
+
+
 //web
 //done without translate
 Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);

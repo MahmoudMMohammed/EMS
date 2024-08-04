@@ -811,5 +811,143 @@ class EventSupplementController extends Controller
         return null; // Indicating validation passed
     }
     /////////////////////////////////////////////////
+    public function getSupplementFood($event_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
+        $exist = UserEvent::query()->find($event_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $foods = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->select('food_details')
+            ->first();
+
+        if (!$foods){
+            return response()->json([
+                "error" => "No food supplements found for this event",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [];
+        foreach ($foods->food_details as $food)
+        {
+            $response [] = [
+                'id' => $food['id'] ,
+                'name' => $food['name'] ,
+                'description' => $food['description'],
+                'country_of_origin' => $food['country_of_origin'],
+                'picture' => $food['picture']
+
+            ];
+        }
+        return response()->json($response , 200);
+    }
+    /////////////////////////////////////////////////
+    public function getSupplementDrinks($event_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = UserEvent::query()->find($event_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $drinks = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->select('drinks_details')
+            ->first();
+
+        if (!$drinks){
+            return response()->json([
+                "error" => "No drinks supplements found for this event",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [];
+        foreach ($drinks->drinks_details as $drink)
+        {
+            $response [] = [
+                'id' => $drink['id'] ,
+                'name' => $drink['name'] ,
+                'description' => $drink['description'],
+                'picture' => $drink['picture']
+
+            ];
+        }
+        return response()->json($response , 200);
+    }
+    /////////////////////////////////////////////////
+    public function getSupplementAccessories($event_id): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = UserEvent::query()->find($event_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $accessories = EventSupplement::query()
+            ->where('user_event_id' , $exist->id)
+            ->select('accessories_details')
+            ->first();
+
+        if (!$accessories){
+            return response()->json([
+                "error" => "No accessories supplements found for this event",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [];
+        foreach ($accessories->accessories_details as $accessory)
+        {
+            $response [] = [
+                'id' => $accessory['id'] ,
+                'name' => $accessory['name'] ,
+                'description' => $accessory['description'],
+                'picture' => $accessory['picture'],
+                'numOfItem' => $accessory['quantity']
+
+            ];
+        }
+        return response()->json($response , 200);
+    }
 }

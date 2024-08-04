@@ -1700,4 +1700,46 @@ class UserEventController extends Controller
 
         return response()->json($response ,200);
     }
+    ///////////////////////////////////////////////////////////////////////////////
+    public function getGeneralDetails($event_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = UserEvent::query()->find($event_id)->first();
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "invalid event id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $status = !($exist->num_people_joined == $exist->num_people_invited) ;
+
+        $picture = LocationPicture::query()
+            ->where('location_id' , $exist->location_id)
+            ->pluck('picture')
+            ->toArray();
+
+        $response = [
+            'id' => $exist->id ,
+            'date' => $exist->date ,
+            'verified' => UserEvent::STATUS_KEYS[$exist->verified] ,
+            'start_time' => $exist->start_time ,
+            'end_time' => $exist->end_time ,
+            'num_people_joined' => $exist->num_people_joined.'/'.$exist->num_people_invited ,
+            'photo_1' => $picture[0],
+            'photo_2' => $picture[1],
+            'photo_3' => $picture[2],
+            'status' => $status
+        ];
+        return response()->json($response , 200);
+    }
 }
