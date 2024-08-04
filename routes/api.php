@@ -452,11 +452,13 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
 });
 
+//done without translate
 Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
 
-
+//web
+//done without translate
 Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);
 Route::post('/get/reservation/byHost' , [UserEventController::class , 'getReservationByHost']);
 Route::post('/get/reservation/byGovernorate' , [UserEventController::class , 'getReservationByGovernorate']);
@@ -465,6 +467,8 @@ Route::get('/get/reservation/mine' , [UserEventController::class , 'getMineReser
 Route::get('/get/reservation/details/general/{event_id}' , [UserEventController::class , 'getUserGeneralEventDetails']);
 Route::get('/get/reservation/details/bill/{event_id}' , [UserEventController::class , 'getBill']);
 
+
+//done without translate
 Route::get('/get/statistics/UserExperience' , [UserController::class , 'StatisticsUserExperience']);
 Route::get('/get/statistics/reservation' , [UserEventController::class , 'StatisticsReservation']);
 Route::get('/get/statistics/sales' , [OwnerController::class , 'StatisticsSales']);
@@ -472,6 +476,8 @@ Route::get('/get/statistics/profits' , [OwnerController::class , 'StatisticsProf
 Route::get('/get/statistics/masculinity' , [UserController::class , 'StatisticsMasculinity']);
 Route::get('/get/statistics/femininity' , [UserController::class , 'StatisticsFemininity']);
 Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRating']);
+
+
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

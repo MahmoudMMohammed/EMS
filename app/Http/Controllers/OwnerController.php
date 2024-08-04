@@ -212,10 +212,8 @@ class OwnerController extends Controller
             ], 422);
         }
 
-        $user_event_ids = UserEvent::query()
-            ->whereIn('verified', ['Finished', 'Confirmed'])
-            ->pluck('id')
-            ->toArray();
+        $user_event_ids = OwnerController::getFinishedAndConfirmedEventsAll();
+        $user_event_ids = $user_event_ids->pluck('id');
 
         $eventSupplements = EventSupplement::query()
             ->whereIn('user_event_id', $user_event_ids)
@@ -241,21 +239,23 @@ class OwnerController extends Controller
             }
         }
 
+        $app_url = env('APP_URL');
+
         $response = [
             [
                 'number of food sold' => $foodTotalSales,
                 'color' => '#F8BD19',
-                'icon' => env('APP_URL') . '/Icon/4.png'
+                'icon' => $app_url . '/Icon/4.png'
             ],
             [
                 'number of drinks sold' => $drinksTotalSales,
                 'color' => '#F69B21',
-                'icon' => env('APP_URL') . '/Icon/9.png'
+                'icon' => $app_url . '/Icon/9.png'
             ],
             [
                 'number of accessories sold' => $accessoriesTotalSales,
                 'color' => '#F25427',
-                'icon' => env('APP_URL') . '/Icon/8.png'
+                'icon' => $app_url . '/Icon/8.png'
             ],
         ];
 
@@ -273,24 +273,24 @@ class OwnerController extends Controller
             ], 422);
         }
 
-        $user_event = UserEvent::query()
-            ->whereIn('verified', ['Finished', 'Confirmed'])
-            ->pluck('location_id')
-            ->toArray();
-
-        $locations = Location::query()->whereIn('id' , $user_event)->get();
+        $user_events = OwnerController::getFinishedAndConfirmedEventsAll();
 
         $location_reservations = 0 ;
-        foreach ($locations as $location)
+        $reservation_price = 0;
+        foreach ($user_events as $user_event)
         {
-            $price = (float)str_replace(['S.P', ',', ' '], '', $location['reservation_price']);
-            $location_reservations += $price ;
+            $price = (float)str_replace(['S.P', ',', ' '], '', $user_event->location->reservation_price);
+
+            $start_time = Carbon::parse($user_event->date . ' ' . $user_event->start_time);
+            $end_time = Carbon::parse($user_event->date . ' ' . $user_event->end_time);
+            $event_time_minutes = $start_time->diffInMinutes($end_time);
+
+            $reservation_price = $price * ($event_time_minutes / 60);
+            $location_reservations += $reservation_price ;
         }
 
-        $user_event_ids = UserEvent::query()
-            ->whereIn('verified', ['Finished', 'Confirmed'])
-            ->pluck('id')
-            ->toArray();
+        $user_event_ids = OwnerController::getFinishedAndConfirmedEventsAll();
+        $user_event_ids = $user_event_ids->pluck('id')->toArray();
 
         $eventSupplements = EventSupplement::query()
             ->whereIn('user_event_id', $user_event_ids)
@@ -394,5 +394,24 @@ class OwnerController extends Controller
         $ratingPercentages['average_rating'] = $averageRating;
 
         return response()->json($ratingPercentages , 200);
+    }
+    //////////////////////////////////////////////////////////////////////
+    private function getFinishedAndConfirmedEventsAll()
+    {
+        $finishedEvents = UserEvent::query()
+            ->where('verified' , 'Finished')
+            ->get();
+
+        $yesterday = Carbon::parse(now())->subDay();
+
+        $confirmedEvents = UserEvent::query()
+            ->where('verified','Confirmed')
+            ->get()
+            ->filter(function ($event) use ($yesterday) {
+                $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+                return $startTime->greaterThanOrEqualTo($yesterday);
+            });
+
+        return $finishedEvents->merge($confirmedEvents);
     }
 }

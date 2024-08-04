@@ -407,6 +407,7 @@ class UserEventController extends Controller
             ], 422);
         }
 
+        $now = Carbon::now();
         switch ($request->type)
         {
             case 1 :
@@ -448,12 +449,21 @@ class UserEventController extends Controller
 
         $response = [];
 
-        //Pending          //Confirmed      //Rejected       //Finished
+                //Pending          //Confirmed      //Rejected       //Finished
         $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
 
         $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
 
+        $app_url = env('app_url');
+
         foreach ($reservations as $reservation) {
+
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
 
             // Calculate the remaining time
             $startTime = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
@@ -476,22 +486,22 @@ class UserEventController extends Controller
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -652,6 +662,7 @@ class UserEventController extends Controller
 
         $reservation = UserEvent::query()->where('id' , $event_id)->pluck('location_id');
         $reservation_price = Location::query()->where('id' , $reservation)->first();
+        $reservation_price = $reservation_price->reservation_price ;
         if(!$reservation_price)
         {
             return response()->json([
@@ -659,18 +670,24 @@ class UserEventController extends Controller
                 "status_code" => 422,
             ], 422);        }
 
+
+        $start_time = Carbon::parse($exist->date . ' ' . $exist->start_time);
+        $end_time = Carbon::parse($exist->date . ' ' . $exist->end_time);
+        $event_time_minutes = $start_time->diffInMinutes($end_time);
+        $reservation_price = $reservation_price * ($event_time_minutes / 60);
+
         $total_price = EventSupplement::query()
             ->where('user_event_id' , $exist->id)
             ->first();
 
-        $tax = ($foodTotalPrice + $drinksTotalPrice + $accessoriesTotalPrice + $reservation_price->reservation_price) * 0.05 ;
+        $tax = ($foodTotalPrice + $drinksTotalPrice + $accessoriesTotalPrice + $reservation_price) * 0.05 ;
         $total_price = (float)str_replace(['S.P', ',', ' '], '',$total_price->total_price);
 
         $response = [
             'Food' => number_format($foodTotalPrice , 2 ).' S.P' ,
             'Drinks' => number_format($drinksTotalPrice , 2 ).' S.P' ,
             'accessories' => number_format($accessoriesTotalPrice , 2 ).' S.P' ,
-            'Reservation price' => number_format($reservation_price->reservation_price , 2 ).' S.P' ,
+            'Reservation price' => number_format($reservation_price , 2 ).' S.P' ,
             'Reconstruction tax' =>number_format($tax , 2 ).' S.P' ,
             'total_price' => number_format($total_price+$tax , 2).' S.P'];
 
@@ -793,27 +810,36 @@ class UserEventController extends Controller
         $i = '';
         $c = '';
 
+        $app_url = env('APP_URL');
+
         foreach ($reservations as $reservation) {
+
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
 
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -866,12 +892,16 @@ class UserEventController extends Controller
         $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
         $i = '';
         $c = '';
+        $app_url = env('APP_URL');
+
+        $now = Carbon::now();
 
         switch ($request->type)
         {
             case 1 :
                 //all
                 $reservations = UserEvent::query()->orderBy('date' , 'desc')->get();
+
                 if($reservations->isEmpty())
                 {
                     return response()->json([
@@ -881,25 +911,32 @@ class UserEventController extends Controller
                 }
                 foreach ($reservations as $reservation)
                 {
+                    $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+                    if($checkTime < $now && $reservation->verified == 1)
+                    {
+                        $reservation->verified = UserEvent::STATUS_KEYS[3];
+                        $reservation->save();
+                    }
+
                     switch($reservation->verified)
                     {
                         case 0 :
-                            $i = env('APP_URL') . '/' . $icon[0] ;
+                            $i = $app_url . '/' . $icon[0] ;
                             $c = $color[0] ;
                             break ;
 
                         case 1 :
-                            $i = env('APP_URL') . '/' . $icon[1] ;
+                            $i = $app_url . '/' . $icon[1] ;
                             $c = $color[1] ;
                             break ;
 
                         case 2 :
-                            $i = env('APP_URL') . '/' . $icon[2] ;
+                            $i = $app_url . '/' . $icon[2] ;
                             $c = $color[2] ;
                             break ;
 
                         case 3 :
-                            $i = env('APP_URL') . '/' . $icon[3] ;
+                            $i = $app_url . '/' . $icon[3] ;
                             $c = $color[3] ;
                             break ;
                     }
@@ -1036,25 +1073,32 @@ class UserEventController extends Controller
 
         foreach ($reservations as $reservation)
         {
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -1107,6 +1151,9 @@ class UserEventController extends Controller
         $i = '';
         $c = '';
 
+        $app_url = env('APP_URL');
+        $now = Carbon::now();
+
         switch($request->type)
         {
             case 1 :
@@ -1122,25 +1169,32 @@ class UserEventController extends Controller
 
                 foreach ($reservations as $reservation)
                 {
+                    $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+                    if($checkTime < $now && $reservation->verified == 1)
+                    {
+                        $reservation->verified = UserEvent::STATUS_KEYS[3];
+                        $reservation->save();
+                    }
+
                     switch($reservation->verified)
                     {
                         case 0 :
-                            $i = env('APP_URL') . '/' . $icon[0] ;
+                            $i = $app_url . '/' . $icon[0] ;
                             $c = $color[0] ;
                             break ;
 
                         case 1 :
-                            $i = env('APP_URL') . '/' . $icon[1] ;
+                            $i = $app_url . '/' . $icon[1] ;
                             $c = $color[1] ;
                             break ;
 
                         case 2 :
-                            $i = env('APP_URL') . '/' . $icon[2] ;
+                            $i = $app_url . '/' . $icon[2] ;
                             $c = $color[2] ;
                             break ;
 
                         case 3 :
-                            $i = env('APP_URL') . '/' . $icon[3] ;
+                            $i = $app_url . '/' . $icon[3] ;
                             $c = $color[3] ;
                             break ;
                     }
@@ -1215,25 +1269,32 @@ class UserEventController extends Controller
 
         foreach ($reservations as $reservation)
         {
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -1280,6 +1341,10 @@ class UserEventController extends Controller
         }
 
         $response = [];
+
+        $app_url = env('APP_URL');
+        $now = Carbon::now();
+
         switch ($request->type)
         {
             case 1 :
@@ -1311,6 +1376,17 @@ class UserEventController extends Controller
 
             case 3 :
                 //Confirmed
+                $reservations = UserEvent::all();
+                foreach ($reservations as $reservation)
+                {
+                    $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+                    if($checkTime < $now && $reservation->verified == 1)
+                    {
+                        $reservation->verified = UserEvent::STATUS_KEYS[3];
+                        $reservation->save();
+                    }
+                }
+
                 $reservations = UserEvent::query()
                     ->where('verified' , 'Confirmed')
                     ->orderBy('date' , 'desc')
@@ -1365,25 +1441,32 @@ class UserEventController extends Controller
 
         foreach ($reservations as $reservation)
         {
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -1460,27 +1543,37 @@ class UserEventController extends Controller
         $i = '';
         $c = '';
 
+        $app_url = env('APP_URL');
+        $now = Carbon::now();
+
         foreach ($reservations as $reservation)
         {
+            $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
+            if($checkTime < $now && $reservation->verified == 1)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
-                    $i = env('APP_URL') . '/' . $icon[0] ;
+                    $i = $app_url . '/' . $icon[0] ;
                     $c = $color[0] ;
                     break ;
 
                 case 1 :
-                    $i = env('APP_URL') . '/' . $icon[1] ;
+                    $i = $app_url . '/' . $icon[1] ;
                     $c = $color[1] ;
                     break ;
 
                 case 2 :
-                    $i = env('APP_URL') . '/' . $icon[2] ;
+                    $i = $app_url . '/' . $icon[2] ;
                     $c = $color[2] ;
                     break ;
 
                 case 3 :
-                    $i = env('APP_URL') . '/' . $icon[3] ;
+                    $i = $app_url . '/' . $icon[3] ;
                     $c = $color[3] ;
                     break ;
             }
@@ -1566,6 +1659,19 @@ class UserEventController extends Controller
                 "error" => "Something went wrong , try again later",
                 "status_code" => 422,
             ], 422);
+        }
+
+        $now = Carbon::now();
+        $confirmed = UserEvent::query()->where('verified' , 'Confirmed')->get();
+
+        foreach ($confirmed as $confirm)
+        {
+            $checkTime = Carbon::parse($confirm->date . ' ' . $confirm->end_time);
+            if($checkTime < $now && $confirm->verified == 1)
+            {
+                $confirm->verified = UserEvent::STATUS_KEYS[3];
+                $confirm->save();
+            }
         }
 
         $confirmed = UserEvent::query()->where('verified' , 'Confirmed')->count();
