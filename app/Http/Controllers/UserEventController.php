@@ -55,6 +55,14 @@ class UserEventController extends Controller
             ], 422);
         }
 
+        // Check that the event duration is at least one hour
+        if ($eventDate->isBefore(now())) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("You cannot create an event in the past!"),
+                "status_code" => 422,
+            ], 422);
+        }
+
         // Check that the event starts at least three hours from now
         if ($startTime->diffInMinutes(Carbon::now()) < 180) {
             return response()->json([
