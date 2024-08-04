@@ -22,9 +22,18 @@ class ReceiptController extends Controller
     public function generateQRForReceipt($userEventId): JsonResponse
     {
         $user = Auth::user();
-        $event = UserEvent::find($userEventId);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $event = UserEvent::findOrFail($userEventId);
+        if ($user->id != $event->user_id){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event is not yours to show!"),
+                "status_code" => 403,
+            ], 403);
+        }
+
         $supplements = $event->supplements;
-        $location = Location::find($event->location_id);
+        $location = Location::findOrFail($event->location_id);
 
 
         $foodDetails = $supplements->food_details;
@@ -109,7 +118,6 @@ class ReceiptController extends Controller
             ]
         );
 
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$receipt) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("Failed to generate the receipt, please try again!"),
