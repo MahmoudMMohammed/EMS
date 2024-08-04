@@ -131,9 +131,13 @@ class StatisticsController extends Controller
 
         $yesterday = Carbon::parse(now())->subDay();
 
+        // Fetch all confirmed events where the parsed start_date is <= yesterday
         $confirmedEvents = UserEvent::whereVerified("Confirmed")
-            ->where("date", '<=' , $yesterday)
-            ->get();
+            ->get()
+            ->filter(function ($event) use ($yesterday) {
+                $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+                return $startTime->greaterThanOrEqualTo($yesterday);
+            });
 
         return $finishedEvents->merge($confirmedEvents);
 
