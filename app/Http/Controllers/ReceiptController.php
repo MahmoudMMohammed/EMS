@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Models\Receipt;
 use App\Models\UserEvent;
 use Barryvdh\DomPDF\Facade;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +23,22 @@ class ReceiptController extends Controller
     public function generateQRForReceipt($userEventId): JsonResponse
     {
         $user = Auth::user();
-        $event = UserEvent::find($userEventId);
-        $supplements = $event->supplements;
-        $location = Location::find($event->location_id);
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
 
+        $event = UserEvent::findOrFail($userEventId);
+        if ($user->id != $event->user_id){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Event is not yours to show!"),
+                "status_code" => 403,
+            ], 403);
+        }
+
+        $supplements = $event->supplements;
+        $location = Location::findOrFail($event->location_id);
+
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+        $endTime = Carbon::parse($event->date . ' ' . $event->end_time);
+        $eventTimeInMinutes = $startTime->diffInMinutes($endTime);
 
         $foodDetails = $supplements->food_details;
         $drinksDetails = $supplements->drinks_details;
@@ -90,7 +103,7 @@ class ReceiptController extends Controller
             'totalAccessories' => $totalAccessories,
             'grandTotal' => $supplements->total_price,
             'qrCodeBase64' => $qrCodeBase64,
-            'reservationPrice' => $location->reservation_price,
+            'reservationPrice' => $location->reservation_price * ( $eventTimeInMinutes / 60),
         ];
 
         // Generate the PDF using the instance method
@@ -109,7 +122,6 @@ class ReceiptController extends Controller
             ]
         );
 
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$receipt) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("Failed to generate the receipt, please try again!"),

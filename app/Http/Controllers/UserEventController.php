@@ -4,31 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
 use App\Helpers\TranslateTextHelper;
-use App\Models\AccessoryCategory;
-use App\Models\Cart;
-use App\Models\DrinkCategory;
 use App\Models\EventSupplement;
-use App\Models\FoodCategory;
 use App\Models\Host;
-use App\Models\HostDrinkCategory;
-use App\Models\HostFoodCategory;
 use App\Models\Location;
 use App\Models\LocationPicture;
-use App\Models\MainEventHost;
-use App\Models\MEHAC;
 use App\Models\Receipt;
 use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
-use App\Models\WarehouseAccessory;
-use App\Services\NotificationService;
 use Carbon\Carbon;
-use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Stmt\Switch_;
 
 class UserEventController extends Controller
 {
@@ -63,6 +51,14 @@ class UserEventController extends Controller
         if ($endTime->diffInMinutes($startTime) < 60) {
             return response()->json([
                 "error" => TranslateTextHelper::translate("The event duration must be at least one hour."),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        // Check that the event duration is at least one hour
+        if ($eventDate->isBefore(now())) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("You cannot create an event in the past!"),
                 "status_code" => 422,
             ], 422);
         }
@@ -114,7 +110,7 @@ class UserEventController extends Controller
         $isLocationHasSpaceForPeople = $this->checkLocationCapacity($location->id, $request->num_people_invited);
         if (!$isLocationHasSpaceForPeople) {
             return response()->json([
-                "error" => TranslateTextHelper::translate("The number of invited people is bigger than location capacity, Please choose a different location."),
+                "error" => TranslateTextHelper::translate("The number of invited people is bigger than location capacity, Max capacity for this location is $location->capacity, Please choose a different location."),
                 "status_code" => 422,
             ], 422);
         }
@@ -191,17 +187,22 @@ class UserEventController extends Controller
 
         $location = Location::find($event->location_id);
 
+        $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+        $endTime = Carbon::parse($event->date . ' ' . $event->end_time);
+
+        $eventTimeInMinutes = $startTime->diffInMinutes($endTime);
+
         return EventSupplement::create([
             'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
-            'total_price' => $location->reservation_price, // add the reservation price for start,other supplements later
+            'total_price' => $location->reservation_price * ( $eventTimeInMinutes / 60), // add the reservation price for start,other supplements later
         ]);
     }
 
     /////////////////////////////////////
-    private function createReceipt($userId, $eventSupplementsId, $userEventId)
+    private function createReceipt($userId, $eventSupplementsId, $userEventId): void
     {
-        return Receipt::create([
+        Receipt::create([
             'user_id' => $userId,
             'event_supplement_id' => $eventSupplementsId,
             'user_event_id' => $userEventId,
@@ -261,7 +262,7 @@ class UserEventController extends Controller
             'event_id' => 'required|integer|exists:user_events,id',
             'invitation_type' => 'sometimes|nullable|string',
             'description' => 'sometimes|nullable|string',
-            'num_people_invited' => 'sometimes|nullable|integer|min:1'
+            'num_people_invited' => 'sometimes|nullable|integer'
         ]);
 
         if ($validator->fails()) {
