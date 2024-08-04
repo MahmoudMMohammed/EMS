@@ -262,7 +262,7 @@ class UserEventController extends Controller
             'event_id' => 'required|integer|exists:user_events,id',
             'invitation_type' => 'sometimes|nullable|string',
             'description' => 'sometimes|nullable|string',
-            'num_people_invited' => 'sometimes|nullable|integer|min:1'
+            'num_people_invited' => 'sometimes|nullable|integer'
         ]);
 
         if ($validator->fails()) {
