@@ -30,6 +30,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
+use App\Models\UserJoinedEvent;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -465,7 +466,7 @@ Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::
 Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
 Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
 Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
-
+Route::get('/reservation/public/join' , [UserJoinedEvent::class , 'joinEvent']);
 
 //web
 //done without translate
