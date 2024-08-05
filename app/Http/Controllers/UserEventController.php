@@ -603,7 +603,8 @@ class UserEventController extends Controller
             'picture_3' => $pictures[2] ,
             'days' => $remaining_days,
             'time' => $remaining_hours . ':' . $remaining_minutes,
-            'status' => $status
+            'status' => $status ,
+            'location_id' => $event->location_id
         ];
 
         return response()->json($response, 200);
@@ -1734,7 +1735,14 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        $status = !($exist->num_people_joined == $exist->num_people_invited) ;
+        $status = 'true';
+
+        $startTime = Carbon::parse($exist->date . ' ' . $exist->start_time)->subHours(24);
+        $currentTime = Carbon::now();
+
+        if ($currentTime->isAfter($startTime) || $exist->num_people_joined == $exist->num_people_invited) {
+            $status = 'false' ;
+        }
 
         $picture = LocationPicture::query()
             ->where('location_id' , $exist->location_id)
