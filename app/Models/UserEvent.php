@@ -111,4 +111,8 @@ class UserEvent extends Model
     {
         return $this->belongsTo(MainEvent::class , 'main_event_id' , 'id');
     }
+    public function mainEvent(): BelongsTo
+    {
+        return $this->belongsTo(MainEvent::class , 'main_event_id' , 'id');
+    }
 }

@@ -26,6 +26,7 @@ class UserEventController extends Controller
         TranslateTextHelper::setTarget($user->profile->preferred_language);
 
         $validator = Validator::make($request->all(), [
+            'main_event_id' => 'required|exists:main_events,id',
             'location_id' => 'required|exists:locations,id',
             'date' => 'required|date',
             'invitation_type' => 'required|string',
@@ -169,6 +170,7 @@ class UserEventController extends Controller
         return UserEvent::create([
             'user_id' => $userId,
             'location_id' => $request->location_id,
+            'main_event_id' => $request->main_event_id,
             'date' => $request->date,
             'invitation_type' => $request->invitation_type,
             'description' => $request->description,
@@ -449,7 +451,7 @@ class UserEventController extends Controller
 
         $response = [];
 
-                //Pending          //Confirmed      //Rejected       //Finished
+        //Pending          //Confirmed      //Rejected       //Finished
         $icon = ['Status/4.png' , 'Status/3.png' , 'Status/2.png' , 'Status/1.png'];
 
         $color = ['#F1910B' , '#60B246' , '#DD6A6A' , '#777777'];
@@ -627,9 +629,9 @@ class UserEventController extends Controller
         foreach ($foods as $foodDetails) {
             foreach ($foodDetails as $food) {
 
-                    $price = (float)str_replace(['S.P', ',', ' '], '', $food['price']);
-                    $quantity = $food['quantity'];
-                    $foodTotalPrice += $price * $quantity;
+                $price = (float)str_replace(['S.P', ',', ' '], '', $food['price']);
+                $quantity = $food['quantity'];
+                $foodTotalPrice += $price * $quantity;
             }
         }
 

@@ -62,6 +62,7 @@
 
     <div class="info">
         <h2>Event Information</h2>
+        <div>Event Type: {{ $event->mainEvent->name }}</div>
         <div>Location: {{ $event->location->name }}</div>
         <div>Date: {{ $event->date }}</div>
         <div>Time: {{ $event->start_time }} - {{ $event->end_time }}</div>

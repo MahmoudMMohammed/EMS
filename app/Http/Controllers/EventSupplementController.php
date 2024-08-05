@@ -581,7 +581,13 @@ class EventSupplementController extends Controller
             ], 404);
         }
 
-        return response()->json($foodSupplements);
+        $supplementsWithTotal = collect($foodSupplements)->map(function ($supplement){
+            $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
+            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            return $supplement;
+        });
+
+        return response()->json($supplementsWithTotal);
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public function getDrinksSupplementsForEvent($event_id): JsonResponse
@@ -602,7 +608,14 @@ class EventSupplementController extends Controller
                 "status_code" => 404
             ],404);
         }
-        return response()->json($drinksSupplements);
+
+        $supplementsWithTotal = collect($drinksSupplements)->map(function ($supplement){
+            $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
+            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            return $supplement;
+        });
+
+        return response()->json($supplementsWithTotal);
 
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -624,7 +637,14 @@ class EventSupplementController extends Controller
                 "status_code" => 404
             ],404);
         }
-        return response()->json($accessoriesSupplements);
+
+        $supplementsWithTotal = collect($accessoriesSupplements)->map(function ($supplement){
+            $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
+            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            return $supplement;
+        });
+
+        return response()->json($supplementsWithTotal);
 
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
