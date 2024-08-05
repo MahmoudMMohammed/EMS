@@ -203,7 +203,10 @@ class EventSupplementController extends Controller
                 case 'food':
                     break;
                 case 'accessory':
-                    $mainEventHost = MainEventHost::whereHostId($location->host->id)->pluck('id');
+                    $mainEventHost = MainEventHost::whereHostId($location->host->id)
+                        ->whereMainEventId($event->main_event_id)
+                        ->pluck('id');
+
                     $warehouse = Warehouse::whereGovernorate($location->governorate)->first();
                     $availableQuantityInWarehouse = WarehouseAccessory::whereAccessoryId($item->id)
                         ->whereWarehouseId($warehouse->id)
