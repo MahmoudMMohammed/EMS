@@ -254,7 +254,7 @@ class UserEventController extends Controller
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function updateEventDetails(Request $request)
+    public function updateEventDetails(Request $request): JsonResponse
     {
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
@@ -263,7 +263,7 @@ class UserEventController extends Controller
             'event_id' => 'required|integer|exists:user_events,id',
             'invitation_type' => 'sometimes|nullable|string',
             'description' => 'sometimes|nullable|string',
-            'num_people_invited' => 'sometimes|nullable|integer'
+            'num_people_invited' => 'sometimes|nullable|integer|min:1'
         ]);
 
         if ($validator->fails()) {
@@ -282,6 +282,14 @@ class UserEventController extends Controller
         $validationResponse = $this->validateEvent($event, $user);
         if ($validationResponse !== null) {
             return $validationResponse;
+        }
+
+        $locationCapacity = $event->location->capacity;
+        if ($validatedData['num_people_invited'] > $locationCapacity){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("The number of people invited has exceeded the location capacity. Max number to invite: $locationCapacity"),
+                "status_code" => 422,
+            ], 422);
         }
 
         // Filter out null values to prevent overwriting with null
