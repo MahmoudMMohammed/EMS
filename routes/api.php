@@ -462,16 +462,19 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 });
 
 //done without translate
+
+//my reservation (git reservation - general of each reservation - bill of each reservation)
 Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
 
+//my reservation add food - drink - accessory (get category of each reservation)
 Route::get('/get/reservation/myReservation/food/category/{Event_id}' , [HostFoodCategoryController::class , 'getReservationFoodCategory']);
 Route::get('/get/reservation/myReservation/drinks/category/{Event_id}' , [HostDrinkCategoryController::class , 'getReservationDrinksCategory']);
 Route::get('/get/reservation/myReservation/accessories/category/{Event_id}' , [MEHACController::class , 'getReservationAccessoriesCategory']);
 
 
-
+//public reservation (general , supplement(food-drink-accessory) , join event)
 Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::class , 'getGeneralDetails']);
 Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
 Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
@@ -480,6 +483,8 @@ Route::get('/reservation/public/join/{event_id}' , [UserJoinedEventController::c
 
 //web
 //done without translate
+
+//get reservation sorted by (date - host - governorate - status - my reservation) and get each reservation details (general - bill)
 Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);
 Route::post('/get/reservation/byHost' , [UserEventController::class , 'getReservationByHost']);
 Route::post('/get/reservation/byGovernorate' , [UserEventController::class , 'getReservationByGovernorate']);
@@ -490,6 +495,8 @@ Route::get('/get/reservation/details/bill/{event_id}' , [UserEventController::cl
 
 
 //done without translate
+
+//get statistics of web (all cards and 3 chart)
 Route::get('/get/statistics/UserExperience' , [UserController::class , 'StatisticsUserExperience']);
 Route::get('/get/statistics/reservation' , [UserEventController::class , 'StatisticsReservation']);
 Route::get('/get/statistics/sales' , [OwnerController::class , 'StatisticsSales']);
