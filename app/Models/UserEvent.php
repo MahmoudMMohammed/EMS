@@ -29,7 +29,8 @@ class UserEvent extends Model
         'end_time',
         'num_people_invited',
         'num_people_joined',
-        'verified'
+        'verified',
+        'main_event_id'
     ];
 
     /**
@@ -106,4 +107,8 @@ class UserEvent extends Model
         return UserEventFactory::new();
     }
 
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(MainEvent::class , 'main_event_id' , 'id');
+    }
 }

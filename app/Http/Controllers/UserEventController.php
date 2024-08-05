@@ -436,7 +436,7 @@ class UserEventController extends Controller
                 if($reservations->isEmpty())
                 {
                     return response()->json([
-                        'massage' => "Dear user,there are no public events to join, create some." ,
+                        'massage' => "Dear user,there are no public events to join." ,
                         'status_code' => 404
                     ] , 404);
                 }
@@ -512,6 +512,7 @@ class UserEventController extends Controller
                 'date' => $reservation->date,
                 'start_time' => $reservation->start_time,
                 'end_time' => $reservation->end_time,
+                'event' => $reservation->event->name ,
                 'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
                 'logo' => $reservation->location->logo ,
                 'days' => $remaining_days,
@@ -1643,8 +1644,11 @@ class UserEventController extends Controller
             'verified' => UserEvent::STATUS_KEYS[$event->verified],
             'start_time' => $event->start_time,
             'end_time' => $event->end_time,
+            'event'=> $event->event->name ,
             'days' => $remaining_days,
             'time' => $remaining_hours . ':' . $remaining_minutes,
+            'invitation_type' => $event->invitation_type ,
+            'num_people_joined' => $event->num_people_joined .'/'. $event->num_people_invited
         ];
 
         return response()->json($response , 200);

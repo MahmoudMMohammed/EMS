@@ -57,11 +57,26 @@ class UserJoinedEventController extends Controller
         //have_start_event_time
         $startTime = Carbon::parse($exist->date . ' ' . $exist->start_time);
         $currentTime = Carbon::now();
-        $diff = $startTime->diff($currentTime);
 
-        if ($currentTime->isAfter($startTime) || $exist->verified == 2 ){
+        if (!($currentTime->isAfter($startTime)) ){
             return response()->json([
                 "message" => "You cannot join the event because it has already started.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($exist->verified != 1)
+        {
+            return response()->json([
+                "message" => "You cannot join the event because it is status not confirmed.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($exist->invitation_type == 'Private')
+        {
+            return response()->json([
+                "message" => "You cannot join the event because it is Private not Public.",
                 "status_code" => 422,
             ], 422);
         }

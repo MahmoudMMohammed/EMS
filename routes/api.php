@@ -14,9 +14,12 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodCategoryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\HostController;
+use App\Http\Controllers\HostDrinkCategoryController;
+use App\Http\Controllers\HostFoodCategoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
+use App\Http\Controllers\MEHACController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptController;
@@ -26,6 +29,7 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEventController;
+use App\Http\Controllers\UserJoinedEventController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
@@ -462,11 +466,17 @@ Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
 Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
 Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
 
+Route::get('/get/reservation/myReservation/food/category/{Event_id}' , [HostFoodCategoryController::class , 'getReservationFoodCategory']);
+Route::get('/get/reservation/myReservation/drinks/category/{Event_id}' , [HostDrinkCategoryController::class , 'getReservationDrinksCategory']);
+Route::get('/get/reservation/myReservation/accessories/category/{Event_id}' , [MEHACController::class , 'getReservationAccessoriesCategory']);
+
+
+
 Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::class , 'getGeneralDetails']);
 Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
 Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
 Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
-Route::get('/reservation/public/join' , [UserJoinedEvent::class , 'joinEvent']);
+Route::get('/reservation/public/join/{event_id}' , [UserJoinedEventController::class , 'joinEvent']);
 
 //web
 //done without translate

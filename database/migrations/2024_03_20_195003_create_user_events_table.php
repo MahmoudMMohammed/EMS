@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('location_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('main_event_id')->constrained()->cascadeOnDelete()->cascadeOnDelete();
             $table->date('date');
             $table->string('invitation_type');
             $table->text('description');

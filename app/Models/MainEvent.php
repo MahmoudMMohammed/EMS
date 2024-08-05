@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MainEvent extends Model
 {
@@ -33,4 +34,8 @@ class MainEvent extends Model
         return $this->hasMany(MainEventHost::class , 'main_event_id' , 'id');
     }
 
+    public function userEvents() : HasMany
+    {
+        return $this->hasMany(UserEvent::class , 'main_event_id' , 'id');
+    }
 }

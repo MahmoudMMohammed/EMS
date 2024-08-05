@@ -12,6 +12,7 @@ use App\Models\FoodCategory;
 use App\Models\HostDrinkCategory;
 use App\Models\HostFoodCategory;
 use App\Models\Location;
+use App\Models\MainEvent;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
 use App\Models\Reservation;
@@ -39,10 +40,12 @@ class UserEventFactory extends Factory
 
         $startTime = $this->faker->time('H:i:s');
         $endTime = Carbon::createFromFormat('H:i:s', $startTime)->addHours(2)->format('H:i:s'); // Converting to 24-hour format and adding 2 hours
+        $mainEventIds = MainEvent::query()->pluck('id')->toArray();
 
         return [
             'user_id' => $this->faker->numberBetween(29, 38),
             'location_id' => $this->faker->numberBetween(1, 26),
+            'main_event_id'=> $this->faker->randomElement($mainEventIds),
             'date' => $this->faker->date,
             'invitation_type' => $this->faker->randomElement(['Public', 'Private']),
             'description' => $this->faker->paragraph,
