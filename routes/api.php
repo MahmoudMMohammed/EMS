@@ -221,10 +221,22 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
         });
 
+        Route::prefix("statistics")->group(function (){
+
+            //get statistics for registration, feedbacks and favorites
+            Route::get('/digital', [StatisticsController::class, 'getDigitalStatisticsForUser']);
+
+            //get food, drinks and accessories statistics for charts
+            Route::get('/schemes', [StatisticsController::class, 'getPurchasesDistributions']);
+
+            //get some user info counts
+            Route::get('/counts', [StatisticsController::class, 'getUserStatisticsCount']);
+
+
+        });
+
 
     });
-
-
 
 
     //explore all locations available
