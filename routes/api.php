@@ -511,3 +511,4 @@ Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRatin
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
 //Route::get('/get-gender', [TestsController::class, 'getGender']);
+//Route::get('/change-currency', [TestsController::class, 'convertPrice']);
