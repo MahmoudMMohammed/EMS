@@ -119,6 +119,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
             //updating user preferred language
             Route::post('/language', [ProfileController::class , 'updatePreferredLanguage']);
 
+            //updating user preferred currency
+            Route::post('/currency', [ProfileController::class , 'updatePreferredCurrency']);
+
             //get user favorites
             Route::get('/favorites', [FavoriteController::class, 'getUserFavorites']);
 
