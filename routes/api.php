@@ -346,6 +346,10 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
         //update drink picture
         Route::post('/drinks/update-picture', [DrinkController::class , 'updateDrinkPicture']);
 
+        //update accessory picture
+        Route::post('/accessories/update-picture', [AccessoryController::class , 'updateAccessoryPicture']);
+
+
     });
 
 });
