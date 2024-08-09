@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedInteger('num_people_invited');
             $table->unsignedInteger('num_people_joined')->default(0);
             $table->enum('verified', ['Pending', 'Confirmed', 'Rejected', 'Finished'])->default('Pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
