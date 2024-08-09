@@ -431,7 +431,7 @@ class StatisticsController extends Controller
 
         return [
             "number_of_ratings" => $feedbacks->count(),
-            "average_ratings" => 'average ratings: ' . $feedbacks->avg(),
+            "average_ratings" => 'average ratings: ' . number_format($feedbacks->avg(),2),
         ];
     }
     //////////////////////////////////////////////////////////
