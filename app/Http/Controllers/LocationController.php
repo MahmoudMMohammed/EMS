@@ -582,4 +582,97 @@ class LocationController extends Controller
             "status_code" => 200,
         ]);
     }
+    public function updateLocationLogo(Request $request): JsonResponse
+    {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'location_id' => 'required|exists:locations,id',
+            'logo' => 'required|image',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $location = Location::findOrFail($request->location_id);
+        $logo = $location->getRawOriginal('logo');
+        $filenameWithoutExtension = pathinfo($logo, PATHINFO_FILENAME);
+
+        //delete the old file
+        if ($logo) {
+            $currentLogoPath = public_path('Location/') . $filenameWithoutExtension . '.' . pathinfo($logo, PATHINFO_EXTENSION) ;
+            if (file_exists($currentLogoPath)) {
+                unlink($currentLogoPath);
+            }
+        }
+
+        $image = $request->file('logo');
+        $newFilename = $filenameWithoutExtension . '.' . $image->getClientOriginalExtension() ;
+        $destination = public_path('Location/');
+        $image->move($destination, $newFilename);
+
+        $location->logo = "Location/$newFilename";
+        $location->save();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Location logo has been updated successfully"),
+            "status_code" => 200,
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    public function updateOneOfLocationPictures(Request $request): JsonResponse
+    {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'location_id' => 'required|exists:locations,id',
+            'picture_number' => 'required|in:1,2,3',
+            'image' => 'required|image'
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $location = Location::findOrFail($request->location_id);
+        $location_pictures = LocationPicture::whereLocationId($location->id)->get();
+
+        // Map picture_id to the correct picture in the collection
+        $locationPicture = $location_pictures->get($request->picture_number - 1);
+
+        $picture = $locationPicture->getRawOriginal('picture');
+        $filenameWithoutExtension = pathinfo($picture, PATHINFO_FILENAME);
+
+        //delete the old file
+        if ($picture) {
+            $currentPicturePath = public_path('Location/') . $filenameWithoutExtension . '.' . pathinfo($picture, PATHINFO_EXTENSION) ;
+            if (file_exists($currentPicturePath)) {
+                unlink($currentPicturePath);
+            }
+        }
+
+        $image = $request->file('image');
+        $newFilename = $filenameWithoutExtension . '.' . $image->getClientOriginalExtension() ;
+        $destination = public_path('Location/');
+        $image->move($destination, $newFilename);
+
+        $locationPicture->picture = "Location/$newFilename";
+        $locationPicture->save();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Location picture has been updated successfully"),
+            "status_code" => 200,
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
 }
