@@ -310,7 +310,7 @@ class StatisticsController extends Controller
 
     private function getMonthlyUserGrowth(): array
     {
-        $startDate = Carbon::now()->subYear(); // Adjust the start date as needed
+        $startDate = Carbon::now()->subYear();
         $endDate = Carbon::now();
 
         $registrations = $this->getUserRegistrationsByMonth($startDate, $endDate);
@@ -318,5 +318,11 @@ class StatisticsController extends Controller
         return $this->calculateMonthlyGrowth($registrations);
     }
     //////////////////////////////////////////////////////////
+    public function WebGetLocationCount(): JsonResponse
+    {
+        $count = Location::query()->count();
+        $response = ['count' => $count.' Place'];
+        return response()->json($response);
+    }
 
 }

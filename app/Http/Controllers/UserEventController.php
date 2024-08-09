@@ -1726,7 +1726,8 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        $exist = UserEvent::query()->find($event_id)->first();
+        $exist = UserEvent::query()->find($event_id);
+
         if(!$exist)
         {
             return response()->json([

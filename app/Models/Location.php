@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
 {
-    use HasFactory;
+    use HasFactory , SoftDeletes;
     protected $table = 'locations';
     /**
      * The attributes that are mass assignable.
@@ -28,6 +29,7 @@ class Location extends Model
         'x_position',
         'y_position',
         'logo',
+        'maintenance ',
     ];
 
     /**

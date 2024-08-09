@@ -25,6 +25,8 @@ return new class extends Migration
             $table->double('x_position');
             $table->double('y_position');
             $table->string('logo');
+            $table->boolean('maintenance')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

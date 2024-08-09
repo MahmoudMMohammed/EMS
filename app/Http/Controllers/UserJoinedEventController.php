@@ -58,7 +58,7 @@ class UserJoinedEventController extends Controller
         $startTime = Carbon::parse($exist->date . ' ' . $exist->start_time);
         $currentTime = Carbon::now();
 
-        if (!($currentTime->isAfter($startTime)) ){
+        if ($currentTime->isAfter($startTime)){
             return response()->json([
                 "message" => "You cannot join the event because it has already started.",
                 "status_code" => 422,

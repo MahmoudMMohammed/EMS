@@ -299,11 +299,11 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         //get weekly statistics about food, drinks and accessories for web charts
         Route::get('/weekly-statistics', [StatisticsController::class, 'getWeeklyStatistics']);
 
-        //get weekly report as PDF
-        Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
     });
 
+    //get weekly report as PDF
+    Route::get('/admin/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
 
 });
@@ -505,7 +505,20 @@ Route::get('/get/statistics/masculinity' , [UserController::class , 'StatisticsM
 Route::get('/get/statistics/femininity' , [UserController::class , 'StatisticsFemininity']);
 Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRating']);
 
+//web location
 
+//location - 1
+Route::get('/get/location/by/host/{category_id}' , [LocationController::class , 'WebGetLocationByHost']);
+Route::get('/get/location/count' , [StatisticsController::class , 'WebGetLocationCount']);
+
+//location - 2
+Route::get('/get/location/general/{location_id}' , [LocationController::class , 'WebGetLocationGeneral']);
+Route::get('/get/location/details/{location_id}' , [LocationController::class , 'WebGetLocationDetails']);
+Route::post('/edit/location/details/{location_id}' , [LocationController::class , 'WebEditLocationDetails']);
+Route::get('/get/location/ContactInformation/{location_id}' , [LocationController::class , 'WebGetLocationAdmin']);
+Route::delete('/delete/location/{location_id}' , [LocationController::class , 'WebDeleteLocation']);
+Route::get('/edit/location/Maintenance/{location_id}' , [LocationController::class , 'WebPutLocationInMaintenance']);
+Route::get('/edit/location/Service/{location_id}' , [LocationController::class , 'WebPutLocationInService']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

@@ -9,6 +9,7 @@ use App\Models\Food;
 use App\Models\Location;
 use App\Models\LocationPicture;
 use App\Models\User;
+use App\Models\UserEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -247,6 +248,338 @@ class LocationController extends Controller
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebGetLocationByHost($category_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($category_id < 0 || $category_id > 7)
+        {
+            return response()->json([
+                "error" => "invalid category ID must be between 0 and 7",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $result = [];
+        if($category_id == 0)
+        {
+            $result = Location::query()->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo')->get();
+            if($result->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no Locations.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif (in_array($category_id , [1,2,3,4,5,6,7]))
+        {
+            $result = Location::query()
+                ->where('host_id' , $category_id)
+                ->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo')
+                ->get();
+
+            if($result->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no Locations for this specific host.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        return response()->json($result , 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebGetLocationGeneral($location_id): JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $photo = LocationPicture::query()
+            ->where('location_id' , $location_id)
+            ->orderBy('id')
+            ->select('id' , 'picture')
+            ->get();
 
 
+        $response = [
+            'id' => $exist->id ,
+            'governorate' => $exist->governorate ,
+            'address' => $exist->address ,
+            'host' => $exist->host->name ,
+            'Xp' => $exist->x_position ,
+            'Yp' => $exist->y_position ,
+            'id_photo_1' => $photo[0]->id ,
+            'photo_1' => $photo[0]->picture ,
+            'id_photo_2' => $photo[1]->id ,
+            'photo_2' => $photo[1]->picture ,
+            'id_photo_3' => $photo[2]->id ,
+            'photo_3' => $photo[2]->picture
+
+        ];
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebGetLocationDetails($location_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->id ,
+            'name' => $exist->name ,
+            'hour_price' => number_format($exist->reservation_price).' S.P' ,
+            'open_time' => $exist->open_time ,
+            'close_time' => $exist->close_time ,
+            'capacity' => $exist->capacity
+        ];
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebEditLocationDetails(Request $request , $location_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'price' => 'required|integer' ,
+            'open' => 'required|date_format:h:i A' ,
+            'close' => 'required|date_format:h:i A' ,
+            'capacity' => 'required|integer'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->update([
+            'name' => $request->input('name') ,
+            'reservation_price' => $request->input('price'),
+            'open_time' => $request->input('open'),
+            'close_time' => $request->input('close'),
+            'capacity' => $request->input('capacity'),
+        ]);
+
+        return response()->json([
+            "message" => "Location details updated successfully",
+            "status_code" => 200,
+        ], 200);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebGetLocationAdmin($location_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->admin->id ,
+            'name' => $exist->admin->name ,
+            'email' => $exist->admin->email ,
+            'phone_number' => $exist->admin->profile->phone_number
+        ];
+
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebDeleteLocation($location_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $event = UserEvent::query()
+            ->where('location_id' , $exist->id)
+            ->whereNotIn('verified', ['Finished', 'Rejected'])
+            ->exists();
+
+        if($event)
+        {
+            return response()->json([
+                "message" => "You cannot delete this place because there are reservations attached to it.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->delete();
+
+        return response()->json([
+            "message" => "This location has been successfully deleted" ,
+            "status_code" => 200,
+        ] , 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebPutLocationInMaintenance($location_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $event = UserEvent::query()
+            ->where('location_id' , $exist->id)
+            ->whereNotIn('verified', ['Finished', 'Rejected'])
+            ->exists();
+
+        if($event)
+        {
+            return response()->json([
+                "message" => "You cannot maintain this place because there are reservations attached to it.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($exist->maintenance == 1)
+        {
+            return response()->json([
+                "message" => "This place is actually under maintenance.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->maintenance = 1;
+        $exist->save();
+
+        return response()->json([
+            "message" => "This place has been successfully put into maintenance" ,
+            "status_code" => 200,
+        ]);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebPutLocationInService($location_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Location::query()->find($location_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid Location id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($exist->maintenance == 0)
+        {
+            return response()->json([
+                "message" => "This place is actually under service.",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->maintenance = 0;
+        $exist->save();
+
+        return response()->json([
+            "message" => "This place has been successfully put into service" ,
+            "status_code" => 200,
+        ]);
+    }
 }

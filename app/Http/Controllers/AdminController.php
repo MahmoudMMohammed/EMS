@@ -198,7 +198,7 @@ class AdminController extends Controller
         $user = User::findOrFail($event->user_id);
         $location = Location::findOrFail($event->location_id);
 
-        if ($location->user_id != $admin->id || $admin->role != 'Owner'){
+        if ($location->user_id != $admin->id && $admin->role != 'Owner'){
             return response()->json([
                 "error" => TranslateTextHelper::translate("Unauthorized, You cannot perform this action!"),
                 "status_code" => 403
@@ -249,7 +249,7 @@ class AdminController extends Controller
         $user = User::findOrFail($event->user_id);
         $location = Location::findOrFail($event->location_id);
 
-        if ($location->user_id != $admin->id || $admin->role != 'Owner'){
+        if ($location->user_id != $admin->id && $admin->role != 'Owner'){
             return response()->json([
                 "error" => TranslateTextHelper::translate("Unauthorized, You cannot perform this action!"),
                 "status_code" => 403

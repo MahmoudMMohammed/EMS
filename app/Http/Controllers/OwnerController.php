@@ -339,7 +339,7 @@ class OwnerController extends Controller
                 'color' => '#7D3696',
             ],
             [
-                'total profits'=> number_format($total_profit , 2 ).' S.P',
+                'total_profits'=> number_format($total_profit , 2 ).' S.P',
                 'color'=> '#989898'
             ]
         ];
