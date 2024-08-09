@@ -548,6 +548,15 @@ Route::delete('/delete/location/{location_id}' , [LocationController::class , 'W
 Route::get('/edit/location/Maintenance/{location_id}' , [LocationController::class , 'WebPutLocationInMaintenance']);
 Route::get('/edit/location/Service/{location_id}' , [LocationController::class , 'WebPutLocationInService']);
 
+//location - 3
+Route::post('/add/location' , [LocationController::class , 'WebAddLocation']);
+Route::get('/get/location/available/admins' , [AdminController::class , 'GetAvailableAdmin']);
+
+//web food
+
+//food - 1
+Route::get('/get/food/by/category/{category_id}' , [FoodController::class , 'WebGetFoodByCategory']);
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);

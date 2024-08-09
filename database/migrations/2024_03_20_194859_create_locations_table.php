@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('open_time');
             $table->string('close_time');
             $table->double('reservation_price');
-            $table->double('x_position');
-            $table->double('y_position');
+            $table->double('x_position')->default(100);
+            $table->double('y_position')->default(100);
             $table->string('logo');
             $table->boolean('maintenance')->default(false);
             $table->softDeletes();

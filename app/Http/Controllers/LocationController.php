@@ -320,7 +320,7 @@ class LocationController extends Controller
         $photo = LocationPicture::query()
             ->where('location_id' , $location_id)
             ->orderBy('id')
-            ->select('id' , 'picture')
+            ->select('picture')
             ->get();
 
 
@@ -331,11 +331,8 @@ class LocationController extends Controller
             'host' => $exist->host->name ,
             'Xp' => $exist->x_position ,
             'Yp' => $exist->y_position ,
-            'id_photo_1' => $photo[0]->id ,
             'photo_1' => $photo[0]->picture ,
-            'id_photo_2' => $photo[1]->id ,
             'photo_2' => $photo[1]->picture ,
-            'id_photo_3' => $photo[2]->id ,
             'photo_3' => $photo[2]->picture
 
         ];
@@ -582,6 +579,7 @@ class LocationController extends Controller
             "status_code" => 200,
         ]);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
     public function updateLocationLogo(Request $request): JsonResponse
     {
         $owner = Auth::user();
@@ -675,4 +673,80 @@ class LocationController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////////////
+    public function WebAddLocation(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'governorate' => 'required|in:Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' ,
+            'address' => 'required|max:30',
+            'price'=> 'required|integer' ,
+            'admin'=> 'required|integer|exists:users,id',
+            'logo'=> 'required|image',
+            'photo_1'=>'required|image',
+            'photo_2'=>'required|image',
+            'photo_3'=>'required|image',
+            'host' => 'required|integer|exists:hosts,id',
+            'open' => 'required|date_format:h:i A' ,
+            'close' => 'required|date_format:h:i A' ,
+            'capacity' => 'required|integer'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $publicPath = public_path('Location');
+
+        $logoPath = 'Location/' . $request->file('logo')->getClientOriginalName();
+        $request->file('logo')->move($publicPath, $logoPath);
+
+        $photo1Path = 'Location/' .  $request->file('photo_1')->getClientOriginalName();
+        $request->file('photo_1')->move($publicPath, $photo1Path);
+
+        $photo2Path = 'Location/' .  $request->file('photo_2')->getClientOriginalName();
+        $request->file('photo_2')->move($publicPath, $photo2Path);
+
+        $photo3Path = 'Location/' .  $request->file('photo_3')->getClientOriginalName();
+        $request->file('photo_3')->move($publicPath, $photo3Path);
+
+        $location = Location::query()->create([
+            'name' => $request->input('name'),
+            'governorate' => $request->input('governorate'),
+            'address' => $request->input('address'),
+            'reservation_price' => $request->input('price'),
+            'user_id' => $request->input('admin'),
+            'host_id' => $request->input('host'),
+            'open_time' => $request->input('open'),
+            'close_time' => $request->input('close'),
+            'capacity' => $request->input('capacity'),
+            'logo' => $logoPath,
+        ]);
+
+        $photoPaths = [$photo1Path , $photo2Path , $photo3Path];
+
+        foreach ($photoPaths as $photoPath) {
+            LocationPicture::query()->create([
+                'location_id' => $location->id,
+                'picture' => $photoPath,
+            ]);
+        }
+
+        return response()->json([
+            "message" => "Location added successfully",
+            "status_code" => 201,
+        ], 201);
+    }
 }

@@ -291,6 +291,41 @@ class AdminController extends Controller
 
     }
     ///////////////////////////////////////////////////////////////////////////////////////
+    public function GetAvailableAdmin() :JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
+        $Available = Location::query()->pluck('user_id')->toArray();
+        if(!$Available)
+        {
+            return response()->json([
+                'message' => 'No locations founded' ,
+                'status_code' => 404
+            ] , 404);
+        }
+
+        $Admins = User::query()
+            ->whereNotIn( 'id' , $Available)
+            ->where('role' , 'Admin')
+            ->select('id' , 'name')
+            ->get();
+
+        if($Admins->isEmpty())
+        {
+            return response()->json([
+                'message' => 'There is no admin available to manage this place. Dear owner, hire new people to manage this place.',
+                'status_code' => 404
+            ], 404);
+        }
+
+        return response()->json($Admins , 200);
+    }
 }
 
