@@ -340,6 +340,12 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
         //update location picture
         Route::post('/locations/update-picture', [LocationController::class , 'updateOneOfLocationPictures']);
 
+        //update food picture
+        Route::post('/food/update-picture', [FoodController::class , 'updateFoodPicture']);
+
+        //update drink picture
+        Route::post('/drinks/update-picture', [DrinkController::class , 'updateDrinkPicture']);
+
     });
 
 });
