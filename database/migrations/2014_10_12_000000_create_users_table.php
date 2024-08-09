@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('role')->default('User');
             $table->boolean('is_blocked')->default(false);
             $table->timestamp('blocked_until')->nullable();
+            $table->unsignedInteger('number_of_logins')->default(0);
+            $table->timestamp('last_login')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -227,6 +227,9 @@ class AuthController extends Controller
                 'status_code' => 400,
                 ] , 400);
         }
+        $user->number_of_logins += 1;
+        $user->last_login = now();
+        $user->save();
 
         return response()->json([
             'token' => $token ,

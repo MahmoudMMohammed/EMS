@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Drink;
+use App\Models\Favorite;
+use App\Models\Feedback;
 use App\Models\Food;
 use App\Models\Host;
 use App\Models\Location;
 use App\Models\User;
 use App\Models\UserEvent;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -73,18 +77,18 @@ class StatisticsController extends Controller
             $pdfOutput = $pdf->output();
             if (empty($pdfOutput)) {
                 Log::error('PDF output is empty.');
-                throw new \Exception('PDF output is empty.');
+                throw new Exception('PDF output is empty.');
             }
 
             // Save PDF to storage
             if (!Storage::put($filePath, $pdfOutput)) {
                 Log::error("Failed to save PDF file at path: $filePath");
-                throw new \Exception('Failed to save PDF file.');
+                throw new Exception('Failed to save PDF file.');
             }
 
             return Storage::download($filePath);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error generating PDF: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'message' => 'An error occurred while generating the PDF',
@@ -94,6 +98,85 @@ class StatisticsController extends Controller
 
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function getDigitalStatisticsForUser(): JsonResponse
+    {
+        $userRegistrationData = $this->getUserRegistrationData();
+        $userFeedbacksCounts = $this->getUserFeedbacksCount();
+        $userFavoritesCounts = $this->getUserFavoritesCount();
+
+        return response()->json([
+            "registration_data" => $userRegistrationData,
+            "feedbacks_data" => $userFeedbacksCounts,
+            "favorites_data" => $userFavoritesCounts,
+        ]);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getPurchasesDistributions(): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        $events = $user->events;
+
+        $items = [
+            'food' => 0,
+            'drinks' => 0,
+            'accessories' => 0,
+        ];
+
+        // Loop through each event and their supplements
+        foreach ($events as $event) {
+            $food = $event->supplements->food_details ?? [];
+            $drinks = $event->supplements->drinks_details ?? [];
+            $accessories = $event->supplements->accessories_details ?? [];
+
+            if (!empty($food)) {
+                foreach ($food as $item) {
+                    $items['food'] += $item['quantity'];
+                }
+            }
+
+            if (!empty($drinks)) {
+                foreach ($drinks as $item) {
+                    $items['drinks'] += $item['quantity'];
+                }
+            }
+
+            if (!empty($accessories)) {
+                foreach ($accessories as $item) {
+                    $items['accessories'] += $item['quantity'];
+                }
+            }
+        }
+
+        return response()->json($items);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function getUserStatisticsCount()
+    {
+        $user = Auth::user();
+
+        $userReservations = $this->getUserFinishedAndConfirmedReservations();
+        $userBlockedReservations = $this->getUserBlockedReservations();
+        $blockedComments = $this->getUserBlockedComments();
+
+        $lastLogin = Carbon::parse($user->last_login);
+        $userInfo = [
+            "message" => 'You have logged '. $user->number_of_logins . ' to the app',
+            'date' => $lastLogin->diffForHumans(),
+        ];
+
+        return response()->json([
+            "confirmed_and_finished_reservations" => $userReservations,
+            "blocked_reservations" => $userBlockedReservations,
+            "user_logins" => $userInfo,
+            "blocked_comments" => $blockedComments,
+            ]);
+
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     private function getWeeklyReportData(): array
@@ -324,5 +407,143 @@ class StatisticsController extends Controller
         $response = ['count' => $count.' Place'];
         return response()->json($response);
     }
+
+    private function getUserRegistrationData(): array
+    {
+        $user = Auth::user();
+        $date = Carbon::parse($user->created_at);
+
+        $registrationDate = $date->toDateString();
+        $time = $date->format('h:i:s A');
+
+        $diffInDays = $date->diffInDays(now());
+
+        return [
+            "date" => "$registrationDate      $time",
+            "days" => $diffInDays
+        ];
+    }
+    //////////////////////////////////////////////////////////
+    private function getUserFeedbacksCount(): array
+    {
+        $user = Auth::user();
+        $feedbacks = Feedback::whereUserId($user->id)->pluck('rate');
+
+        return [
+            "number_of_ratings" => $feedbacks->count(),
+            "average_ratings" => 'average ratings: ' . $feedbacks->avg(),
+        ];
+    }
+    //////////////////////////////////////////////////////////
+
+    private function getUserFavoritesCount()
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $favorites = Favorite::whereUserId($user->id)->get();
+
+        $items = [
+            'locations' => [],
+            'foods' => [],
+            'drinks' => [],
+            'accessories' => []
+        ];
+        static $counter = 0;
+
+        foreach ($favorites as $favorite) {
+            $item = $favorite->favoritable;
+            if ($item) {
+                switch (class_basename($item)) {
+                    case 'Location':
+                        $items['locations'][] = $item;
+                        break;
+                    case 'Food':
+                        $items['foods'][] = $item;
+                        break;
+                    case 'Drink':
+                        $items['drinks'][] = $item;
+                        break;
+                    case 'Accessory':
+                        $items['accessories'][] = $item;
+                        break;
+                }
+            }
+            $counter++;
+        }
+
+        $foodCount = count($items['foods']);
+        $drinksCount = count($items['drinks']);
+        $accessoriesCount = count($items['accessories']);
+        $locationsCount = count($items['locations']);
+        return [
+            "data" => "food:$foodCount, drinks:$drinksCount, accessories:$accessoriesCount, locations:$locationsCount",
+            "total_count" => count($items['foods']) + count($items['drinks']) + count($items['accessories']) + count($items['locations']),
+        ];
+    }
+    //////////////////////////////////////////////////////////
+    private function getUserFinishedAndConfirmedReservations()
+    {
+        $user = Auth::user();
+        // Fetch all finished events
+        $finishedEvents = UserEvent::whereUserId($user->id)
+            ->whereVerified("Finished")
+            ->get();
+
+        $yesterday = Carbon::parse(now())->subDay();
+
+        // Fetch all confirmed events where the parsed start_date is <= yesterday
+        $confirmedEvents = UserEvent::whereUserId($user->id)
+            ->whereVerified("Confirmed")
+            ->get()
+            ->filter(function ($event) use ($yesterday) {
+                $startTime = Carbon::parse($event->date . ' ' . $event->start_time);
+                return $startTime->greaterThanOrEqualTo($yesterday);
+            });
+        $combined = $finishedEvents->merge($confirmedEvents)->sortByDesc('created_at');
+        $latest = $combined->first();
+        $latestDate = Carbon::parse($latest->created_at);
+
+        return [
+            'message' => 'You have '. count($combined) . ' reservations inside the app.',
+            'date' => $latestDate->diffForHumans(),
+        ];
+    }
+    //////////////////////////////////////////////////////////
+    private function getUserBlockedReservations()
+    {
+        $user = Auth::user();
+
+        // Fetch all rejected events
+        $rejectedEvents = UserEvent::whereUserId($user->id)
+            ->whereVerified("Rejected")
+            ->get();
+
+        $latestEvent = $rejectedEvents->sortByDesc('created_at')->first();
+        $eventCreationDate = Carbon::parse($latestEvent->created_at);
+
+
+        return [
+            "message" => 'You have '. count($rejectedEvents) . ' blocked events.',
+            "date" => $eventCreationDate->diffForHumans(now()),
+        ];
+    }
+    //////////////////////////////////////////////////////////
+    private function getUserBlockedComments(): array
+    {
+        $user = Auth::user();
+
+        $blockedComments = Feedback::withTrashed() // Include soft deleted models
+            ->whereUserId($user->id)
+            ->whereNotNull('deleted_at') // Check that 'deleted_at' is not null
+            ->get();
+        $latestComment = $blockedComments->sortByDesc('created_at')->first();
+
+        return [
+            "message" => 'You have '. count($blockedComments) . ' blocked comments.',
+            "date" => $latestComment->date,
+        ];
+    }
+    //////////////////////////////////////////////////////////
 
 }

@@ -182,4 +182,53 @@ class DrinkController extends Controller
 
         return response()->json($response , 200);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public function updateDrinkPicture(Request $request): JsonResponse
+    {
+        $owner = Auth::user();
+        TranslateTextHelper::setTarget($owner->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            'drink_id' => 'required|exists:drinks,id',
+            'picture' => 'required|image',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $drink = Drink::findOrFail($request->drink_id);
+        $picture = $drink->getRawOriginal('picture');
+        $filenameWithoutExtension = pathinfo($picture, PATHINFO_FILENAME);
+        $directory = pathinfo($picture, PATHINFO_DIRNAME);
+
+
+
+        //delete the old file
+        if ($picture) {
+            $currentPicturePath = public_path($directory) .'/'. $filenameWithoutExtension . '.' . pathinfo($picture, PATHINFO_EXTENSION) ;
+            if (file_exists($currentPicturePath)) {
+                unlink($currentPicturePath);
+            }
+        }
+
+        $image = $request->file('picture');
+        $newFilename = $filenameWithoutExtension . '.' . $image->getClientOriginalExtension() ;
+        $destination = public_path($directory);
+        $image->move($destination, $newFilename);
+
+        $drink->picture = "$directory/$newFilename";
+        $drink->save();
+
+        return response()->json([
+            "message" => TranslateTextHelper::translate("Drink picture has been updated successfully"),
+            "status_code" => 200,
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
 }

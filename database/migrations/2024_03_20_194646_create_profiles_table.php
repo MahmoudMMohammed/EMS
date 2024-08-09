@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('preferred_language')->default('en');
+            $table->string('preferred_currency')->default('SYP');
             $table->string('about_me')->nullable();
             $table->string('place_of_residence')->nullable();
             $table->string('gender')->nullable();

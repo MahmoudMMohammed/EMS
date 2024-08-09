@@ -119,6 +119,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
             //updating user preferred language
             Route::post('/language', [ProfileController::class , 'updatePreferredLanguage']);
 
+            //updating user preferred currency
+            Route::post('/currency', [ProfileController::class , 'updatePreferredCurrency']);
+
             //get user favorites
             Route::get('/favorites', [FavoriteController::class, 'getUserFavorites']);
 
@@ -218,10 +221,22 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
         });
 
+        Route::prefix("statistics")->group(function (){
+
+            //get statistics for registration, feedbacks and favorites
+            Route::get('/digital', [StatisticsController::class, 'getDigitalStatisticsForUser']);
+
+            //get food, drinks and accessories statistics for charts
+            Route::get('/schemes', [StatisticsController::class, 'getPurchasesDistributions']);
+
+            //get some user info counts
+            Route::get('/counts', [StatisticsController::class, 'getUserStatisticsCount']);
+
+
+        });
+
 
     });
-
-
 
 
     //explore all locations available
@@ -314,9 +329,22 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
         Route::prefix("events/{event_id}")->group(function () {
 
+            //delete user reservation
             Route::delete('/delete', [OwnerController::class , 'deleteReservation']);
 
         });
+
+        //update location logo
+        Route::post('/locations/update-logo', [LocationController::class , 'updateLocationLogo']);
+
+        //update location picture
+        Route::post('/locations/update-picture', [LocationController::class , 'updateOneOfLocationPictures']);
+
+        //update food picture
+        Route::post('/food/update-picture', [FoodController::class , 'updateFoodPicture']);
+
+        //update drink picture
+        Route::post('/drinks/update-picture', [DrinkController::class , 'updateDrinkPicture']);
 
     });
 
@@ -524,3 +552,4 @@ Route::get('/edit/location/Service/{location_id}' , [LocationController::class ,
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
 //Route::get('/get-gender', [TestsController::class, 'getGender']);
+//Route::get('/change-currency', [TestsController::class, 'convertPrice']);

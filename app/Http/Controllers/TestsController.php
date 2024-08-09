@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
+use App\Helpers\CurrencyConverter;
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
+use App\Models\Food;
 use App\Services\GenderService;
 use Illuminate\Http\Request;
 
@@ -42,6 +45,15 @@ class TestsController extends Controller
             'name' => $name,
             'gender' => $gender,
         ]);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public function convertPrice()
+    {
+        $food = Food::find(1);
+
+        return CurrencyConverterScraper::convert($food->getRawPriceAttribute(),"SYP");
+
+//        return CurrencyConverterScraper::getAvailableExchanges();
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

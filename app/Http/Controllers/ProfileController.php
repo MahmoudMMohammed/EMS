@@ -179,7 +179,7 @@ class ProfileController extends Controller
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function updatePreferredLanguage(Request $request)
+    public function updatePreferredLanguage(Request $request): JsonResponse
     {
         $profile = $this->getUserProfile();
 
@@ -211,6 +211,37 @@ class ProfileController extends Controller
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
+    public function updatePreferredCurrency(Request $request): JsonResponse
+    {
+        $profile = $this->getUserProfile();
+
+        $validator = Validator::make($request->all(),[
+            'preferred_currency' => 'required | in:USD,EUR,TRY,EGP,SAR,JOD,AED,LYD,KWD,GBP,QAR,BHD,SEK,CAD,OMR,NOK,DKK'
+        ]);
+        if ($validator->fails()) {
+            TranslateTextHelper::setTarget($profile->preferred_language);
+            return response()->json([
+                "error" => TranslateTextHelper::translate($validator->errors()->first()),
+                "status_code" => 422,
+            ], 422);
+        }
+        $profile->preferred_currency = $request->preferred_currency;
+
+        if (!$profile->save()){
+            return response()->json([
+                'error' => TranslateTextHelper::translate('Could not update currency please try again later!'),
+                'status_code' => 400
+            ], 400);
+        }
+        $profile->save();
+        TranslateTextHelper::setTarget($profile->preferred_language);
+        return response()->json([
+            'message' => TranslateTextHelper::translate('Preferred currency updated successfully'),
+            'status_code' => 200
+        ], 200);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
     //method to get user with profile
     private function getUserProfile()
     {
