@@ -329,9 +329,16 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
         Route::prefix("events/{event_id}")->group(function () {
 
+            //delete user reservation
             Route::delete('/delete', [OwnerController::class , 'deleteReservation']);
 
         });
+
+        //update location logo
+        Route::post('/locations/update-logo', [LocationController::class , 'updateLocationLogo']);
+
+        //update location picture
+        Route::post('/locations/update-picture', [LocationController::class , 'updateOneOfLocationPictures']);
 
     });
 
