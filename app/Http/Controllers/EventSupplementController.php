@@ -390,7 +390,7 @@ class EventSupplementController extends Controller
 
         foreach ($itemSupplements as &$supplement) {
             if ($supplement['id'] == $item->id) {
-                $supplement['quantity'] = $request->quantity;
+                $supplement['quantity'] = intval($request->quantity);
                 break;
             }
         }
