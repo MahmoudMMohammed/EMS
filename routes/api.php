@@ -628,7 +628,11 @@ Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAcces
 
 //accessory - 2
 Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
-Route::get('/get/accessories/details' , [AccessoryController::class , 'WebGetDrinksDetails']);
+Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetDrinksDetails']);
+Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEditAccessoriesDetails']);
+
+//accessory - 3
+Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

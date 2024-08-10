@@ -385,7 +385,7 @@ class DrinkController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0' ,
+            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
             'description' => 'required|string' ,
         ]);
 
@@ -422,7 +422,7 @@ class DrinkController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price'=> 'required|integer|doesnt_start_with:0' ,
+            'price'=> 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
             'drink_category_id'=> 'required|integer|exists:drink_categories,id',
             'picture'=> 'required|image',
             'description' => 'required|string',

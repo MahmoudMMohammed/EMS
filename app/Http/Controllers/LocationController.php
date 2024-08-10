@@ -392,10 +392,10 @@ class LocationController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0' ,
+            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
             'open' => 'required|date_format:h:i A' ,
             'close' => 'required|date_format:h:i A' ,
-            'capacity' => 'required|integer'
+            'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1'
         ]);
 
         if($validator->fails())
@@ -696,7 +696,8 @@ class LocationController extends Controller
             'host' => 'required|integer|exists:hosts,id',
             'open' => 'required|date_format:h:i A' ,
             'close' => 'required|date_format:h:i A' ,
-            'capacity' => 'required|integer'
+            'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1' ,
+            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1'
         ]);
 
         if($validator->fails())
