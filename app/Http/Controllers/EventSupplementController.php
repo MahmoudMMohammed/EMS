@@ -458,10 +458,10 @@ class EventSupplementController extends Controller
 
         $itemSupplements = $this->getItemSupplements($item, $supplements);
 
-        // Filter out the item to be removed
-        $itemSupplements = array_filter($itemSupplements, function ($supplement) use ($item) {
+        // Filter out the item to be removed and re-index the array
+        $itemSupplements = array_values(array_filter($itemSupplements, function ($supplement) use ($item) {
             return $supplement['id'] !== $item->id;
-        });
+        }));
 
         $updated = $this->updateEventSupplements($itemSupplements, $supplements->id, $request->item_type);
 
