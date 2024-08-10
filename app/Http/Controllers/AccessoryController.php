@@ -348,4 +348,35 @@ class AccessoryController extends Controller
 
         return response()->json($response ,200);
     }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function getAccessoryStatistics($accessory_id): array
+    {
+        $accessory = Accessory::findOrFail($accessory_id);
+        $accessoryRegistration = $this->getRegistrationInfo($accessory);
+        $accessorySales = $this->getModelSales($accessory);
+        unset($accessorySales['total_sales']);
+        return array_merge($accessoryRegistration,$accessorySales);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public function deleteAccessory($accessory_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $accessory = Accessory::findOrFail($accessory_id);
+        if ($this->checkModelUsage($accessory)){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Cannot delete this accessory as it is used in pending or confirmed events."),
+                "status_code" => 400
+            ], 400);
+        }
+        $accessory->delete();
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Accessory deleted successfully."),
+            "status_code" => 200
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+
 }
