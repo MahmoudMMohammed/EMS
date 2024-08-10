@@ -6,6 +6,7 @@ use App\Helpers\TranslateTextHelper;
 use App\Models\Drink;
 use App\Models\DrinkCategory;
 use App\Models\Favorite;
+use App\Traits\ModelUsageCheck;
 use App\Traits\RegistrationData;
 use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 class DrinkController extends Controller
 {
-    use RegistrationData,SalesData;
+    use RegistrationData,SalesData,ModelUsageCheck;
     public function getDrinksByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -472,4 +473,23 @@ class DrinkController extends Controller
 
     ////////////////////////////////////////////////////////////////////////////////
 
+    public function deleteDrink($drink_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $drink = Drink::findOrFail($drink_id);
+        if ($this->checkModelUsage($drink)){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Cannot delete this drink as it is used in pending or confirmed events."),
+                "status_code" => 400
+            ], 400);
+        }
+        $drink->delete();
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Drink deleted successfully."),
+            "status_code" => 200
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
 }

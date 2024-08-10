@@ -334,29 +334,53 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 
         });
 
-        //update location logo
-        Route::post('/locations/update-logo', [LocationController::class , 'updateLocationLogo']);
+        Route::prefix("locations")->group(function () {
 
-        //update location picture
-        Route::post('/locations/update-picture', [LocationController::class , 'updateOneOfLocationPictures']);
+            //update location logo
+            Route::post('/update-logo', [LocationController::class , 'updateLocationLogo']);
 
-        //update food picture
-        Route::post('/food/update-picture', [FoodController::class , 'updateFoodPicture']);
+            //update location picture
+            Route::post('/update-picture', [LocationController::class , 'updateOneOfLocationPictures']);
+        });
 
-        //get food statistics data
-        Route::get('/food/statistics/{food_id}', [FoodController::class , 'getFoodStatistics']);
 
-        //update drink picture
-        Route::post('/drinks/update-picture', [DrinkController::class , 'updateDrinkPicture']);
+        Route::prefix("food")->group(function () {
+            //update food picture
+            Route::post('/update-picture', [FoodController::class , 'updateFoodPicture']);
 
-        //get drink statistics data
-        Route::get('/drinks/statistics/{drink_id}', [DrinkController::class , 'getDrinkStatistics']);
+            //get food statistics data
+            Route::get('/statistics/{food_id}', [FoodController::class , 'getFoodStatistics']);
 
-        //update accessory picture
-        Route::post('/accessories/update-picture', [AccessoryController::class , 'updateAccessoryPicture']);
+            //delete food ( soft delete )
+            Route::delete('/{food_id}', [FoodController::class , 'deleteFood']);
 
-        //get accessory statistics data
-        Route::get('/accessories/statistics/{accessory_id}', [AccessoryController::class , 'getAccessoryStatistics']);
+        });
+
+
+        Route::prefix("drinks")->group(function () {
+            //update drink picture
+            Route::post('/update-picture', [DrinkController::class , 'updateDrinkPicture']);
+
+            //get drink statistics data
+            Route::get('/statistics/{drink_id}', [DrinkController::class , 'getDrinkStatistics']);
+
+            //delete drink ( soft delete )
+            Route::delete('/{drink_id}', [DrinkController::class , 'deleteDrink']);
+
+        });
+
+
+        Route::prefix("accessories")->group(function () {
+            //update accessory picture
+            Route::post('/update-picture', [AccessoryController::class , 'updateAccessoryPicture']);
+
+            //get accessory statistics data
+            Route::get('/statistics/{accessory_id}', [AccessoryController::class , 'getAccessoryStatistics']);
+
+            //delete accessory ( soft delete )
+            Route::delete('/{accessory_id}', [AccessoryController::class , 'deleteAccessory']);
+
+        });
 
     });
 

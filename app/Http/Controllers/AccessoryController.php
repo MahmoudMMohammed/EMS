@@ -9,6 +9,7 @@ use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\ModelUsageCheck;
 use App\Traits\RegistrationData;
 use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AccessoryController extends Controller
 {
-    use RegistrationData,SalesData;
+    use RegistrationData,SalesData,ModelUsageCheck;
     public function getAccessoriesByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -253,4 +254,23 @@ class AccessoryController extends Controller
     }
     ////////////////////////////////////////////////////////////////////////////////
 
+    public function deleteAccessory($accessory_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $accessory = Accessory::findOrFail($accessory_id);
+        if ($this->checkModelUsage($accessory)){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Cannot delete this accessory as it is used in pending or confirmed events."),
+                "status_code" => 400
+            ], 400);
+        }
+        $accessory->delete();
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Accessory deleted successfully."),
+            "status_code" => 200
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
 }

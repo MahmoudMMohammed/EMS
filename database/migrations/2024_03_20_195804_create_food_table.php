@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('picture');
             $table->text('description');
             $table->string('country_of_origin');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

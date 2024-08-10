@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('picture');
             $table->foreignId('accessory_category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

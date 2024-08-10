@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('drink_category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('picture');
             $table->text('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
