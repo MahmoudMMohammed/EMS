@@ -239,5 +239,113 @@ class AccessoryController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetAccessoriesByCategory($accessory_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
+        if($accessory_id < 0 || $accessory_id > 7)
+        {
+            return response()->json([
+                "error" => "invalid accessory ID must be between 0 and 7",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $results = [];
+        if($accessory_id == 0)
+        {
+            $results = Accessory::query()->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no accessories.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif (in_array($accessory_id , range(1,7)))
+        {
+            $results = Accessory::query()
+                ->where('accessory_category_id' , $accessory_id)
+                ->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no accessories for this specific category.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+
+        $response = [];
+        foreach ($results as $result)
+        {
+            $response [] = [
+                'id' => $result->id ,
+                'name' => $result->name ,
+                'price' =>$result->price ,
+                'accessory_category' => $result->category->category ,
+                'picture' => $result->picture
+            ];
+        }
+
+        return response()->json($response , 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetAccessoriesCount():JsonResponse
+    {
+        $count = Accessory::query()->count();
+        $response = ['count' => $count.' Item'];
+        return response()->json($response);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetAccessoriesGeneral(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'accessory_id' => 'required|integer|exists:accessories,id' ,
+            'warehouse' => 'required|in:1,2,3,4,5,6,7' //1:'Damascus' , 2:'Homs' , 3:'Tartus' , 4:'Aleppo' , 5:'Suwayda' , 6:'Daraa' , 7:'Raqqa'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $governorate = WarehouseAccessory::query()
+            ->where('warehouse_id' , $request->warehouse)
+            ->where('accessory_id' , $request->accessory_id)
+            ->first();
+
+        $details = Accessory::query()->where('id' , $request->accessory_id)->first();
+
+        $response = [
+            'id' => $details->id,
+            'accessory_category' => $details->category->category ,
+            'ware_house' => $governorate->warehouse->governorate
+        ];
+
+        return response()->json($response ,200);
+    }
 }

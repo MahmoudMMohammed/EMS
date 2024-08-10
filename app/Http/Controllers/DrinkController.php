@@ -258,7 +258,7 @@ class DrinkController extends Controller
             if($results->isEmpty())
             {
                 return response()->json([
-                    "message" => "There are no food.",
+                    "message" => "There are no drinks.",
                     "status_code" => 404,
                 ], 404);
             }

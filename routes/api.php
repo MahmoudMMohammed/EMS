@@ -585,6 +585,17 @@ Route::post('/edit/drinks/details/{drink_id}' , [DrinkController::class , 'WebEd
 //drink - 3
 Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
 
+
+//web accessory
+
+//accessory - 1
+Route::get('/get/accessories/by/category/{accessory_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
+Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAccessoriesCount']);
+
+//accessory - 2
+Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
+Route::get('/get/accessories/details' , [AccessoryController::class , 'WebGetDrinksDetails']);
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
