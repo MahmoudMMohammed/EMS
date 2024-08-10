@@ -235,5 +235,73 @@ class FoodController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetFoodByCategory($category_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
+        if($category_id < 0 || $category_id > 12)
+        {
+            return response()->json([
+                "error" => "invalid category ID must be between 0 and 12",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $results = [];
+        if($category_id == 0)
+        {
+            $results = Food::query()->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no food.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif (in_array($category_id , range(1,12)))
+        {
+            $results = Food::query()
+                ->where('food_category_id' , $category_id)
+                ->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no food for this specific category.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+
+        $response = [];
+        foreach ($results as $result)
+        {
+            $response [] = [
+                'id' => $result->id ,
+                'name' => $result->name ,
+                'price' =>$result->price ,
+                'food_category' => $result->category->category ,
+                'country_of_origin' => $result->country_of_origin ,
+                'picture' => $result->picture
+            ];
+        }
+
+        return response()->json($response , 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetFoodCount():JsonResponse
+    {
+        $count = Food::query()->count();
+        $response = ['count' => $count.' Item'];
+        return response()->json($response);
+    }
 }

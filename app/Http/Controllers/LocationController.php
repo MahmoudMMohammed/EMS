@@ -279,7 +279,7 @@ class LocationController extends Controller
                 ], 404);
             }
         }
-        elseif (in_array($category_id , [1,2,3,4,5,6,7]))
+        elseif (in_array($category_id , range(1,7)))
         {
             $result = Location::query()
                 ->where('host_id' , $category_id)

@@ -560,6 +560,7 @@ Route::get('/get/location/available/admins' , [AdminController::class , 'GetAvai
 
 //food - 1
 Route::get('/get/food/by/category/{category_id}' , [FoodController::class , 'WebGetFoodByCategory']);
+Route::get('/get/food/count' , [FoodController::class , 'WebGetFoodCount']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
