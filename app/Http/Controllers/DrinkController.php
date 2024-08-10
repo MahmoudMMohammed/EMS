@@ -231,4 +231,231 @@ class DrinkController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetDrinksByCategory($drink_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        if($drink_id < 0 || $drink_id > 7)
+        {
+            return response()->json([
+                "error" => "invalid drink ID must be between 0 and 7",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $results = [];
+        if($drink_id == 0)
+        {
+            $results = Drink::query()->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no food.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif (in_array($drink_id , range(1,7)))
+        {
+            $results = Drink::query()
+                ->where('drink_category_id' , $drink_id)
+                ->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no drinks for this specific category.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+
+        $response = [];
+        foreach ($results as $result)
+        {
+            $response [] = [
+                'id' => $result->id ,
+                'name' => $result->name ,
+                'price' =>$result->price ,
+                'drink_category' => $result->category->category ,
+                'picture' => $result->picture
+            ];
+        }
+
+        return response()->json($response , 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetDrinksCount():JsonResponse
+    {
+        $count = Drink::query()->count();
+        $response = ['count' => $count.' Item'];
+        return response()->json($response);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetDrinksGeneral($drink_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Drink::query()->find($drink_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid drink id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->id ,
+            'drink_category' => $exist->category->category ,
+        ];
+
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetDrinksDetails($drink_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Drink::query()->find($drink_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid drink id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->id ,
+            'name' => $exist->name ,
+            'price' => $exist->price ,
+            'description' => $exist->description
+        ];
+
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebEditDrinksDetails(Request $request , $drink_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Drink::query()->find($drink_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid drink id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'price' => 'required|integer|doesnt_start_with:0' ,
+            'description' => 'required|string' ,
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->update([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description')
+        ]);
+
+        return response()->json([
+            "message" => "drink details updated successfully",
+            "status_code" => 200,
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebAddDrink(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'price'=> 'required|integer|doesnt_start_with:0' ,
+            'drink_category_id'=> 'required|integer|exists:drink_categories,id',
+            'picture'=> 'required|image',
+            'description' => 'required|string',
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $publicPath = public_path("Drinks/Added");
+
+        $PicturePath = 'Drinks/Added/' . $request->file('picture')->getClientOriginalName();
+        $request->file('picture')->move($publicPath, $PicturePath);
+
+        $drink = Drink::query()->create([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'drink_category_id' => $request->input('drink_category_id'),
+            'description' => $request->input('description'),
+            'picture' => $PicturePath,
+        ]);
+
+        if(!$drink)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        return response()->json([
+            "message" => "drink added successfully",
+            "status_code" => 201,
+        ], 201);
+    }
 }

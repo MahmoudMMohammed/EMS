@@ -392,7 +392,7 @@ class LocationController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price' => 'required|integer' ,
+            'price' => 'required|integer|doesnt_start_with:0' ,
             'open' => 'required|date_format:h:i A' ,
             'close' => 'required|date_format:h:i A' ,
             'capacity' => 'required|integer'
@@ -688,7 +688,6 @@ class LocationController extends Controller
             'name' => 'required|max:50' ,
             'governorate' => 'required|in:Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' ,
             'address' => 'required|max:30',
-            'price'=> 'required|integer' ,
             'admin'=> 'required|integer|exists:users,id',
             'logo'=> 'required|image',
             'photo_1'=>'required|image',
@@ -734,6 +733,14 @@ class LocationController extends Controller
             'capacity' => $request->input('capacity'),
             'logo' => $logoPath,
         ]);
+
+        if(!$location)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
 
         $photoPaths = [$photo1Path , $photo2Path , $photo3Path];
 

@@ -52,7 +52,7 @@ class Drink extends Model
 
     public function getPriceAttribute ($value)
     {
-        return number_format($value , 2 , '.' , ',') . "S.P" ;
+        return number_format($value , 2 , '.' , ',') . " S.P" ;
     }
 
     public function getRawPriceAttribute(): float

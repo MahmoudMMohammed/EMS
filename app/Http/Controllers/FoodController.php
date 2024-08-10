@@ -304,4 +304,165 @@ class FoodController extends Controller
         $response = ['count' => $count.' Item'];
         return response()->json($response);
     }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetFoodGeneral($food_id):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Food::query()->find($food_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid food id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->id ,
+            'food_category' => $exist->category->category ,
+            'country_of_origin' => $exist->country_of_origin ,
+        ];
+
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebGetFoodDetails($food_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Food::query()->find($food_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid food id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $response = [
+            'id' => $exist->id ,
+            'name' => $exist->name ,
+            'price' => $exist->price ,
+            'description' => $exist->description
+        ];
+
+        return response()->json($response ,200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebEditFoodDetails(Request $request , $food_id) : JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist = Food::query()->find($food_id);
+        if(!$exist)
+        {
+            return response()->json([
+                "error" => "Invalid food id",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'price' => 'required|integer|doesnt_start_with:0' ,
+            'description' => 'required|string' ,
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $exist->update([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description')
+        ]);
+
+        return response()->json([
+            "message" => "food details updated successfully",
+            "status_code" => 200,
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function WebAddFood(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|max:50' ,
+            'price'=> 'required|integer|doesnt_start_with:0' ,
+            'food_category_id'=> 'required|integer|exists:food_categories,id',
+            'picture'=> 'required|image',
+            'description' => 'required|string',
+            'country_of_origin' => 'required|alpha' ,
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $publicPath = public_path("Food/Added");
+
+        $PicturePath = 'Food/Added/' . $request->file('picture')->getClientOriginalName();
+        $request->file('picture')->move($publicPath, $PicturePath);
+
+        $food = Food::query()->create([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'food_category_id' => $request->input('food_category_id'),
+            'description' => $request->input('description'),
+            'country_of_origin' => $request->input('country_of_origin'),
+            'picture' => $PicturePath,
+        ]);
+
+        if(!$food)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        return response()->json([
+            "message" => "food added successfully",
+            "status_code" => 201,
+        ], 201);
+    }
 }

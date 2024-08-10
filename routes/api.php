@@ -562,6 +562,29 @@ Route::get('/get/location/available/admins' , [AdminController::class , 'GetAvai
 Route::get('/get/food/by/category/{category_id}' , [FoodController::class , 'WebGetFoodByCategory']);
 Route::get('/get/food/count' , [FoodController::class , 'WebGetFoodCount']);
 
+//food - 2
+Route::get('/get/food/general/{food_id}' , [FoodController::class , 'WebGetFoodGeneral']);
+Route::get('/get/food/details/{food_id}' , [FoodController::class , 'WebGetFoodDetails']);
+Route::post('/edit/food/details/{food_id}' , [FoodController::class , 'WebEditFoodDetails']);
+
+//food - 3
+Route::post('/add/food' , [FoodController::class , 'WebAddFood']);
+
+
+//web drink
+
+//drink - 1
+Route::get('/get/drinks/by/category/{drink_id}' , [DrinkController::class , 'WebGetDrinksByCategory']);
+Route::get('/get/drinks/count' , [DrinkController::class , 'WebGetDrinksCount']);
+
+//drink - 2
+Route::get('/get/drinks/general/{drink_id}' , [DrinkController::class , 'WebGetDrinksGeneral']);
+Route::get('/get/drinks/details/{drink_id}' , [DrinkController::class , 'WebGetDrinksDetails']);
+Route::post('/edit/drinks/details/{drink_id}' , [DrinkController::class , 'WebEditDrinksDetails']);
+
+//drink - 3
+Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
