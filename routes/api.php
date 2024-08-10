@@ -355,6 +355,8 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
         //update accessory picture
         Route::post('/accessories/update-picture', [AccessoryController::class , 'updateAccessoryPicture']);
 
+        //get accessory statistics data
+        Route::get('/accessories/statistics/{accessory_id}', [AccessoryController::class , 'getAccessoryStatistics']);
 
     });
 

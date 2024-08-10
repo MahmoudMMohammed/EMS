@@ -9,6 +9,8 @@ use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\RegistrationData;
+use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AccessoryController extends Controller
 {
+    use RegistrationData,SalesData;
     public function getAccessoriesByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -237,6 +240,16 @@ class AccessoryController extends Controller
             "message" => TranslateTextHelper::translate("Drink picture has been updated successfully"),
             "status_code" => 200,
         ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public function getAccessoryStatistics($accessory_id): array
+    {
+        $accessory = Accessory::findOrFail($accessory_id);
+        $accessoryRegistration = $this->getRegistrationInfo($accessory);
+        $accessorySales = $this->getModelSales($accessory);
+        unset($accessorySales['total_sales']);
+        return array_merge($accessoryRegistration,$accessorySales);
     }
     ////////////////////////////////////////////////////////////////////////////////
 
