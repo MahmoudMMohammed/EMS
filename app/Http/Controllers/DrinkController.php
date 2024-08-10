@@ -6,6 +6,8 @@ use App\Helpers\TranslateTextHelper;
 use App\Models\Drink;
 use App\Models\DrinkCategory;
 use App\Models\Favorite;
+use App\Traits\RegistrationData;
+use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 
 class DrinkController extends Controller
 {
+    use RegistrationData,SalesData;
     public function getDrinksByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -458,4 +461,15 @@ class DrinkController extends Controller
             "status_code" => 201,
         ], 201);
     }
+    ////////////////////////////////////////////////////////////////////////////////
+    public function getDrinkStatistics($drink_id): array
+    {
+        $drink = Drink::findOrFail($drink_id);
+        $drinkRegistration = $this->getRegistrationInfo($drink);
+        $drinkSales = $this->getModelSales($drink);
+        return array_merge($drinkRegistration,$drinkSales);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
 }

@@ -343,8 +343,14 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
         //update food picture
         Route::post('/food/update-picture', [FoodController::class , 'updateFoodPicture']);
 
+        //get food statistics data
+        Route::get('/food/statistics/{food_id}', [FoodController::class , 'getFoodStatistics']);
+
         //update drink picture
         Route::post('/drinks/update-picture', [DrinkController::class , 'updateDrinkPicture']);
+
+        //get drink statistics data
+        Route::get('/drinks/statistics/{drink_id}', [DrinkController::class , 'getDrinkStatistics']);
 
         //update accessory picture
         Route::post('/accessories/update-picture', [AccessoryController::class , 'updateAccessoryPicture']);

@@ -7,6 +7,7 @@ use App\Models\EventSupplement;
 use App\Models\Location;
 use App\Models\Receipt;
 use App\Models\UserEvent;
+use App\Traits\PriceParsing;
 use Barryvdh\DomPDF\Facade;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReceiptController extends Controller
 {
+    use PriceParsing;
+
     public function generateQRForReceipt($userEventId): JsonResponse
     {
         $user = Auth::user();
@@ -153,11 +156,4 @@ class ReceiptController extends Controller
     }
     ////////////////////////////////////////////////////////////////////////////////////
 
-    private function parsePrice($priceString): float
-    {
-        $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-        $cleanedPrice = str_replace(',', '', $cleanedPrice);
-        return floatval($cleanedPrice);
-    }
-    ////////////////////////////////////////////////
 }

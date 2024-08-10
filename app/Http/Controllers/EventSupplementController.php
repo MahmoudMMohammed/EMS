@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\PriceParsing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,7 @@ use function Symfony\Component\String\s;
 
 class EventSupplementController extends Controller
 {
+    use PriceParsing;
     public function getSupplementsForEvent($event_id): JsonResponse
     {
         $user = Auth::user();
@@ -739,14 +741,6 @@ class EventSupplementController extends Controller
         return response()->json($supplements);
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private function parsePrice($priceString): float
-    {
-        $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-        $cleanedPrice = str_replace(',', '', $cleanedPrice);
-        return floatval($cleanedPrice);
-    }
-    /////////////////////////////////////////////////
 
     private function getItem($type, $itemId)
     {
