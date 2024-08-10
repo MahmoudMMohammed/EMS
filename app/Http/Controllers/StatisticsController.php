@@ -12,6 +12,8 @@ use App\Models\Host;
 use App\Models\Location;
 use App\Models\User;
 use App\Models\UserEvent;
+use App\Traits\PriceParsing;
+use App\Traits\RegistrationData;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +23,11 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
+
 class StatisticsController extends Controller
 {
+    use RegistrationData,PriceParsing;
+
     public function getWeeklyStatistics(): JsonResponse
     {
         $events = $this->getFinishedAndConfirmedEvents();
@@ -102,7 +107,8 @@ class StatisticsController extends Controller
 
     public function getDigitalStatisticsForUser(): JsonResponse
     {
-        $userRegistrationData = $this->getUserRegistrationData();
+        $user = Auth::user();
+        $userRegistrationData = $this->getRegistrationInfo($user);
         $userFeedbacksCounts = $this->getUserFeedbacksCount();
         $userFavoritesCounts = $this->getUserFavoritesCount();
 
@@ -345,13 +351,6 @@ class StatisticsController extends Controller
     }
     //////////////////////////////////////////////////////////
 
-    private function parsePrice($priceString): float
-    {
-        $cleanedPrice = preg_replace('/[^0-9.,]/', '', $priceString);
-        $cleanedPrice = str_replace(',', '', $cleanedPrice);
-        return floatval($cleanedPrice);
-    }
-    //////////////////////////////////////////////////////////
 
     private function getUserRegistrationsByMonth($startDate, $endDate)
     {
@@ -407,23 +406,8 @@ class StatisticsController extends Controller
         $response = ['count' => $count.' Place'];
         return response()->json($response);
     }
-
-    private function getUserRegistrationData(): array
-    {
-        $user = Auth::user();
-        $date = Carbon::parse($user->created_at);
-
-        $registrationDate = $date->toDateString();
-        $time = $date->format('h:i:s A');
-
-        $diffInDays = $date->diffInDays(now());
-
-        return [
-            "date" => "$registrationDate      $time",
-            "days" => $diffInDays
-        ];
-    }
     //////////////////////////////////////////////////////////
+
     private function getUserFeedbacksCount(): array
     {
         $user = Auth::user();

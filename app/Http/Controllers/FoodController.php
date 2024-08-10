@@ -6,6 +6,9 @@ use App\Helpers\TranslateTextHelper;
 use App\Models\Favorite;
 use App\Models\Food;
 use App\Models\FoodCategory;
+use App\Traits\ModelUsageCheck;
+use App\Traits\RegistrationData;
+use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 class FoodController extends Controller
 {
+    use RegistrationData,SalesData,ModelUsageCheck;
     public function getFoodByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -465,4 +469,35 @@ class FoodController extends Controller
             "status_code" => 201,
         ], 201);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public function getFoodStatistics($food_id): array
+    {
+        $food = Food::findOrFail($food_id);
+        $foodRegistration = $this->getRegistrationInfo($food);
+        $foodSales = $this->getModelSales($food);
+        return array_merge($foodRegistration,$foodSales);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public function deleteFood($food_id): JsonResponse
+    {
+        $user = Auth::user();
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $food = Food::findOrFail($food_id);
+        if ($this->checkModelUsage($food)){
+            return response()->json([
+                "error" => TranslateTextHelper::translate("Cannot delete this food as it is used in pending or confirmed events."),
+                "status_code" => 400
+            ], 400);
+        }
+        $food->delete();
+        return response()->json([
+            "error" => TranslateTextHelper::translate("Food deleted successfully."),
+            "status_code" => 200
+        ], 200);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
 }
