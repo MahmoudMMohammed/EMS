@@ -235,53 +235,58 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
         });
 
+    });
 
+    Route::prefix("locations")->group(function (){
+
+        //explore all locations available
+        Route::get('/', [LocationController::class, 'getLocations']);
+
+        //find location by its id
+        Route::get('/{location_id}', [LocationController::class, 'getLocationById']);
     });
 
 
-    //explore all locations available
-    Route::get('/locations', [LocationController::class, 'getLocations']);
+    Route::prefix("food")->group(function (){
 
-    //find location by its id
-    Route::get('/locations/{location_id}', [LocationController::class, 'getLocationById']);
+        //explore all available food categories
+        Route::get('/categories', [FoodController::class, 'getFoodCategories']);
 
+        //explore all food for specific category
+        Route::get('/category/{category_id}', [FoodController::class, 'getFoodByCategory']);
 
-
-    //explore all available food categories
-    Route::get('/food/categories', [FoodController::class, 'getFoodCategories']);
-
-    //explore all food for specific category
-    Route::get('/food/category/{category_id}', [FoodController::class, 'getFoodByCategory']);
-
-    //find food by its id
-    Route::get('/food/{food_id}', [FoodController::class, 'getFoodById']);
+        //find food by its id
+        Route::get('/{food_id}', [FoodController::class, 'getFoodById']);
+    });
 
 
+    Route::prefix("drinks")->group(function (){
+
+        //explore all available drinks categories
+        Route::get('/categories', [DrinkController::class, 'getDrinksCategories']);
+
+        //explore all drinks for specific category
+        Route::get('/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
+
+        //find drink by its id
+        Route::get('/{drink_id}', [DrinkController::class, 'getDrinkById']);
+    });
 
 
-    //explore all available drinks categories
-    Route::get('/drinks/categories', [DrinkController::class, 'getDrinksCategories']);
+    Route::prefix("accessories")->group(function (){
 
-    //explore all drinks for specific category
-    Route::get('/drinks/category/{category_id}', [DrinkController::class, 'getDrinksByCategory']);
+        //explore all available drinks categories
+        Route::get('/categories', [AccessoryController::class, 'getAccessoriesCategories']);
 
-    //find drink by its id
-    Route::get('/drinks/{drink_id}', [DrinkController::class, 'getDrinkById']);
+        //explore all accessories for specific category
+        Route::get('/category/{category_id}', [AccessoryController::class, 'getAccessoriesByCategory']);
 
-
-
-
-
-    //explore all available drinks categories
-    Route::get('/accessories/categories', [AccessoryController::class, 'getAccessoriesCategories']);
-
-    //explore all accessories for specific category
-    Route::get('/accessories/category/{category_id}', [AccessoryController::class, 'getAccessoriesByCategory']);
-
-    //find accessory by its id
-    Route::get('/accessories/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
+        //find accessory by its id
+        Route::get('/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
+    });
 
 });
+
 
 Route::middleware([AdminMiddleware::class])->group(function () {
 
@@ -314,25 +319,22 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         //get weekly statistics about food, drinks and accessories for web charts
         Route::get('/weekly-statistics', [StatisticsController::class, 'getWeeklyStatistics']);
 
+        //get weekly report as PDF
+        Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
     });
 
-    //get weekly report as PDF
-    Route::get('/admin/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
-
-
 });
+
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
 
     Route::prefix("owner")->group(function () {
 
-        Route::prefix("events/{event_id}")->group(function () {
 
-            //delete user reservation
-            Route::delete('/delete', [OwnerController::class , 'deleteReservation']);
+        //delete user reservation
+        Route::delete('events/{event_id}/delete', [OwnerController::class , 'deleteReservation']);
 
-        });
 
         Route::prefix("locations")->group(function () {
 
