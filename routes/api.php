@@ -634,6 +634,9 @@ Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEdit
 //accessory - 3
 Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
+//four cart (location)
+Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);

@@ -757,4 +757,63 @@ class LocationController extends Controller
             "status_code" => 201,
         ], 201);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function getAllLocations(Request $request) : JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            "governorate" => 'required|in:all,Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $results = [];
+        if($request->input('governorate') == 'all')
+        {
+            $results = Location::query()->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no locations to display.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif ($request->input('governorate') != 'all')
+        {
+            $results = Location::query()
+                ->where('governorate' , $request->input('governorate'))
+                ->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')
+                ->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no locations for specific governorate to display",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+
+        return response()->json($results , 200);
+
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+
 }
