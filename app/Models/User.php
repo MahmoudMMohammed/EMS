@@ -94,4 +94,9 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return $this->hasMany(Search::class , 'user_id' , 'id');
     }
+
+    public function rate()
+    {
+        return $this->hasOne(AppRating::class , 'user_id' , 'id');
+    }
 }

@@ -4,6 +4,7 @@
 use App\Http\Controllers\AccessoryCategoryController;
 use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AppRatingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkCategoryController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
+use App\Models\AppRating;
 use App\Models\UserJoinedEvent;
 use Illuminate\Support\Facades\Route;
 
@@ -646,6 +648,13 @@ Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheM
 //setting language
 Route::get('/user/language' , [UserController::class , 'getUserLanguage']);
 
+//setting currency
+Route::get('/user/currency' , [UserController::class , 'getUserCurrency']);
+
+//setting rate
+Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating']);
+Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
+Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
