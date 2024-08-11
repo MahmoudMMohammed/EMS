@@ -15,6 +15,7 @@ use App\Models\UserEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Constraint\IsEmpty;
 
@@ -841,5 +842,44 @@ class LocationController extends Controller
 
     }
     ////////////////////////////////////////////////////////////////////////////////////////
+    public function getTheMostLocationReserved():JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        // First, aggregate the reservation counts per location
+        $locations = DB::table('user_events')
+            ->select('user_events.location_id', DB::raw('COUNT(user_events.id) as reservations_count'))
+            ->groupBy('user_events.location_id');
+
+        // Then join with locations and location_pictures to get the name and picture
+        $result = DB::table('locations')
+            ->joinSub($locations, 'location_counts', function ($join) {
+                $join->on('locations.id', '=', 'location_counts.location_id');
+            })
+            ->leftJoin('location_pictures', 'locations.id', '=', 'location_pictures.location_id')
+            ->select('locations.name', DB::raw('MIN(location_pictures.picture) as picture'), 'location_counts.reservations_count')
+            ->groupBy('locations.id', 'locations.name', 'location_counts.reservations_count')
+            ->orderByDesc('location_counts.reservations_count')
+            ->limit(3) // Limit the result to the top 3 locations
+            ->get();
+
+        $response = [];
+        foreach ($result as $res)
+        {
+            $response [] = [
+                "name" => $res->name,
+                "picture" => env('APP_URL').'/'.$res->picture,
+                "reservations_count" => $res->reservations_count
+            ];
+        }
+        return response()->json($response , 200);
+    }
 
 }

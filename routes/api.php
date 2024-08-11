@@ -635,12 +635,17 @@ Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEdit
 Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
 
-//four cart (location , food , drink , accessory , get cart item)
+//four cart (location , food , drink , accessory , get cart item) and (get most location reservation)
 Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
 Route::post('/home/food' , [FoodController::class , 'getAllFood']);
 Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
 Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']); //note : slow in translate
 Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
+Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheMostLocationReserved']);
+
+//setting language
+Route::get('/user/language' , [UserController::class , 'getUserLanguage']);
+
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

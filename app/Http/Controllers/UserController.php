@@ -247,4 +247,29 @@ class UserController extends Controller
         }
         return response()->json(['Femininity'=>$femalePercentage] ,200);
     }
+    /////////////////////////////////////////////////////////////////////////////////////
+    public function getUserLanguage():JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $profile = Profile::query()->where('user_id' , $user->id)->first();
+        if(!$profile)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        return response()->json(['Preferred _language' => $profile->preferred_language] , 200);
+    }
 }
