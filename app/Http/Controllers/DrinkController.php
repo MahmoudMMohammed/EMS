@@ -527,13 +527,13 @@ class DrinkController extends Controller
         }
 
         // Retrieve the food items
-        $foods = $query->orderby('price')->get();
+        $drinks = $query->orderby('price')->get();
 
         // Check if any food items were found
-        if ($foods->isEmpty()) {
+        if ($drinks->isEmpty()) {
             $errorMessage = $request->type && !$isTypeNull
                 ? TranslateTextHelper::translate("No drinks found for the specified price")
-                : TranslateTextHelper::translate("No drink found in application");
+                : TranslateTextHelper::translate("No drinks found in application");
 
             return response()->json([
                 "error" => $errorMessage,
@@ -541,13 +541,13 @@ class DrinkController extends Controller
             ], 404);
         }
 
-        $name = $foods->pluck('name')->toArray();
+        $name = $drinks->pluck('name')->toArray();
         $name = TranslateTextHelper::batchTranslate($name);
 
-        $description = $foods->pluck('description')->toArray();
+        $description = $drinks->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
-        $foodsIds = $foods->pluck('id')->toArray();
+        $foodsIds = $drinks->pluck('id')->toArray();
 
         $favorites = Favorite::query()
             ->where('favoritable_type', 'App\Models\Food')
@@ -557,15 +557,15 @@ class DrinkController extends Controller
 
         $response = [];
 
-        foreach ($foods as $food) {
+        foreach ($drinks as $drink) {
             $response [] = [
-                'id' => $food->id,
-                'name' => $name[$food->name],
-                'price' => $food->RawPrice,
+                'id' => $drink->id,
+                'name' => $name[$drink->name],
+                'price' => $drink->RawPrice,
                 'currency' => 'S.P',
-                'description' => $description[$food->description],
-                'picture' => $food->picture,
-                'is_favorite' => in_array($food->id, $favorites),
+                'description' => $description[$drink->description],
+                'picture' => $drink->picture,
+                'is_favorite' => in_array($drink->id, $favorites),
             ];
         }
         return response()->json($response, 200);

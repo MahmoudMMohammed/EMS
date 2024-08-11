@@ -635,10 +635,12 @@ Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEdit
 Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
 
-//four cart (location)
+//four cart (location , food , drink , accessory , get cart item)
 Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
 Route::post('/home/food' , [FoodController::class , 'getAllFood']);
 Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
+Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']); //note : slow in translate
+Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

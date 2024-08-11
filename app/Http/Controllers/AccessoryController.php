@@ -533,4 +533,85 @@ class AccessoryController extends Controller
         ], 201);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function getAllAccessories(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            "type" => 'required|integer|between:-1,999999'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $isTypeNull = $request->type == '-1';
+
+        // Start with the base query
+        $query = Accessory::query();
+
+        // If a type is provided and it's not -1, filter the results
+        if ($request->type && !$isTypeNull) {
+            $query->where('price', '<=', $request->type);
+        }
+
+        // Retrieve the food items
+        $accessories = $query->orderby('price')->get();
+
+        // Check if any food items were found
+        if ($accessories->isEmpty()) {
+            $errorMessage = $request->type && !$isTypeNull
+                ? TranslateTextHelper::translate("No accessories found for the specified price")
+                : TranslateTextHelper::translate("No accessories found in application");
+
+            return response()->json([
+                "error" => $errorMessage,
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $name = $accessories->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $accessories->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
+
+        $foodsIds = $accessories->pluck('id')->toArray();
+
+        $favorites = Favorite::query()
+            ->where('favoritable_type', 'App\Models\Food')
+            ->whereIn('favoritable_id', $foodsIds)
+            ->pluck('favoritable_id')
+            ->toArray();
+
+        $response = [];
+
+
+
+        foreach ($accessories as $accessory) {
+            $response [] = [
+                'id' => $accessory->id,
+                'name' => $name[$accessory->name],
+                'price' => $accessory->RawPrice,
+                'currency' => 'S.P',
+                'description' => $description[$accessory->description],
+                'picture' => $accessory->picture,
+                'category' => TranslateTextHelper::translate($accessory->category->category) ,
+                'is_favorite' => in_array($accessory->id, $favorites),
+            ];
+        }
+        return response()->json($response, 200);
+    }
 }
