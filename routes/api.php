@@ -405,7 +405,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get hosts related each event
     Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
 
-    //get count of (location - food - drink - accessory)
+    //get count of (location - food - drink - accessory - cart)
     Route::get('/home/count' , [LocationController::class , 'HomeCount']);
 
     //Get Location related host && get location by governorate
@@ -634,8 +634,11 @@ Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEdit
 //accessory - 3
 Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
+
 //four cart (location)
 Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
+Route::post('/home/food' , [FoodController::class , 'getAllFood']);
+Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Drink;
 use App\Models\Food;
 use App\Models\Location;
@@ -20,6 +22,14 @@ class LocationController extends Controller
 {
     public function HomeCount(): JsonResponse
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
         $location = Location::query()->count();
         if(!$location){
             return response()->json([
@@ -53,10 +63,24 @@ class LocationController extends Controller
             ] , 400);
         }
 
+        $cart = Cart::query()->where('user_id' , $user->id)->first();
+
+        if(!$cart){
+           return response()->json(['location_count' => $location ,
+                                 'food_count' => $Food ,
+                                 'drink_count' => $Drink ,
+                                 'accessory_count' => $Accessory ,
+                                 'item of cart' => 0,
+                                 'status_code' => 200] , 200);
+        }
+
+        $count = CartItem::query()->where('cart_id' , $cart->id)->count();
+
         return response()->json(['location_count' => $location ,
                                  'food_count' => $Food ,
                                  'drink_count' => $Drink ,
                                  'accessory_count' => $Accessory ,
+                                 'item of cart' => $count,
                                  'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -179,10 +203,10 @@ class LocationController extends Controller
 
         if($request->governorate && !$isGovernorateNull)
         {
-            $query->where('governorate' , $request->governorate);
+            $query->where('governorate' , TranslateTextHelper::translateToEnglishOnly($request->governorate));
         }
 
-        $locations = $query->select('id', 'name', 'governorate', 'open_time', 'close_time', 'capacity' , 'logo')->get();
+        $locations = $query->select('id', 'name', 'governorate', 'open_time', 'close_time', 'capacity' , 'logo' , 'maintenance')->get();
 
         if ($locations->isEmpty() && $request->governorate  && !$isGovernorateNull) {
             return response()->json([
@@ -190,6 +214,7 @@ class LocationController extends Controller
                 'status_code' => 404,
             ], 404);
         }
+
 
         $name = $locations->pluck('name')->toArray();
         $name = TranslateTextHelper::batchTranslate($name);
@@ -207,7 +232,8 @@ class LocationController extends Controller
                 'open_time' => $location -> open_time ,
                 'close_time' => $location -> close_time,
                 'capacity' => $location -> capacity,
-                'logo' => $location -> logo
+                'logo' => $location -> logo,
+                'maintenance' => $location -> maintenance
             ];
         }
 
@@ -772,7 +798,7 @@ class LocationController extends Controller
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $validator = Validator::make($request->all(), [
-            "governorate" => 'required|in:all,Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
+            "governorate" => 'required|in:null,Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
         ]);
 
         if ($validator->fails()) {
@@ -783,7 +809,7 @@ class LocationController extends Controller
         }
 
         $results = [];
-        if($request->input('governorate') == 'all')
+        if($request->input('governorate') == 'null')
         {
             $results = Location::query()->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')->get();
 
