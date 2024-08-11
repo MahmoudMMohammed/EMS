@@ -130,6 +130,7 @@ class StatisticsController extends Controller
             'food' => 0,
             'drinks' => 0,
             'accessories' => 0,
+            'total' => 0
         ];
 
         // Loop through each event and their supplements
@@ -155,6 +156,12 @@ class StatisticsController extends Controller
                     $items['accessories'] += $item['quantity'];
                 }
             }
+
+            $items['total'] = $items['accessories'] + $items['drinks'] + $items['food'];
+        }
+
+        foreach ($items as $key => $value) {
+            $items[$key] = $value . ' Purchases';
         }
 
         return response()->json($items);
