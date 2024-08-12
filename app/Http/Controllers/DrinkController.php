@@ -565,11 +565,11 @@ class DrinkController extends Controller
         $description = $drinks->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
-        $foodsIds = $drinks->pluck('id')->toArray();
+        $drinksIds = $drinks->pluck('id')->toArray();
 
         $favorites = Favorite::query()
-            ->where('favoritable_type', 'App\Models\Food')
-            ->whereIn('favoritable_id', $foodsIds)
+            ->where('favoritable_type', 'App\Models\Drink')
+            ->whereIn('favoritable_id', $drinksIds)
             ->pluck('favoritable_id')
             ->toArray();
 

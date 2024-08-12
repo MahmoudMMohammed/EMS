@@ -9,6 +9,7 @@ use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\ModelUsageCheck;
 use App\Traits\PriceParsing;
 use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,7 @@ use App\Traits\RegistrationData;
 
 class AccessoryController extends Controller
 {
-    use RegistrationData , PriceParsing , SalesData;
+    use RegistrationData , PriceParsing , SalesData , ModelUsageCheck;
     public function getAccessoriesByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -610,11 +611,11 @@ class AccessoryController extends Controller
         $description = $accessories->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
-        $foodsIds = $accessories->pluck('id')->toArray();
+        $accessoriesIds = $accessories->pluck('id')->toArray();
 
         $favorites = Favorite::query()
-            ->where('favoritable_type', 'App\Models\Food')
-            ->whereIn('favoritable_id', $foodsIds)
+            ->where('favoritable_type', 'App\Models\Accessory')
+            ->whereIn('favoritable_id', $accessoriesIds)
             ->pluck('favoritable_id')
             ->toArray();
 
