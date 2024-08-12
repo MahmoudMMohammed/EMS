@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Drink;
 use App\Models\Food;
 use App\Models\Location;
@@ -13,6 +15,7 @@ use App\Models\UserEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Constraint\IsEmpty;
 
@@ -20,6 +23,14 @@ class LocationController extends Controller
 {
     public function HomeCount(): JsonResponse
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
         $location = Location::query()->count();
         if(!$location){
             return response()->json([
@@ -53,10 +64,24 @@ class LocationController extends Controller
             ] , 400);
         }
 
+        $cart = Cart::query()->where('user_id' , $user->id)->first();
+
+        if(!$cart){
+           return response()->json(['location_count' => $location ,
+                                 'food_count' => $Food ,
+                                 'drink_count' => $Drink ,
+                                 'accessory_count' => $Accessory ,
+                                 'item of cart' => 0,
+                                 'status_code' => 200] , 200);
+        }
+
+        $count = CartItem::query()->where('cart_id' , $cart->id)->count();
+
         return response()->json(['location_count' => $location ,
                                  'food_count' => $Food ,
                                  'drink_count' => $Drink ,
                                  'accessory_count' => $Accessory ,
+                                 'item of cart' => $count,
                                  'status_code' => 200] , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -179,10 +204,10 @@ class LocationController extends Controller
 
         if($request->governorate && !$isGovernorateNull)
         {
-            $query->where('governorate' , $request->governorate);
+            $query->where('governorate' , TranslateTextHelper::translateToEnglishOnly($request->governorate));
         }
 
-        $locations = $query->select('id', 'name', 'governorate', 'open_time', 'close_time', 'capacity' , 'logo')->get();
+        $locations = $query->select('id', 'name', 'governorate', 'open_time', 'close_time', 'capacity' , 'logo' , 'maintenance')->get();
 
         if ($locations->isEmpty() && $request->governorate  && !$isGovernorateNull) {
             return response()->json([
@@ -190,6 +215,7 @@ class LocationController extends Controller
                 'status_code' => 404,
             ], 404);
         }
+
 
         $name = $locations->pluck('name')->toArray();
         $name = TranslateTextHelper::batchTranslate($name);
@@ -207,7 +233,8 @@ class LocationController extends Controller
                 'open_time' => $location -> open_time ,
                 'close_time' => $location -> close_time,
                 'capacity' => $location -> capacity,
-                'logo' => $location -> logo
+                'logo' => $location -> logo,
+                'maintenance' => $location -> maintenance
             ];
         }
 
@@ -391,11 +418,11 @@ class LocationController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0' ,
-            'open' => 'required|date_format:h:i A' ,
-            'close' => 'required|date_format:h:i A' ,
-            'capacity' => 'required|integer'
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'open' => 'sometimes |date_format:h:i A' ,
+            'close' => 'sometimes|date_format:h:i A' ,
+            'capacity' => 'sometimes|integer|doesnt_start_with:0|max:100000|min:1'
         ]);
 
         if($validator->fails())
@@ -406,13 +433,42 @@ class LocationController extends Controller
             ], 422);
         }
 
-        $exist->update([
-            'name' => $request->input('name') ,
-            'reservation_price' => $request->input('price'),
-            'open_time' => $request->input('open'),
-            'close_time' => $request->input('close'),
-            'capacity' => $request->input('capacity'),
-        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $dataToUpdate = [];
+
+        if ($request->has('name')) {
+            $dataToUpdate['name'] = $request->input('name');
+        }
+        if ($request->has('price')) {
+            $dataToUpdate['reservation_price'] = $request->input('price');
+        }
+        if ($request->has('open')) {
+            $dataToUpdate['open_time'] = $request->input('open');
+        }
+        if ($request->has('close')) {
+            $dataToUpdate['close_time'] = $request->input('close');
+        }
+        if ($request->has('capacity')) {
+            $dataToUpdate['capacity'] = $request->input('capacity');
+        }
+
+        if(empty($dataToUpdate))
+        {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ],404);
+        }
+
+        $exist->update($dataToUpdate);
+
 
         return response()->json([
             "message" => "Location details updated successfully",
@@ -696,7 +752,8 @@ class LocationController extends Controller
             'host' => 'required|integer|exists:hosts,id',
             'open' => 'required|date_format:h:i A' ,
             'close' => 'required|date_format:h:i A' ,
-            'capacity' => 'required|integer'
+            'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1' ,
+            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1'
         ]);
 
         if($validator->fails())
@@ -756,4 +813,102 @@ class LocationController extends Controller
             "status_code" => 201,
         ], 201);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function getAllLocations(Request $request) : JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            "governorate" => 'required|in:null,Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $results = [];
+        if($request->input('governorate') == 'null')
+        {
+            $results = Location::query()->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no locations to display.",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+        elseif ($request->input('governorate') != 'all')
+        {
+            $results = Location::query()
+                ->where('governorate' , $request->input('governorate'))
+                ->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')
+                ->get();
+
+            if($results->isEmpty())
+            {
+                return response()->json([
+                    "message" => "There are no locations for specific governorate to display",
+                    "status_code" => 404,
+                ], 404);
+            }
+        }
+
+        return response()->json($results , 200);
+
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function getTheMostLocationReserved():JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        // First, aggregate the reservation counts per location
+        $locations = DB::table('user_events')
+            ->select('user_events.location_id', DB::raw('COUNT(user_events.id) as reservations_count'))
+            ->groupBy('user_events.location_id');
+
+        // Then join with locations and location_pictures to get the name and picture
+        $result = DB::table('locations')
+            ->joinSub($locations, 'location_counts', function ($join) {
+                $join->on('locations.id', '=', 'location_counts.location_id');
+            })
+            ->leftJoin('location_pictures', 'locations.id', '=', 'location_pictures.location_id')
+            ->select('locations.name', DB::raw('MIN(location_pictures.picture) as picture'), 'location_counts.reservations_count')
+            ->groupBy('locations.id', 'locations.name', 'location_counts.reservations_count')
+            ->orderByDesc('location_counts.reservations_count')
+            ->limit(3) // Limit the result to the top 3 locations
+            ->get();
+
+        $response = [];
+        foreach ($result as $res)
+        {
+            $response [] = [
+                "name" => $res->name,
+                "picture" => env('APP_URL').'/'.$res->picture,
+                "reservations_count" => $res->reservations_count
+            ];
+        }
+        return response()->json($response , 200);
+    }
+
 }

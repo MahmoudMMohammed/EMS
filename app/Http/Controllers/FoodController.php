@@ -6,6 +6,7 @@ use App\Helpers\TranslateTextHelper;
 use App\Models\Favorite;
 use App\Models\Food;
 use App\Models\FoodCategory;
+use App\Models\Location;
 use App\Traits\ModelUsageCheck;
 use App\Traits\RegistrationData;
 use App\Traits\SalesData;
@@ -389,9 +390,9 @@ class FoodController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0' ,
-            'description' => 'required|string' ,
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'description' => 'sometimes|string' ,
         ]);
 
         if($validator->fails())
@@ -402,11 +403,29 @@ class FoodController extends Controller
             ], 422);
         }
 
-        $exist->update([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description')
-        ]);
+        $dataToUpdate = [];
+        if($request->has('name'))
+        {
+            $dataToUpdate['name'] = $request->input('name');
+        }
+        if($request->has('price'))
+        {
+            $dataToUpdate['price'] = $request->input('price');
+        }
+        if($request->has('description'))
+        {
+            $dataToUpdate['description'] = $request->input('description');
+        }
+
+        if(empty($dataToUpdate))
+        {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $exist->update($dataToUpdate);
 
         return response()->json([
             "message" => "food details updated successfully",
@@ -427,7 +446,7 @@ class FoodController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price'=> 'required|integer|doesnt_start_with:0' ,
+            'price'=> 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
             'food_category_id'=> 'required|integer|exists:food_categories,id',
             'picture'=> 'required|image',
             'description' => 'required|string',
@@ -500,4 +519,87 @@ class FoodController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function getAllFood(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            "type" => 'required|integer|between:-1,999999'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $isTypeNull = $request->type == '-1';
+
+        // Start with the base query
+        $query = Food::query();
+
+        // If a type is provided and it's not -1, filter the results
+        if ($request->type && !$isTypeNull) {
+            $query->where('price', '<=', $request->type);
+        }
+
+        // Retrieve the food items
+        $foods = $query->orderby('price')->get();
+
+        // Check if any food items were found
+        if ($foods->isEmpty()) {
+            $errorMessage = $request->type && !$isTypeNull
+                ? TranslateTextHelper::translate("No food found for the specified price")
+                : TranslateTextHelper::translate("No food found in application");
+
+            return response()->json([
+                "error" => $errorMessage,
+                "status_code" => 404,
+            ], 404);
+        }
+
+            $name = $foods->pluck('name')->toArray();
+            $name = TranslateTextHelper::batchTranslate($name);
+
+            $description = $foods->pluck('description')->toArray();
+            $description = TranslateTextHelper::batchTranslate($description);
+
+            $country_of_origin = $foods->pluck('country_of_origin')->toArray();
+            $country_of_origin = TranslateTextHelper::batchTranslate($country_of_origin);
+
+
+            $foodsIds = $foods->pluck('id')->toArray();
+
+            $favorites = Favorite::query()
+                ->where('favoritable_type', 'App\Models\Food')
+                ->whereIn('favoritable_id', $foodsIds)
+                ->pluck('favoritable_id')
+                ->toArray();
+
+            $response = [];
+
+            foreach ($foods as $food) {
+                $response [] = [
+                    'id' => $food->id,
+                    'name' => $name[$food->name],
+                    'price' => $food->RawPrice,
+                    'currency' => 'S.P',
+                    'description' => $description[$food->description],
+                    'country_of_origin' => $country_of_origin[$food->country_of_origin],
+                    'picture' => $food->picture,
+                    'is_favorite' => in_array($food->id, $favorites),
+                ];
+            }
+            return response()->json($response, 200);
+    }
 }

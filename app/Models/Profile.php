@@ -27,6 +27,7 @@ class Profile extends Model
         'about_me',
         'place_of_residence',
         'gender',
+        'preferred_currency',
     ];
 
     /**

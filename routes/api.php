@@ -4,13 +4,13 @@
 use App\Http\Controllers\AccessoryCategoryController;
 use App\Http\Controllers\AccessoryController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AppRatingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DrinkCategoryController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\EventSupplementController;
 use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\FcmController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodCategoryController;
 use App\Http\Controllers\FoodController;
@@ -35,9 +35,8 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
-use App\Models\User;
+use App\Models\AppRating;
 use App\Models\UserJoinedEvent;
-use App\Services\NotificationService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,10 +90,6 @@ Route::get('/web/auth/google', [SocialController::class, 'redirectToGoogleAPIWeb
 //handling google callback with user info for dashboard
 Route::get('/web/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackWeb']);
 
-
-Route::post('/update-device-token', [FcmController::class, 'updateDeviceToken']);
-
-Route::post('/send-fcm-notification', [FcmController::class, 'sendFcmNotification']);
 
 
 Route::middleware([UserMiddleware::class])->group(function () {
@@ -412,7 +407,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //get hosts related each event
     Route::get('/home/hosts/{event_id}' , [MainEventHostController::class , 'GetHostsRelatedEvent']);
 
-    //get count of (location - food - drink - accessory)
+    //get count of (location - food - drink - accessory - cart)
     Route::get('/home/count' , [LocationController::class , 'HomeCount']);
 
     //Get Location related host && get location by governorate
@@ -626,24 +621,43 @@ Route::post('/edit/drinks/details/{drink_id}' , [DrinkController::class , 'WebEd
 //drink - 3
 Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
 
+
+//web accessory
+
+//accessory - 1
+Route::get('/get/accessories/by/category/{accessory_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
+Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAccessoriesCount']);
+
+//accessory - 2
+Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
+Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetDrinksDetails']);
+Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEditAccessoriesDetails']);
+
+//accessory - 3
+Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
+
+
+//four cart (location , food , drink , accessory , get cart item) and (get most location reservation)
+Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
+Route::post('/home/food' , [FoodController::class , 'getAllFood']);
+Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
+Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']); //note : slow in translate
+Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
+Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheMostLocationReserved']);
+
+//setting language
+Route::get('/user/language' , [UserController::class , 'getUserLanguage']);
+
+//setting currency
+Route::get('/user/currency' , [UserController::class , 'getUserCurrency']);
+
+//setting rate
+Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating']);
+Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
+Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
+
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
 //Route::get('/get-gender', [TestsController::class, 'getGender']);
 //Route::get('/change-currency', [TestsController::class, 'convertPrice']);
-Route::post('/send-notification', [TestsController::class, 'sendPushNotification']);
-
-
-
-
-Route::get('/test-notification', function (NotificationService $notificationService) {
-    $user = User::first(); // Replace with actual user retrieval
-    $title = 'Test Notification';
-    $message = 'This is a test notification';
-
-    $result = $notificationService->send($user, $title, $message);
-
-    return $result ? 'Notification sent successfully' : 'Failed to send notification';
-});
-
-

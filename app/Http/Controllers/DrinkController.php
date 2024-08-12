@@ -262,7 +262,7 @@ class DrinkController extends Controller
             if($results->isEmpty())
             {
                 return response()->json([
-                    "message" => "There are no food.",
+                    "message" => "There are no drinks.",
                     "status_code" => 404,
                 ], 404);
             }
@@ -384,9 +384,9 @@ class DrinkController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0' ,
-            'description' => 'required|string' ,
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'description' => 'sometimes|string' ,
         ]);
 
         if($validator->fails())
@@ -397,11 +397,29 @@ class DrinkController extends Controller
             ], 422);
         }
 
-        $exist->update([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description')
-        ]);
+        $dataToUpdate = [];
+        if($request->has('name'))
+        {
+            $dataToUpdate['name'] = $request->input('name');
+        }
+        if($request->has('price'))
+        {
+            $dataToUpdate['price'] = $request->input('price');
+        }
+        if($request->has('description'))
+        {
+            $dataToUpdate['description'] = $request->input('description');
+        }
+
+        if(empty($dataToUpdate))
+        {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $exist->update($dataToUpdate);
 
         return response()->json([
             "message" => "drink details updated successfully",
@@ -422,7 +440,7 @@ class DrinkController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price'=> 'required|integer|doesnt_start_with:0' ,
+            'price'=> 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
             'drink_category_id'=> 'required|integer|exists:drink_categories,id',
             'picture'=> 'required|image',
             'description' => 'required|string',
@@ -492,4 +510,82 @@ class DrinkController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
+    public function getAllDrinks(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user->profile->preferred_language);
+
+        $validator = Validator::make($request->all(), [
+            "type" => 'required|integer|between:-1,999999'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $isTypeNull = $request->type == '-1';
+
+        // Start with the base query
+        $query = Drink::query();
+
+        // If a type is provided and it's not -1, filter the results
+        if ($request->type && !$isTypeNull) {
+            $query->where('price', '<=', $request->type);
+        }
+
+        // Retrieve the food items
+        $drinks = $query->orderby('price')->get();
+
+        // Check if any food items were found
+        if ($drinks->isEmpty()) {
+            $errorMessage = $request->type && !$isTypeNull
+                ? TranslateTextHelper::translate("No drinks found for the specified price")
+                : TranslateTextHelper::translate("No drinks found in application");
+
+            return response()->json([
+                "error" => $errorMessage,
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $name = $drinks->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $drinks->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
+
+        $foodsIds = $drinks->pluck('id')->toArray();
+
+        $favorites = Favorite::query()
+            ->where('favoritable_type', 'App\Models\Food')
+            ->whereIn('favoritable_id', $foodsIds)
+            ->pluck('favoritable_id')
+            ->toArray();
+
+        $response = [];
+
+        foreach ($drinks as $drink) {
+            $response [] = [
+                'id' => $drink->id,
+                'name' => $name[$drink->name],
+                'price' => $drink->RawPrice,
+                'currency' => 'S.P',
+                'description' => $description[$drink->description],
+                'picture' => $drink->picture,
+                'is_favorite' => in_array($drink->id, $favorites),
+            ];
+        }
+        return response()->json($response, 200);
+    }
 }

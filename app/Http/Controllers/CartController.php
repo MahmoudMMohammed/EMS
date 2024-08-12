@@ -360,4 +360,115 @@ class CartController extends Controller
             "status_code" => 200,
         ], 200);
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getAllItemCart(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
+        $cart = Cart::query()->where('user_id' , $user->id)->pluck('id');
+
+        if(! $cart->count() > 0)
+        {
+            return response()->json([
+                "error" => TranslateTextHelper::translate("You don't have a cart yet"),
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'type' => 'required|string|in:all,food,drink'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+                'status_code' => 422
+            ] , 422);
+        }
+
+        $isTypeAll = strtolower($request->type) === 'all' ;
+
+        $results = CartItem::query()->where('cart_id' , $cart)->where('itemable_type' ,'!=' , 'App\Models\Accessory');
+
+        if($request->type && !$isTypeAll)
+        {
+            if(strtolower($request->type) == 'food') {
+                $results->where('itemable_type', 'App\Models\Food');
+            }
+            elseif(strtolower($request->type) == 'drink') {
+                $results->where('itemable_type' , 'App\Models\Drink');
+            }
+        }
+
+        $items = $results->orderBy('quantity')->with('itemable')->get();
+
+        if ($items->isEmpty() && $request->type && $isTypeAll) {
+            return response()->json([
+                'error' => TranslateTextHelper::translate("No Items found , Add some"),
+                'status_code' => 404,
+            ], 404);
+        }
+
+        if ($items->isEmpty() && $request->type && !$isTypeAll) {
+            return response()->json([
+                'error' => TranslateTextHelper::translate("No Items found for specific category , Add some"),
+                'status_code' => 404,
+            ], 404);
+        }
+
+        $response = [];
+        $totalPrice = 0;
+        $totalItems = 0;
+
+        $names = [];
+        foreach ($items as $item)
+        {
+            $names [] = $item->itemable->name ;
+        }
+
+        $translate = TranslateTextHelper::batchTranslate($names);
+
+        foreach ($items as $item)
+        {
+            $itemTotalPrice = $item->itemable->raw_price * $item->quantity;
+            $totalPrice += $itemTotalPrice;
+            $totalItems ++;
+
+            $type = '' ;
+            switch ($item->itemable_type){
+                case 'App\Models\Food' :
+                    $type = 'food' ;
+                    break ;
+                case 'App\Models\Drink' :
+                    $type = 'drink';
+                    break ;
+            }
+
+            $response [] = [
+                'id' => $item->itemable->id ,
+                'name' => $translate[$item->itemable->name] ,
+                'numOfItem' => $item->quantity ,
+                'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
+                'picture' => $item->itemable->picture ,
+                'type' => $type
+            ];
+        }
+
+        return response()->json([
+            'data' => $response ,
+            'total_price' => number_format($totalPrice , 2 , '.' , ',') . ' S.P' ,
+            'total_Items' => $totalItems ,
+        ] , 200);
+    }
 }
