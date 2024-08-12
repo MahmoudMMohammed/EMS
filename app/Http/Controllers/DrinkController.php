@@ -384,9 +384,9 @@ class DrinkController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
-            'description' => 'required|string' ,
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'description' => 'sometimes|string' ,
         ]);
 
         if($validator->fails())
@@ -397,11 +397,29 @@ class DrinkController extends Controller
             ], 422);
         }
 
-        $exist->update([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description')
-        ]);
+        $dataToUpdate = [];
+        if($request->has('name'))
+        {
+            $dataToUpdate['name'] = $request->input('name');
+        }
+        if($request->has('price'))
+        {
+            $dataToUpdate['price'] = $request->input('price');
+        }
+        if($request->has('description'))
+        {
+            $dataToUpdate['description'] = $request->input('description');
+        }
+
+        if(empty($dataToUpdate))
+        {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ], 404);
+        }
+
+        $exist->update($dataToUpdate);
 
         return response()->json([
             "message" => "drink details updated successfully",

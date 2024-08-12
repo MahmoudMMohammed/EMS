@@ -434,10 +434,10 @@ class AccessoryController extends Controller
         $validator = Validator::make($request->all() , [
             'accessory_id' => 'required|integer|exists:accessories,id' ,
             'warehouse' => 'required|in:1,2,3,4,5,6,7' , //1:'Damascus' , 2:'Homs' , 3:'Tartus' , 4:'Aleppo' , 5:'Suwayda' , 6:'Daraa' , 7:'Raqqa'
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
-            'quantity' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1',
-            'description' => 'required|string' ,
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'quantity' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1',
+            'description' => 'sometimes|string' ,
         ]);
 
         if($validator->fails())
@@ -448,22 +448,39 @@ class AccessoryController extends Controller
             ], 422);
         }
 
-        $exist = Accessory::query()->where('id' , $request->accessory_id)->first();
+        $accessory = Accessory::query()->where('id' , $request->accessory_id)->first();
 
-        $quantity = WarehouseAccessory::query()
+        $warehouseAccessory = WarehouseAccessory::query()
             ->where('warehouse_id' , $request->warehouse)
             ->where('accessory_id' , $request->accessory_id)
             ->first();
 
-        $exist->update([
-            'name' => $request->input('name'),
-            'price' => $request->input('price'),
-            'description' => $request->input('description'),
-        ]);
 
-        $quantity->update([
-            'quantity' => $request->input('quantity')
-        ]);
+        $dataToUpdateAccessory = [];
+        $dataToUpdateQuantity = [];
+
+        if ($request->has('name')) {
+            $dataToUpdateAccessory['name'] = $request->input('name');
+        }
+        if ($request->has('price')) {
+            $dataToUpdateAccessory['price'] = $request->input('price');
+        }
+        if ($request->has('description')) {
+            $dataToUpdateAccessory['description'] = $request->input('description');
+        }
+        if ($request->has('quantity')) {
+            $dataToUpdateQuantity['quantity'] = $request->input('quantity');
+        }
+
+        if (empty($dataToUpdateAccessory) && empty($dataToUpdateQuantity)) {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ],404);
+        }
+
+        $accessory->update($dataToUpdateAccessory);
+        $warehouseAccessory->update($dataToUpdateQuantity);
 
         return response()->json([
             "message" => "accessory details updated successfully",

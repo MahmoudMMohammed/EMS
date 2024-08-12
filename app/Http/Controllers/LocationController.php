@@ -418,11 +418,11 @@ class LocationController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'required|max:50' ,
-            'price' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1' ,
-            'open' => 'required|date_format:h:i A' ,
-            'close' => 'required|date_format:h:i A' ,
-            'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1'
+            'name' => 'sometimes|max:50' ,
+            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'open' => 'sometimes |date_format:h:i A' ,
+            'close' => 'sometimes|date_format:h:i A' ,
+            'capacity' => 'sometimes|integer|doesnt_start_with:0|max:100000|min:1'
         ]);
 
         if($validator->fails())
@@ -433,13 +433,42 @@ class LocationController extends Controller
             ], 422);
         }
 
-        $exist->update([
-            'name' => $request->input('name') ,
-            'reservation_price' => $request->input('price'),
-            'open_time' => $request->input('open'),
-            'close_time' => $request->input('close'),
-            'capacity' => $request->input('capacity'),
-        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $dataToUpdate = [];
+
+        if ($request->has('name')) {
+            $dataToUpdate['name'] = $request->input('name');
+        }
+        if ($request->has('price')) {
+            $dataToUpdate['reservation_price'] = $request->input('price');
+        }
+        if ($request->has('open')) {
+            $dataToUpdate['open_time'] = $request->input('open');
+        }
+        if ($request->has('close')) {
+            $dataToUpdate['close_time'] = $request->input('close');
+        }
+        if ($request->has('capacity')) {
+            $dataToUpdate['capacity'] = $request->input('capacity');
+        }
+
+        if(empty($dataToUpdate))
+        {
+            return response()->json([
+                "message" => "You haven't made any changes",
+                "status_code" => 404,
+            ],404);
+        }
+
+        $exist->update($dataToUpdate);
+
 
         return response()->json([
             "message" => "Location details updated successfully",
