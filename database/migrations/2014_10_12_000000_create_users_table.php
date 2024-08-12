@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('blocked_until')->nullable();
             $table->unsignedInteger('number_of_logins')->default(0);
             $table->timestamp('last_login')->nullable();
-            $table->text("fcm_token");
+            $table->text("fcm_token")->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -280,5 +281,104 @@ class ProfileController extends Controller
             'profile_picture' => $userdata -> profile -> profile_picture
         ];
         return response()->json($response , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    public function getAdminOwnerProfile():JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $profile = User::query()->where('id' , $user->id)->first();
+
+        if(!$profile)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $response = [
+            'id' => $profile->id ,
+            'name' => $profile->name ,
+            'phone_number' => $profile->profile->phone_number ,
+            'email' => $profile->email ,
+            'birth_date' => $profile->profile->birth_date ,
+            'picture' => $profile->profile->profile_picture,
+            'role' => $profile->role,
+            'verified' => 'verified' ,
+            'Registration' => $profile->created_at->format('Y/m/d')
+        ];
+
+        return response()->json($response ,200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    public function editAdminOwnerProfile(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|regex:/^[a-zA-Z\s]+$/' ,
+            'email' => 'required|email|unique:users,email' ,
+            'password' => ['required' , password_rule::min(6)->numbers()->letters()->mixedCase() ] ,
+            'phone_number' => 'required|starts_with:09|digits:10',
+            'birthday' => 'required|date_format:Y-m-d' ,
+            'residence' => 'sometimes|nullable|string',
+            'bio' => 'sometimes|nullable|max:100'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $admin = User::query()->where('id' , $user->id)->first();
+
+        $adminProfile = Profile::query()->where('user_id' , $admin->id)->first();
+
+        if(!$admin || !$adminProfile)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $admin->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        $adminProfile->update([
+            'phone_number' => $request->input('phone_number'),
+            'birth_date' => $request->input('birthday'),
+            'about_me' => $request->input('residence'),
+            'place_od_residence' => $request->input('bio'),
+        ]);
+
+        return response()->json([
+            "message" => "accessory details updated successfully",
+            "status_code" => 200,
+        ], 200);
+
     }
 }

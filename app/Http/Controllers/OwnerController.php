@@ -8,6 +8,7 @@ use App\Models\AppRating;
 use App\Models\EventSupplement;
 use App\Models\Feedback;
 use App\Models\Location;
+use App\Models\Profile;
 use App\Models\User;
 use App\Models\UserEvent;
 use Carbon\Carbon;
@@ -15,6 +16,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password as password_rule;
+use Illuminate\Support\Facades\Hash;
 
 class OwnerController extends Controller
 {
@@ -24,7 +27,10 @@ class OwnerController extends Controller
 
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
-        $owners = User::with('profile')->where('role' , "Owner")->get();
+        $owners = User::with('profile')
+            ->where('role' , "Owner")
+            ->where('id' , '!=' , $user->id)
+            ->get();
 
         if(!$owners->count() > 0)
         {
@@ -413,5 +419,193 @@ class OwnerController extends Controller
             });
 
         return $finishedEvents->merge($confirmedEvents);
+    }
+
+    public function updateAdminLocation(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name_old_id' => 'required|exists:users,id' ,
+            'email_old' => 'required|email|exists:users,email' ,
+            'new_admin_id' => 'required|exists:users,id',
+            'location_id' => 'required|integer|exists:locations,id' ,
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+
+        $not_location = Location::query()->where('id' , $request->location_id)->first();
+
+        if($not_location->user_id != $request->name_old_id)
+        {
+            return response()->json([
+                "message" => "The old admin doesn't even run this place",
+                "status_code" => 422,
+            ] ,201);
+        }
+
+
+        $not_location->update([
+            'user_id' => $request->input(['new_admin_id'])
+        ]);
+
+        $replace = User::query()
+            ->where('id' , $request->input('name_old_id'))
+            ->delete();
+
+        return response()->json([
+            "message" => "admin location replaced successfully",
+            "status_code" => 201,
+        ] ,201);
+    }
+    //////////////////////////////////////////////////////////////////////
+    public function AddNewAdmin(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'name' => 'required|regex:/^[a-zA-Z\s]+$/' ,
+            'email' => 'required|email|unique:users,email' ,
+            'password' => ['required' , password_rule::min(6)->numbers()->letters()->mixedCase() ] ,
+            'phone_number' => 'required|starts_with:09|digits:10',
+            'birthday' => 'required|date_format:Y-m-d' ,
+            'gender'=>'required|in:male,female',
+            'residence' => 'sometimes|nullable|string',
+            'picture' => 'required|image'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $publicPath = public_path("ProfilePictures/Owners&Admins");
+
+        $PicturePath = 'ProfilePictures/Owners&Admins/' . $request->file('picture')->getClientOriginalName();
+        $request->file('picture')->move($publicPath, $PicturePath);
+
+        $add = User::query()->create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'verified'=>1,
+            'role' => 'Admin'
+        ]);
+
+        $add_profile = Profile::query()->create([
+            'user_id' => $add->id,
+            'phone_number' => $request->input('phone_number'),
+            'birth_date' => $request->input('birthday') ,
+            'gender'=>$request->input('gender'),
+            'place_of_residence' => $request->input('residence'),
+            'profile_picture' => $PicturePath
+        ]);
+
+        if(!$add || !$add_profile)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        return response()->json([
+            "message" => "admin added successfully",
+            "status_code" => 201,
+        ], 201);
+
+    }
+    /////
+    public function rechargeWallet(Request $request):JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all() , [
+            'email' => 'required|email|exists:users,email' ,
+            'value' => 'required|integer|doesnt_start_with:0|max:100000000|min:1'
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json([
+                "error" => $validator->errors()->first(),
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $user_wallet = User::query()
+            ->where('email' , $request->email)
+            ->where('role' , 'User')
+            ->first();
+
+        if(!$user_wallet)
+        {
+            return response()->json([
+                "error" => "There is a problem with the email you entered",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $profile = Profile::query()->where('user_id' , $user_wallet->id)->first();
+
+        if(!$profile)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $currentBalance = $profile->balance;
+        $newBalance = $currentBalance + $request->input('value');
+
+        if ($newBalance > 500000000) {
+            return response()->json([
+                "error" => "The balance exceeds the allowed limit of 500,000,000 .",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $profile->update([
+            'balance' => $newBalance
+        ]);
+
+        $format = number_format($request->value , 2);
+
+        return response()->json([
+            "message" => "The user's wallet with Dome: $format S.P has been charged successfully",
+            "status_code" => 200,
+        ], 200);
     }
 }
