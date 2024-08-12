@@ -9,13 +9,18 @@ use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\PriceParsing;
+use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\RegistrationData;
+
 
 class AccessoryController extends Controller
 {
+    use RegistrationData , PriceParsing , SalesData;
     public function getAccessoriesByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
