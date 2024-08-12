@@ -8,10 +8,17 @@ use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Food;
 use App\Services\GenderService;
+use App\Services\NotificationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TestsController extends Controller
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService){
+        $this->notificationService = $notificationService;
+    }
     public function testNotifications($user_id)
     {
         $message = "Testing Pusher";
@@ -55,6 +62,27 @@ class TestsController extends Controller
 
 //        return CurrencyConverterScraper::getAvailableExchanges();
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function sendPushNotification(Request $request): JsonResponse
+    {
+        $request->validate([
+            'fcm_token' => 'required|string',
+            'title' => 'required|string',
+            'body' => 'required|string',
+            'data' => 'nullable|array',
+        ]);
+
+        $token = $request->token;
+        $title = $request->title;
+        $body = $request->body;
+        $data = $request->data;
+
+        $this->notificationService->sendNotification($token, $title, $body, $data);
+
+        return response()->json(['message' => "notification sent successfully"]);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

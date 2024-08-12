@@ -30,7 +30,7 @@ class AuthController extends Controller
             "name" => 'required | min:2 | max:30 | regex:/^[A-Za-z\s]+$/ ',
             "email" => 'required | email | unique:users,email',
             "password" => ['required' , 'confirmed' , password_rule::min(6)->numbers()->letters()->mixedCase() ] ,
-
+            "fcm_token" => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -44,6 +44,7 @@ class AuthController extends Controller
             "name" => $request->name,
             "email" => $request->email,
             "password" => Hash::make($request->password),
+            "fcm_token" => $request->fcm_token,
         ]);
 
         $gender = GenderService::getGenderByName($user->name);
@@ -143,6 +144,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required | email | exists:users,email',
             'password' => 'required',
+            'fcm_token' => 'required|sometimes',
         ]);
 
         if ($validator->fails()) {
@@ -229,6 +231,9 @@ class AuthController extends Controller
         }
         $user->number_of_logins += 1;
         $user->last_login = now();
+        if (isset($request->fcm_token)){
+            $user->fcm_token = $request->fcm_token;
+        }
         $user->save();
 
         return response()->json([

@@ -11,6 +11,7 @@ use App\Http\Controllers\DrinkCategoryController;
 use App\Http\Controllers\DrinkController;
 use App\Http\Controllers\EventSupplementController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FcmController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FoodCategoryController;
 use App\Http\Controllers\FoodController;
@@ -36,7 +37,9 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\UserMiddleware;
 use App\Models\AppRating;
+use App\Models\User;
 use App\Models\UserJoinedEvent;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,6 +93,10 @@ Route::get('/web/auth/google', [SocialController::class, 'redirectToGoogleAPIWeb
 //handling google callback with user info for dashboard
 Route::get('/web/auth/google/callback' ,[SocialController::class, 'handleGoogleAPICallbackWeb']);
 
+
+Route::post('/update-device-token', [FcmController::class, 'updateDeviceToken']);
+
+Route::post('/send-fcm-notification', [FcmController::class, 'sendFcmNotification']);
 
 
 Route::middleware([UserMiddleware::class])->group(function () {
@@ -661,3 +668,18 @@ Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'del
 //Route::get('/translate' ,[TestsController::class, 'testTranslation']);
 //Route::get('/get-gender', [TestsController::class, 'getGender']);
 //Route::get('/change-currency', [TestsController::class, 'convertPrice']);
+
+Route::post('/send-notification', [TestsController::class, 'sendPushNotification']);
+
+
+
+
+Route::get('/test-notification', function (NotificationService $notificationService) {
+    $user = User::first(); // Replace with actual user retrieval
+    $title = 'Test Notification';
+    $message = 'This is a test notification';
+
+    $result = $notificationService->send($user, $title, $message);
+
+    return $result ? 'Notification sent successfully' : 'Failed to send notification';
+});

@@ -10,7 +10,11 @@
         "barryvdh/laravel-dompdf": "^2.2",
         "devaslanphp/auto-translate": "^1.0",
         "endroid/qr-code": "^5.0",
+        "google/apiclient": "*",
         "guzzlehttp/guzzle": "^7.8",
+        "kreait/firebase-php": "^7.0",
+        "kreait/laravel-firebase": "^5.0",
+        "laravel-notification-channels/fcm": "^4.3",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.12",
@@ -19,7 +23,8 @@
         "stichoza/google-translate-php": "^4.1",
         "symfony/css-selector": "^7.1",
         "symfony/dom-crawler": "^7.1",
-        "tymon/jwt-auth": "^2.0"
+        "tymon/jwt-auth": "^2.0",
+        "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

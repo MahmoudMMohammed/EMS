@@ -26,6 +26,7 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         'google_id',
         'verified',
         'role',
+        'fcm_token',
     ];
 
     /**
@@ -95,6 +96,10 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         return $this->hasMany(Search::class , 'user_id' , 'id');
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class , 'notifiable_id' , 'id');
+    }
     public function rate()
     {
         return $this->hasOne(AppRating::class , 'user_id' , 'id');
