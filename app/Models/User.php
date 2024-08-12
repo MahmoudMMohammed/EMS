@@ -100,4 +100,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return $this->hasMany(Notification::class , 'notifiable_id' , 'id');
     }
+    public function rate()
+    {
+        return $this->hasOne(AppRating::class , 'user_id' , 'id');
+    }
 }
