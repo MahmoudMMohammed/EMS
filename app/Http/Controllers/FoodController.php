@@ -391,7 +391,7 @@ class FoodController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'sometimes|max:50' ,
-            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
+            'price' => 'required|ends_with: S.P' ,
             'description' => 'sometimes|string' ,
         ]);
 
@@ -403,29 +403,40 @@ class FoodController extends Controller
             ], 422);
         }
 
-        $dataToUpdate = [];
-        if($request->has('name'))
-        {
-            $dataToUpdate['name'] = $request->input('name');
-        }
-        if($request->has('price'))
-        {
-            $dataToUpdate['price'] = $request->input('price');
-        }
-        if($request->has('description'))
-        {
-            $dataToUpdate['description'] = $request->input('description');
+        // Initialize counters for "S" and "P"
+        $sCount = 0;
+        $pCount = 0;
+
+        // Check each character in the input
+        foreach (str_split($request->input('price')) as $char) {
+            if ($char === 'S') {
+                $sCount++;
+            } elseif ($char === 'P') {
+                $pCount++;
+            } elseif (!ctype_digit($char) && $char !== ' ' && $char !== '.' && $char !== ',') {
+                // Contains an invalid character
+                return response()->json([
+                    "error" => 'The format of the price is incorrect.',
+                    "status_code" => 422,
+                ], 422);
+            }
         }
 
-        if(empty($dataToUpdate))
-        {
+        // Validate the count of "S" and "P"
+        if ($sCount > 1 || $pCount > 1) {
             return response()->json([
-                "message" => "You haven't made any changes",
-                "status_code" => 404,
-            ], 404);
+                "error" => 'The format of the price is incorrect.',
+                "status_code" => 422,
+            ], 422);
         }
 
-        $exist->update($dataToUpdate);
+        $format = (float)str_replace(['S.P', ',', ' '], '', $request->input('price'));
+
+        $exist->update([
+            'name' => $request->input('name'),
+            'price' => $format,
+            'description' => $request->input('description')
+        ]);
 
         return response()->json([
             "message" => "food details updated successfully",

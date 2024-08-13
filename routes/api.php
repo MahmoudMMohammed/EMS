@@ -632,12 +632,12 @@ Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
 //web accessory
 
 //accessory - 1
-Route::get('/get/accessories/by/category/{accessory_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
+Route::get('/get/accessories/by/category/{accessory_id}/{warehouse_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
 Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAccessoriesCount']);
 
 //accessory - 2
 Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
-Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetDrinksDetails']);
+Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetAccessoryDetails']);
 Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEditAccessoriesDetails']);
 
 //accessory - 3
@@ -662,6 +662,16 @@ Route::get('/user/currency' , [UserController::class , 'getUserCurrency']);
 Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating']);
 Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
 Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
+
+//profile
+Route::get('/admin_owner/get/profile' , [ProfileController::class , 'getAdminOwnerProfile']);
+Route::post('/admin_owner/edit/profile' , [ProfileController::class , 'editAdminOwnerProfile']);
+Route::post('/update/admin/location' , [OwnerController::class , 'updateAdminLocation']);
+Route::get('/profile/helper/select/old_admin' , [AdminController::class , 'getAllAdmin']);
+Route::get('/profile/helper/select/new_admin' , [AdminController::class , 'getAllNewAdmin']);
+Route::get('/profile/helper/select/location' , [LocationController::class , 'getAllLocationsSelect']);
+Route::post('/add/admin' , [OwnerController::class , 'AddNewAdmin']);
+Route::post('/recharge/user/wallet' , [OwnerController::class , 'rechargeWallet']);
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

@@ -163,7 +163,10 @@ class AdminController extends Controller
         $user = Auth::user();
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
-        $admins = User::with('profile')->where('role' , "Admin")->get();
+        $admins = User::with('profile')
+            ->where('role' , "Admin")
+            ->where('id' , '!=' , $user->id)
+            ->get();
 
         if(!$admins->count() > 0)
         {
@@ -326,6 +329,69 @@ class AdminController extends Controller
         }
 
         return response()->json($Admins , 200);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    public function getAllAdmin():JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $all_admin = User::query()
+            ->where('role' , 'Admin')
+            ->select('id' , 'name')
+            ->get();
+
+        if(!$all_admin)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+        return response()->json($all_admin , 200);
+    }
+    /////////////////////////////////////////////////////////////////////////////////
+    public function getAllNewAdmin():JsonResponse
+    {
+        $user = Auth::user();
+        if(!$user)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $locations = Location::query()->pluck('user_id')->toArray();
+        if(!$locations)
+        {
+            return response()->json([
+                'message' => 'There is no location to manage it.',
+                'status_code' => 404
+            ], 404);
+        }
+
+        $new_admin = User::query()
+            ->whereNotIn('id' , $locations)
+            ->where('role' , 'Admin')
+            ->select('id' , 'name')
+            ->get();
+
+        if($new_admin->isEmpty())
+        {
+            return response()->json([
+                'message' => 'There is no admin available to manage this place. Dear owner, hire new people to manage this place.',
+                'status_code' => 404
+            ], 404);
+        }
+
+        return response()->json($new_admin , 200);
     }
 }
 

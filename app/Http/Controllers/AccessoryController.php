@@ -9,6 +9,7 @@ use App\Models\Favorite;
 use App\Models\Location;
 use App\Models\Warehouse;
 use App\Models\WarehouseAccessory;
+use App\Traits\ModelUsageCheck;
 use App\Traits\PriceParsing;
 use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,7 @@ use App\Traits\RegistrationData;
 
 class AccessoryController extends Controller
 {
-    use RegistrationData , PriceParsing , SalesData;
+    use RegistrationData , PriceParsing , SalesData , ModelUsageCheck;
     public function getAccessoriesByCategory($category_id): JsonResponse
     {
         $user = Auth::user();
@@ -244,7 +245,7 @@ class AccessoryController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
-    public function WebGetAccessoriesByCategory($accessory_id) : JsonResponse
+    public function WebGetAccessoriesByCategory($accessory_id , $warehouse_id) : JsonResponse
     {
         $user = Auth::user();
         if(!$user)
@@ -255,7 +256,7 @@ class AccessoryController extends Controller
             ], 422);
         }
 
-        if($accessory_id < 0 || $accessory_id > 7)
+        if($accessory_id < 0 || $accessory_id > 7 )
         {
             return response()->json([
                 "error" => "invalid accessory ID must be between 0 and 7",
@@ -263,10 +264,32 @@ class AccessoryController extends Controller
             ], 422);
         }
 
+        if($warehouse_id < 1 || $warehouse_id > 7 )
+        {
+            return response()->json([
+                "error" => "invalid warehouse ID must be between 1 and 7",
+                "status_code" => 422,
+            ], 422);
+        }
+
         $results = [];
+
         if($accessory_id == 0)
         {
-            $results = Accessory::query()->get();
+            $results = WarehouseAccessory::query()
+                ->where('warehouse_id' , $warehouse_id)
+                ->pluck('accessory_id')
+                ->toArray();
+
+            if(!$results)
+            {
+                return response()->json([
+                    "message" => "There are no accessories.",
+                    "status_code" => 404,
+                ], 404);
+            }
+
+            $results = Accessory::query()->whereIn('id' , $results)->get();
 
             if($results->isEmpty())
             {
@@ -278,8 +301,22 @@ class AccessoryController extends Controller
         }
         elseif (in_array($accessory_id , range(1,7)))
         {
+            $results = WarehouseAccessory::query()
+                ->where('warehouse_id' , $warehouse_id)
+                ->pluck('accessory_id')
+                ->toArray();
+
+            if(!$results)
+            {
+                return response()->json([
+                    "message" => "There are no accessories for this specific category.",
+                    "status_code" => 404,
+                ], 404);
+            }
+
             $results = Accessory::query()
                 ->where('accessory_category_id' , $accessory_id)
+                ->whereIn('id' , $results)
                 ->get();
 
             if($results->isEmpty())
@@ -383,7 +420,7 @@ class AccessoryController extends Controller
         ], 200);
     }
     ////////////////////////////////////////////////////////////////////////////////
-    public function WebGetDrinksDetails(Request $request) :JsonResponse
+    public function WebGetAccessoryDetails(Request $request) :JsonResponse
     {
         $user = Auth::user();
         if(!$user)
@@ -439,10 +476,10 @@ class AccessoryController extends Controller
         $validator = Validator::make($request->all() , [
             'accessory_id' => 'required|integer|exists:accessories,id' ,
             'warehouse' => 'required|in:1,2,3,4,5,6,7' , //1:'Damascus' , 2:'Homs' , 3:'Tartus' , 4:'Aleppo' , 5:'Suwayda' , 6:'Daraa' , 7:'Raqqa'
-            'name' => 'sometimes|max:50' ,
-            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
-            'quantity' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1',
-            'description' => 'sometimes|string' ,
+            'name' => 'required|max:50' ,
+            'price' => 'required|ends_with:S.P' ,
+            'quantity' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1',
+            'description' => 'required|string' ,
         ]);
 
         if($validator->fails())
@@ -453,6 +490,35 @@ class AccessoryController extends Controller
             ], 422);
         }
 
+        // Initialize counters for "S" and "P"
+        $sCount = 0;
+        $pCount = 0;
+
+        // Check each character in the input
+        foreach (str_split($request->input('price')) as $char) {
+            if ($char === 'S') {
+                $sCount++;
+            } elseif ($char === 'P') {
+                $pCount++;
+            } elseif (!ctype_digit($char) && $char !== ' ' && $char !== '.' && $char !== ',') {
+                // Contains an invalid character
+                return response()->json([
+                    "error" => 'The format of the price is incorrect.',
+                    "status_code" => 422,
+                ], 422);
+            }
+        }
+
+        // Validate the count of "S" and "P"
+        if ($sCount > 1 || $pCount > 1) {
+            return response()->json([
+                "error" => 'The format of the price is incorrect.',
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $format = (float)str_replace(['S.P', ',', ' '], '', $request->input('price'));
+
         $accessory = Accessory::query()->where('id' , $request->accessory_id)->first();
 
         $warehouseAccessory = WarehouseAccessory::query()
@@ -460,32 +526,15 @@ class AccessoryController extends Controller
             ->where('accessory_id' , $request->accessory_id)
             ->first();
 
+        $accessory->update([
+            'name' => $request->input('name'),
+            'price' => $format,
+            'description' => $request->input('description')
+        ]);
 
-        $dataToUpdateAccessory = [];
-        $dataToUpdateQuantity = [];
-
-        if ($request->has('name')) {
-            $dataToUpdateAccessory['name'] = $request->input('name');
-        }
-        if ($request->has('price')) {
-            $dataToUpdateAccessory['price'] = $request->input('price');
-        }
-        if ($request->has('description')) {
-            $dataToUpdateAccessory['description'] = $request->input('description');
-        }
-        if ($request->has('quantity')) {
-            $dataToUpdateQuantity['quantity'] = $request->input('quantity');
-        }
-
-        if (empty($dataToUpdateAccessory) && empty($dataToUpdateQuantity)) {
-            return response()->json([
-                "message" => "You haven't made any changes",
-                "status_code" => 404,
-            ],404);
-        }
-
-        $accessory->update($dataToUpdateAccessory);
-        $warehouseAccessory->update($dataToUpdateQuantity);
+        $warehouseAccessory->update([
+            'quantity' => $request->input('quantity'),
+        ]);
 
         return response()->json([
             "message" => "accessory details updated successfully",
@@ -610,11 +659,11 @@ class AccessoryController extends Controller
         $description = $accessories->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
-        $foodsIds = $accessories->pluck('id')->toArray();
+        $accessoriesIds = $accessories->pluck('id')->toArray();
 
         $favorites = Favorite::query()
-            ->where('favoritable_type', 'App\Models\Food')
-            ->whereIn('favoritable_id', $foodsIds)
+            ->where('favoritable_type', 'App\Models\Accessory')
+            ->whereIn('favoritable_id', $accessoriesIds)
             ->pluck('favoritable_id')
             ->toArray();
 

@@ -418,11 +418,11 @@ class LocationController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'name' => 'sometimes|max:50' ,
-            'price' => 'sometimes|integer|doesnt_start_with:0|max:1000000000|min:1' ,
-            'open' => 'sometimes |date_format:h:i A' ,
-            'close' => 'sometimes|date_format:h:i A' ,
-            'capacity' => 'sometimes|integer|doesnt_start_with:0|max:100000|min:1'
+            'name' => 'required|max:50' ,
+            'price' => 'required|ends_with: S.P' ,
+            'open' => 'required|date_format:h:i A' ,
+            'close' => 'required|date_format:h:i A' ,
+            'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1'
         ]);
 
         if($validator->fails())
@@ -433,41 +433,42 @@ class LocationController extends Controller
             ], 422);
         }
 
-        if ($validator->fails()) {
+        // Initialize counters for "S" and "P"
+        $sCount = 0;
+        $pCount = 0;
+
+        // Check each character in the input
+        foreach (str_split($request->input('price')) as $char) {
+            if ($char === 'S') {
+                $sCount++;
+            } elseif ($char === 'P') {
+                $pCount++;
+            } elseif (!ctype_digit($char) && $char !== ' ' && $char !== '.' && $char !== ',') {
+                // Contains an invalid character
+                return response()->json([
+                    "error" => 'The format of the price is incorrect.',
+                    "status_code" => 422,
+                ], 422);
+            }
+        }
+
+        // Validate the count of "S" and "P"
+        if ($sCount > 1 || $pCount > 1) {
             return response()->json([
-                "error" => $validator->errors()->first(),
+                "error" => 'The format of the price is incorrect.',
                 "status_code" => 422,
             ], 422);
         }
 
+        $format = (float)str_replace(['S.P', ',', ' '], '', $request->input('price'));
 
-        $dataToUpdate = [];
-
-        if ($request->has('name')) {
-            $dataToUpdate['name'] = $request->input('name');
-        }
-        if ($request->has('price')) {
-            $dataToUpdate['reservation_price'] = $request->input('price');
-        }
-        if ($request->has('open')) {
-            $dataToUpdate['open_time'] = $request->input('open');
-        }
-        if ($request->has('close')) {
-            $dataToUpdate['close_time'] = $request->input('close');
-        }
-        if ($request->has('capacity')) {
-            $dataToUpdate['capacity'] = $request->input('capacity');
-        }
-
-        if(empty($dataToUpdate))
-        {
-            return response()->json([
-                "message" => "You haven't made any changes",
-                "status_code" => 404,
-            ],404);
-        }
-
-        $exist->update($dataToUpdate);
+        $exist->update([
+            'name' => $request->input('name'),
+            'reservation_price' => $format,
+            'open_time' => $request->input('open'),
+            'close_time' => $request->input('close'),
+            'capacity' => $request->input('capacity'),
+        ]);
 
 
         return response()->json([
@@ -827,8 +828,10 @@ class LocationController extends Controller
 
         TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
+
+
         $validator = Validator::make($request->all(), [
-            "governorate" => 'required|in:null,Damascus,Homs,Tartus,Aleppo,Suwayda,Daraa,Raqqa' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
+            "governorate" => 'required' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
         ]);
 
         if ($validator->fails()) {
@@ -837,6 +840,8 @@ class LocationController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::translateToEnglishOnly($request->governorate) ;
 
         $results = [];
         if($request->input('governorate') == 'null')
@@ -851,10 +856,10 @@ class LocationController extends Controller
                 ], 404);
             }
         }
-        elseif ($request->input('governorate') != 'all')
+        elseif ($request->input('governorate') != 'null')
         {
             $results = Location::query()
-                ->where('governorate' , $request->input('governorate'))
+                ->where('governorate' , TranslateTextHelper::translateToEnglishOnly($request->input('governorate')))
                 ->select('id' , 'name' , 'governorate' , 'capacity' , 'open_time' , 'close_time' , 'logo' , 'maintenance')
                 ->get();
 
@@ -910,5 +915,26 @@ class LocationController extends Controller
         }
         return response()->json($response , 200);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public function getAllLocationsSelect():JsonResponse
+    {
+        $user = Auth::user();
 
+        if (!$user) {
+            return response()->json([
+                "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $locations = Location::query()->select('id' , 'name')->get();
+        if(!$locations)
+        {
+            return response()->json([
+                'message' => 'There is no locations to manage it.',
+                'status_code' => 404
+            ], 404);
+        }
+        return response()->json($locations, 200);
+    }
 }
