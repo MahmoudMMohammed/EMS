@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\CurrencyConverterScraper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -57,7 +58,11 @@ class Accessory extends Model
 
     public function getPriceAttribute($value)
     {
-        return number_format($value , 2 , '.' , ',') . ' S.P';
+        $userPreferredCurrency = auth()->user()->profile->preferred_currency;
+
+        $convertedPrice = CurrencyConverterScraper::convert($value, $userPreferredCurrency);
+
+        return number_format($convertedPrice, 2) . ' ' . $userPreferredCurrency;
     }
 
     public function getRawPriceAttribute(): float
