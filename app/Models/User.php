@@ -98,7 +98,7 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
 
     public function notifications()
     {
-        return $this->hasMany(Notification::class , 'notifiable_id' , 'id');
+        return $this->morphMany(Notification::class, 'notifiable');
     }
     public function rate()
     {

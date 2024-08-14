@@ -61,7 +61,7 @@ class NotificationService
                 'notifiable_type' => 'App\Models\User',
                 'notifiable_id' => $user['id'],
                 'data' => json_encode([
-                    'user' => $user['first_name'] . ' ' . $user['last_name'],
+                    'user' => $user['name'],
                     'message' => $message,
                     'title' => $title,
                 ]), // The data of the notification
