@@ -13,7 +13,9 @@ use App\Traits\SalesData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Exception;
 
 class FoodController extends Controller
 {
@@ -602,11 +604,11 @@ class FoodController extends Controller
             foreach ($foods as $food) {
                 $response [] = [
                     'id' => $food->id,
-                    'name' => $name[$food->name],
+                    'name' => $name[$food->name] ?? $food->name,
                     'price' => $food->RawPrice,
                     'currency' => 'S.P',
-                    'description' => $description[$food->description],
-                    'country_of_origin' => $country_of_origin[$food->country_of_origin],
+                    'description' => $description[$food->description] ?? $food->description,
+                    'country_of_origin' => $country_of_origin[$food->country_of_origin] ?? $food->country_of_origin,
                     'picture' => $food->picture,
                     'is_favorite' => in_array($food->id, $favorites),
                 ];

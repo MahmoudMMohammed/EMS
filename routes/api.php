@@ -486,6 +486,44 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     //api for allowed to user searching
     Route::post('/search' , [SearchController::class , 'Search']);
+
+    //get reservation related user (private - public) and all public reservation type
+    Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
+
+    //get details of specific reservation (general)
+    Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
+
+    //get bill of specific reservation
+    Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
+
+    //get reservation specific food categories for specific event
+    Route::get('/get/reservation/myReservation/food/category/{Event_id}' , [HostFoodCategoryController::class , 'getReservationFoodCategory']);
+
+    //get reservation specific drink categories for specific event
+    Route::get('/get/reservation/myReservation/drinks/category/{Event_id}' , [HostDrinkCategoryController::class , 'getReservationDrinksCategory']);
+
+    //get reservation specific accessories categories for specific event
+    Route::get('/get/reservation/myReservation/accessories/category/{Event_id}' , [MEHACController::class , 'getReservationAccessoriesCategory']);
+
+    //get general info for specific public reservation
+    Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::class , 'getGeneralDetails']);
+
+    //get food supplement for specific public reservation
+    Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
+
+    //get drinks supplement for specific public reservation
+
+    Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
+
+    //get accessories supplement for specific public reservation
+
+    Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
+
+    //join the public event
+    Route::get('/reservation/public/join/{event_id}' , [UserJoinedEventController::class , 'joinEvent']);
+
+
+
 });
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -546,22 +584,20 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
 //done without translate
 
 //my reservation (git reservation - general of each reservation - bill of each reservation)
-Route::post('/get/reservation' , [UserEventController::class , 'getUserEvent']);
-Route::get('/get/reservation/myReservation/details/{event_id}' , [UserEventController::class , 'getUserPrivateEventDetails']);
-Route::get('/get/reservation/myReservation/bill/{event_id}' , [UserEventController::class , 'getBill']);
+
+
+
+
 
 //my reservation add food - drink - accessory (get category of each reservation)
-Route::get('/get/reservation/myReservation/food/category/{Event_id}' , [HostFoodCategoryController::class , 'getReservationFoodCategory']);
-Route::get('/get/reservation/myReservation/drinks/category/{Event_id}' , [HostDrinkCategoryController::class , 'getReservationDrinksCategory']);
-Route::get('/get/reservation/myReservation/accessories/category/{Event_id}' , [MEHACController::class , 'getReservationAccessoriesCategory']);
+
+
 
 
 //public reservation (general , supplement(food-drink-accessory) , join event)
-Route::get('/get/reservation/public/general/{event_id}' , [UserEventController::class , 'getGeneralDetails']);
-Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
-Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
-Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
-Route::get('/reservation/public/join/{event_id}' , [UserJoinedEventController::class , 'joinEvent']);
+
+
+
 
 //web
 //done without translate
@@ -651,11 +687,27 @@ Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEdit
 Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
 
 
+//profile
+Route::get('/admin_owner/get/profile' , [ProfileController::class , 'getAdminOwnerProfile']);
+Route::post('/admin_owner/edit/profile' , [ProfileController::class , 'editAdminOwnerProfile']);
+Route::post('/update/admin/location' , [OwnerController::class , 'updateAdminLocation']);
+Route::get('/profile/helper/select/old_admin' , [AdminController::class , 'getAllAdmin']);
+Route::get('/profile/helper/select/new_admin' , [AdminController::class , 'getAllNewAdmin']);
+Route::get('/profile/helper/select/location' , [LocationController::class , 'getAllLocationsSelect']);
+Route::post('/add/admin' , [OwnerController::class , 'AddNewAdmin']);
+Route::post('/recharge/user/wallet' , [OwnerController::class , 'rechargeWallet']);
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 //four cart (location , food , drink , accessory , get cart item) and (get most location reservation)
+
 Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
+
 Route::post('/home/food' , [FoodController::class , 'getAllFood']);
 Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
-Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']); //note : slow in translate
+Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']);
+
+
 Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
 Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheMostLocationReserved']);
 
@@ -670,15 +722,7 @@ Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating'])
 Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
 Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
 
-//profile
-Route::get('/admin_owner/get/profile' , [ProfileController::class , 'getAdminOwnerProfile']);
-Route::post('/admin_owner/edit/profile' , [ProfileController::class , 'editAdminOwnerProfile']);
-Route::post('/update/admin/location' , [OwnerController::class , 'updateAdminLocation']);
-Route::get('/profile/helper/select/old_admin' , [AdminController::class , 'getAllAdmin']);
-Route::get('/profile/helper/select/new_admin' , [AdminController::class , 'getAllNewAdmin']);
-Route::get('/profile/helper/select/location' , [LocationController::class , 'getAllLocationsSelect']);
-Route::post('/add/admin' , [OwnerController::class , 'AddNewAdmin']);
-Route::post('/recharge/user/wallet' , [OwnerController::class , 'rechargeWallet']);
+
 
 //test
 //Route::get('/notification/user/{user_id}' ,[TestsController::class, 'testNotifications']);

@@ -315,7 +315,8 @@ class SearchController extends Controller
                         'name' => $names[$result->name] ,
                         'governorate' => $governorate[$result->governorate] ,
                         'open_time' => $result->open_time ,
-                        'close_time' => $result->close_time
+                        'close_time' => $result->close_time ,
+                        'picture' => $result->logo
                     ];
                 }
 

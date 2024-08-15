@@ -404,6 +404,8 @@ class UserEventController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $validator = Validator::make($request->all() , [
             'type' => 'required|in:1,2'
         ]);
@@ -424,12 +426,14 @@ class UserEventController extends Controller
                 $reservations = UserEvent::query()
                     ->where('user_id' , $user->id)
                     ->orderBy('date' , 'desc')
+                    ->with(['location', 'event'])
                     ->get();
 
                 if($reservations->isEmpty())
                 {
                     return response()->json([
-                        'massage' => "Dear user,you do not have any reservations of your own yet, create some." ,
+                        'massage' => TranslateTextHelper::translate("Dear user,you do not have any reservations of your own yet, create some.") ??
+                                    "Dear user,you do not have any reservations of your own yet, create some." ,
                         'status_code' => 404
                     ] , 404);
                 }
@@ -441,12 +445,14 @@ class UserEventController extends Controller
                     ->where( 'verified' , 'Confirmed')
                     ->where('user_id' , '!=' , $user->id)
                     ->orderBy('date' , 'desc')
+                    ->with(['location', 'event'])
                     ->get();
 
                 if($reservations->isEmpty())
                 {
                     return response()->json([
-                        'massage' => "Dear user,there are no public events to join." ,
+                        'massage' => TranslateTextHelper::translate("Dear user,there are no public events to join.") ??
+                                    "Dear user,there are no public events to join.",
                         'status_code' => 404
                     ] , 404);
                 }
@@ -466,12 +472,26 @@ class UserEventController extends Controller
 
         $app_url = env('app_url');
 
+        $name = $reservations->pluck('location.name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $event = $reservations->pluck('event.name')->toArray();
+        $event = TranslateTextHelper::batchTranslate($event);
+
+
         foreach ($reservations as $reservation) {
 
             $checkTime = Carbon::parse($reservation->date . ' ' . $reservation->end_time);
             if($checkTime < $now && $reservation->verified == 1)
             {
                 $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if($checkTime2 < $now && $reservation->verified == 0)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
                 $reservation->save();
             }
 
@@ -518,12 +538,12 @@ class UserEventController extends Controller
 
             $response[] = [
                 'id' => $reservation->id,
-                'name' => $reservation->location->name,
+                'name' => $name[$reservation->location->name] ?? $reservation->location->name,
                 'date' => $reservation->date,
                 'start_time' => $reservation->start_time,
                 'end_time' => $reservation->end_time,
-                'event' => $reservation->event->name ,
-                'verified' => UserEvent::STATUS_KEYS[$reservation->verified],
+                'event' => $event[$reservation->event->name] ?? $reservation->event->name,
+                'verified' => TranslateTextHelper::translate(UserEvent::STATUS_KEYS[$reservation->verified]) ?? UserEvent::STATUS_KEYS[$reservation->verified],
                 'logo' => $reservation->location->logo ,
                 'days' => $remaining_days,
                 'time' => $remaining_hours  . ':' . $remaining_minutes,
@@ -545,6 +565,8 @@ class UserEventController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $event = UserEvent::query()->find($event_id);
         if(!$event)
@@ -592,10 +614,11 @@ class UserEventController extends Controller
 
         $status = !($remaining_days == '000' && $remaining_hours == '00' && $remaining_minutes == '00');
 
+
         $response = [
             'id' => $event->id,
             'date' => $event->date,
-            'verified' => UserEvent::STATUS_KEYS[$event->verified],
+            'verified' => TranslateTextHelper::translate(UserEvent::STATUS_KEYS[$event->verified]) ?? UserEvent::STATUS_KEYS[$event->verified],
             'start_time' => $event->start_time,
             'end_time' => $event->end_time,
             'picture_1' => $pictures[0] ,
@@ -837,6 +860,13 @@ class UserEventController extends Controller
                 $reservation->save();
             }
 
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if($checkTime2 < $now && $reservation->verified == 0)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
@@ -931,6 +961,13 @@ class UserEventController extends Controller
                     if($checkTime < $now && $reservation->verified == 1)
                     {
                         $reservation->verified = UserEvent::STATUS_KEYS[3];
+                        $reservation->save();
+                    }
+
+                    $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+                    if($checkTime2 < $now && $reservation->verified == 0)
+                    {
+                        $reservation->verified = UserEvent::STATUS_KEYS[2];
                         $reservation->save();
                     }
 
@@ -1096,6 +1133,13 @@ class UserEventController extends Controller
                 $reservation->save();
             }
 
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if($checkTime2 < $now && $reservation->verified == 0)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
+                $reservation->save();
+            }
+
             switch($reservation->verified)
             {
                 case 0 :
@@ -1189,6 +1233,13 @@ class UserEventController extends Controller
                     if($checkTime < $now && $reservation->verified == 1)
                     {
                         $reservation->verified = UserEvent::STATUS_KEYS[3];
+                        $reservation->save();
+                    }
+
+                    $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+                    if($checkTime2 < $now && $reservation->verified == 0)
+                    {
+                        $reservation->verified = UserEvent::STATUS_KEYS[2];
                         $reservation->save();
                     }
 
@@ -1289,6 +1340,13 @@ class UserEventController extends Controller
             if($checkTime < $now && $reservation->verified == 1)
             {
                 $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if($checkTime2 < $now && $reservation->verified == 0)
+            {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
                 $reservation->save();
             }
 
@@ -1418,6 +1476,15 @@ class UserEventController extends Controller
 
             case 4 :
                 //Rejected
+                $reservations = UserEvent::all();
+                foreach ($reservations as $reservation)
+                {
+                    $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+                    if ($checkTime2 < $now && $reservation->verified == 0) {
+                        $reservation->verified = UserEvent::STATUS_KEYS[2];
+                        $reservation->save();
+                    }
+                }
                 $reservations = UserEvent::query()
                     ->where('verified' , 'Rejected')
                     ->orderBy('date' , 'desc')
@@ -1461,6 +1528,12 @@ class UserEventController extends Controller
             if($checkTime < $now && $reservation->verified == 1)
             {
                 $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if ($checkTime2 < $now && $reservation->verified == 0) {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
                 $reservation->save();
             }
 
@@ -1568,6 +1641,12 @@ class UserEventController extends Controller
             if($checkTime < $now && $reservation->verified == 1)
             {
                 $reservation->verified = UserEvent::STATUS_KEYS[3];
+                $reservation->save();
+            }
+
+            $checkTime2 = Carbon::parse($reservation->date . ' ' . $reservation->start_time);
+            if ($checkTime2 < $now && $reservation->verified == 0) {
+                $reservation->verified = UserEvent::STATUS_KEYS[2];
                 $reservation->save();
             }
 
@@ -1730,6 +1809,8 @@ class UserEventController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = UserEvent::query()->find($event_id);
 
         if(!$exist)
@@ -1757,7 +1838,7 @@ class UserEventController extends Controller
         $response = [
             'id' => $exist->id ,
             'date' => $exist->date ,
-            'verified' => UserEvent::STATUS_KEYS[$exist->verified] ,
+            'verified' => TranslateTextHelper::translate(UserEvent::STATUS_KEYS[$exist->verified]) ?? UserEvent::STATUS_KEYS[$exist->verified],
             'start_time' => $exist->start_time ,
             'end_time' => $exist->end_time ,
             'num_people_joined' => $exist->num_people_joined.'/'.$exist->num_people_invited ,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\UserEvent;
 use App\Models\UserJoinedEvent;
 use Carbon\Carbon;
@@ -22,6 +23,8 @@ class UserJoinedEventController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
         {
@@ -35,7 +38,7 @@ class UserJoinedEventController extends Controller
         if($can_not_join)
         {
             return response()->json([
-                "message" => "You cannot join this event because it has reached the maximum number of visitors.",
+                "message" => TranslateTextHelper::translate("You cannot join this event because it has reached the maximum number of visitors."),
                 "status_code" => 422,
             ], 422);
         }
@@ -48,7 +51,7 @@ class UserJoinedEventController extends Controller
         if($have_joined_before)
         {
             return response()->json([
-                "message" => "You are already joining this event.",
+                "message" => TranslateTextHelper::translate("You are already joining this event."),
                 "status_code" => 422,
             ], 422);
         }
@@ -60,7 +63,7 @@ class UserJoinedEventController extends Controller
 
         if ($currentTime->isAfter($startTime)){
             return response()->json([
-                "message" => "You cannot join the event because it has already started.",
+                "message" => TranslateTextHelper::translate("You cannot join the event because it has already started."),
                 "status_code" => 422,
             ], 422);
         }
@@ -68,7 +71,7 @@ class UserJoinedEventController extends Controller
         if($exist->verified != 1)
         {
             return response()->json([
-                "message" => "You cannot join the event because it is status not confirmed.",
+                "message" => TranslateTextHelper::translate("You cannot join the event because it is status not confirmed."),
                 "status_code" => 422,
             ], 422);
         }
@@ -76,7 +79,7 @@ class UserJoinedEventController extends Controller
         if($exist->invitation_type == 'Private')
         {
             return response()->json([
-                "message" => "You cannot join the event because it is Private not Public.",
+                "message" => TranslateTextHelper::translate("You cannot join the event because it is Private not Public."),
                 "status_code" => 422,
             ], 422);
         }
@@ -91,7 +94,7 @@ class UserJoinedEventController extends Controller
 
 
         return response()->json([
-            "message" => "You have successfully joined the event.",
+            "message" => TranslateTextHelper::translate("You have successfully joined the event."),
             "status_code" => 200,
         ], 200);
     }

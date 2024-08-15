@@ -828,10 +828,6 @@ class LocationController extends Controller
             ], 422);
         }
 
-        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
-
-
-
         $validator = Validator::make($request->all(), [
             "governorate" => 'required' , //'all' 'Damascus' , 'Homs' , 'Tartus' , 'Aleppo' , 'Suwayda' , 'Daraa' , 'Raqqa'
         ]);
@@ -868,13 +864,34 @@ class LocationController extends Controller
             if($results->isEmpty())
             {
                 return response()->json([
-                    "message" => "There are no locations for specific governorate to display",
+                    "message" => TranslateTextHelper::translate("There are no locations for specific governorate to display"),
                     "status_code" => 404,
                 ], 404);
             }
         }
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
-        return response()->json($results , 200);
+        $name = $results->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $governorate = $results->pluck('governorate')->toArray();
+        $governorate = TranslateTextHelper::batchTranslate($governorate);
+
+        $response = [];
+        foreach ($results as $result)
+        {
+            $response [] = [
+                'id' => $result->id ,
+                'name' => $name[$result->name] ?? $result->name ,
+                'governorate' => $governorate[$result->governorate] ?? $result->governorate,
+                'capacity' => $result->capacity ,
+                'open_time' => $result->open_time ,
+                'close_time' => $result->close_time ,
+                'logo' => $result->logo ,
+                'maintenance' => $result->maintenance
+            ];
+        }
+        return response()->json($response , 200);
 
     }
     ////////////////////////////////////////////////////////////////////////////////////////

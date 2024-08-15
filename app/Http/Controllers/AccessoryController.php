@@ -631,11 +631,11 @@ class AccessoryController extends Controller
         $isTypeNull = $request->type == '-1';
 
         // Start with the base query
-        $query = Accessory::query();
+        $query = Accessory::query()->with('category');
 
         // If a type is provided and it's not -1, filter the results
         if ($request->type && !$isTypeNull) {
-            $query->where('price', '<=', $request->type);
+            $query->where('price', '<=', $request->type)->with('category');
         }
 
         // Retrieve the food items
@@ -659,6 +659,9 @@ class AccessoryController extends Controller
         $description = $accessories->pluck('description')->toArray();
         $description = TranslateTextHelper::batchTranslate($description);
 
+        $category = $accessories->pluck('category.category')->toArray();
+        $category= TranslateTextHelper::batchTranslate($category);
+
         $accessoriesIds = $accessories->pluck('id')->toArray();
 
         $favorites = Favorite::query()
@@ -674,12 +677,12 @@ class AccessoryController extends Controller
         foreach ($accessories as $accessory) {
             $response [] = [
                 'id' => $accessory->id,
-                'name' => $name[$accessory->name],
+                'name' => $name[$accessory->name] ?? $accessory->name,
                 'price' => $accessory->RawPrice,
                 'currency' => 'S.P',
-                'description' => $description[$accessory->description],
+                'description' => $description[$accessory->description] ?? $accessory->description,
                 'picture' => $accessory->picture,
-                'category' => TranslateTextHelper::translate($accessory->category->category) ,
+                'category' => $category[$accessory->category->category] ?? $accessory->category->category ,
                 'is_favorite' => in_array($accessory->id, $favorites),
             ];
         }

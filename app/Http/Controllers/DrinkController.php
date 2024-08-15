@@ -9,6 +9,7 @@ use App\Models\Favorite;
 use App\Traits\ModelUsageCheck;
 use App\Traits\RegistrationData;
 use App\Traits\SalesData;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -532,71 +533,77 @@ class DrinkController extends Controller
             ], 422);
         }
 
-        TranslateTextHelper::setTarget($user->profile->preferred_language);
+        try {
 
-        $validator = Validator::make($request->all(), [
-            "type" => 'required|integer|between:-1,999999'
-        ]);
+            TranslateTextHelper::setTarget($user->profile->preferred_language);
 
-        if ($validator->fails()) {
-            return response()->json([
-                "error" => $validator->errors()->first(),
-                "status_code" => 422,
-            ], 422);
+            $validator = Validator::make($request->all(), [
+                "type" => 'required|integer|between:-1,999999'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "error" => $validator->errors()->first(),
+                    "status_code" => 422,
+                ], 422);
+            }
+
+            $isTypeNull = $request->type == '-1';
+
+            // Start with the base query
+            $query = Drink::query();
+
+            // If a type is provided and it's not -1, filter the results
+            if ($request->type && !$isTypeNull) {
+                $query->where('price', '<=', $request->type);
+            }
+
+            // Retrieve the food items
+            $drinks = $query->orderby('price')->get();
+
+            // Check if any food items were found
+            if ($drinks->isEmpty()) {
+                $errorMessage = $request->type && !$isTypeNull
+                    ? TranslateTextHelper::translate("No drinks found for the specified price")
+                    : TranslateTextHelper::translate("No drinks found in application");
+
+                return response()->json([
+                    "error" => $errorMessage,
+                    "status_code" => 404,
+                ], 404);
+            }
+
+            $name = $drinks->pluck('name')->toArray();
+            $name = TranslateTextHelper::batchTranslate($name);
+
+            $description = $drinks->pluck('description')->toArray();
+            $description = TranslateTextHelper::batchTranslate($description);
+
+            $drinksIds = $drinks->pluck('id')->toArray();
+
+            $favorites = Favorite::query()
+                ->where('favoritable_type', 'App\Models\Drink')
+                ->whereIn('favoritable_id', $drinksIds)
+                ->pluck('favoritable_id')
+                ->toArray();
+
+            $response = [];
+
+            foreach ($drinks as $drink) {
+                $response [] = [
+                    'id' => $drink->id,
+                    'name' => $name[$drink->name] ?? $drink->name,
+                    'price' => $drink->RawPrice,
+                    'currency' => 'S.P',
+                    'description' => $description[$drink->description] ?? $drink->description,
+                    'picture' => $drink->picture,
+                    'is_favorite' => in_array($drink->id, $favorites),
+                ];
+            }
+            return response()->json($response, 200);
         }
-
-        $isTypeNull = $request->type == '-1';
-
-        // Start with the base query
-        $query = Drink::query();
-
-        // If a type is provided and it's not -1, filter the results
-        if ($request->type && !$isTypeNull) {
-            $query->where('price', '<=', $request->type);
+        catch (Exception $e){
+            return response()->json(['error' => $e , 'status_code' => 422], 422);
         }
-
-        // Retrieve the food items
-        $drinks = $query->orderby('price')->get();
-
-        // Check if any food items were found
-        if ($drinks->isEmpty()) {
-            $errorMessage = $request->type && !$isTypeNull
-                ? TranslateTextHelper::translate("No drinks found for the specified price")
-                : TranslateTextHelper::translate("No drinks found in application");
-
-            return response()->json([
-                "error" => $errorMessage,
-                "status_code" => 404,
-            ], 404);
-        }
-
-        $name = $drinks->pluck('name')->toArray();
-        $name = TranslateTextHelper::batchTranslate($name);
-
-        $description = $drinks->pluck('description')->toArray();
-        $description = TranslateTextHelper::batchTranslate($description);
-
-        $drinksIds = $drinks->pluck('id')->toArray();
-
-        $favorites = Favorite::query()
-            ->where('favoritable_type', 'App\Models\Drink')
-            ->whereIn('favoritable_id', $drinksIds)
-            ->pluck('favoritable_id')
-            ->toArray();
-
-        $response = [];
-
-        foreach ($drinks as $drink) {
-            $response [] = [
-                'id' => $drink->id,
-                'name' => $name[$drink->name],
-                'price' => $drink->RawPrice,
-                'currency' => 'S.P',
-                'description' => $description[$drink->description],
-                'picture' => $drink->picture,
-                'is_favorite' => in_array($drink->id, $favorites),
-            ];
-        }
-        return response()->json($response, 200);
     }
 }

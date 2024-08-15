@@ -839,6 +839,8 @@ class EventSupplementController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
         {
@@ -855,19 +857,30 @@ class EventSupplementController extends Controller
 
         if (!$foods){
             return response()->json([
-                "error" => "No food supplements found for this event",
+                "error" => TranslateTextHelper::translate("No food supplements found for this event"),
                 "status_code" => 422,
             ], 422);
         }
+
+        $foodDetails = collect($foods->food_details);
+
+        $name = $foodDetails->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $foodDetails->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
+
+        $country_of_origin = $foodDetails->pluck('country_of_origin')->toArray();
+        $country_of_origin = TranslateTextHelper::batchTranslate($country_of_origin);
 
         $response = [];
         foreach ($foods->food_details as $food)
         {
             $response [] = [
                 'id' => $food['id'] ,
-                'name' => $food['name'] ,
-                'description' => $food['description'],
-                'country_of_origin' => $food['country_of_origin'],
+                'name' => $name[$food['name']] ?? $food['name'],
+                'description' => $description[$food['description']] ?? $food['description'],
+                'country_of_origin' => $country_of_origin[$food['country_of_origin']] ?? $food['country_of_origin'],
                 'picture' => $food['picture']
 
             ];
@@ -886,6 +899,8 @@ class EventSupplementController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
         {
@@ -902,18 +917,27 @@ class EventSupplementController extends Controller
 
         if (!$drinks){
             return response()->json([
-                "error" => "No drinks supplements found for this event",
+                "error" => TranslateTextHelper::translate("No drinks supplements found for this event"),
                 "status_code" => 422,
             ], 422);
         }
+
+        $drinkDetails = collect($drinks->drinks_details);
+
+        $name = $drinkDetails->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $drinkDetails->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
+
 
         $response = [];
         foreach ($drinks->drinks_details as $drink)
         {
             $response [] = [
                 'id' => $drink['id'] ,
-                'name' => $drink['name'] ,
-                'description' => $drink['description'],
+                'name' => $name[$drink['name']] ?? $drink['name'],
+                'description' => $description[$drink['description']] ?? $drink['name'],
                 'picture' => $drink['picture']
 
             ];
@@ -932,6 +956,8 @@ class EventSupplementController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
         {
@@ -948,18 +974,26 @@ class EventSupplementController extends Controller
 
         if (!$accessories){
             return response()->json([
-                "error" => "No accessories supplements found for this event",
+                "error" => TranslateTextHelper::translate("No accessories supplements found for this event"),
                 "status_code" => 422,
             ], 422);
         }
+
+        $accessoryDetails = collect($accessories->accessories_details);
+
+        $name = $accessoryDetails->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
+        $description = $accessoryDetails->pluck('description')->toArray();
+        $description = TranslateTextHelper::batchTranslate($description);
 
         $response = [];
         foreach ($accessories->accessories_details as $accessory)
         {
             $response [] = [
                 'id' => $accessory['id'] ,
-                'name' => $accessory['name'] ,
-                'description' => $accessory['description'],
+                'name' => $name[$accessory['name']] ?? $accessory['name'],
+                'description' => $description[$accessory['description']] ?? $accessory['description'],
                 'picture' => $accessory['picture'],
                 'numOfItem' => $accessory['quantity']
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\FoodCategory;
 use App\Models\HostFoodCategory;
 use App\Models\Location;
@@ -22,6 +23,8 @@ class HostFoodCategoryController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
@@ -59,7 +62,10 @@ class HostFoodCategoryController extends Controller
             ], 422);
         }
 
-        $results = FoodCategory::query()->whereIn('id' , $categories_ids)->get();
+        $results = FoodCategory::query()
+            ->whereIn('id' , $categories_ids)
+            ->get();
+
         if(!$results)
         {
             return response()->json([
@@ -71,12 +77,15 @@ class HostFoodCategoryController extends Controller
         $color = ['#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696' , '#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696'];
         $index = 0 ;
 
+        $category = $results->pluck('category')->toArray();
+        $category = TranslateTextHelper::batchTranslate($category);
+
         $response = [];
         foreach ($results as $result)
         {
             $response [] = [
                 'id' => $result->id ,
-                'name' => $result->category ,
+                'name' => $category[$result->category] ?? $result->category ,
                 'logo' => $result->logo ,
                 'number' => $result->food->count(),
                 'color' => $color[$index]

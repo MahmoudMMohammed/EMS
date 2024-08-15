@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\Location;
 use App\Models\MainEventHost;
 use App\Models\MEHAC;
@@ -22,6 +23,8 @@ class MEHACController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $exist = UserEvent::query()->find($event_id);
         if(!$exist)
@@ -59,7 +62,10 @@ class MEHACController extends Controller
             ], 422);
         }
 
-        $results = MEHAC::query()->whereIn('main_event_host_id' , $categories_ids)->get();
+        $results = MEHAC::query()
+            ->whereIn('main_event_host_id' , $categories_ids)
+            ->with('category')
+            ->get();
 
         if(!$results)
         {
@@ -72,12 +78,15 @@ class MEHACController extends Controller
         $color = ['#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696' , '#443391' , '#3E5EAB' , '#1495CF' , '#60B246' , '#D1DC36' , '#F2EB3B' , '#F8BD19' , '#F89C21' , '#F25427' , '#F33128' , '#A71E4A' , '#7D3696'];
         $index = 0 ;
 
+        $category = $results->pluck('category.category')->toArray();
+        $category = TranslateTextHelper::batchTranslate($category);
+
         $response = [];
         foreach ($results as $result)
         {
             $response [] = [
                 'id' => $result->category->id ,
-                'name' => $result->category->category ,
+                'name' => $category[$result->category->category] ?? $result->category->category,
                 'logo' => $result->category->logo ,
                 'number' => $result->category->accessories->count(),
                 'color' => $color[$index]
