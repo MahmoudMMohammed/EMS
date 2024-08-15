@@ -22,6 +22,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MainEventController;
 use App\Http\Controllers\MainEventHostController;
 use App\Http\Controllers\MEHACController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceiptController;
@@ -330,6 +331,12 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
         //get weekly report as PDF
         Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
+
+        //get admin notifications
+        Route::get('/notifications', [NotificationController::class, 'getAdminNotifications']);
+
+        //create a notification
+        Route::post('/notifications', [NotificationController::class, 'createNotification']);
 
     });
 

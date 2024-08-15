@@ -31,7 +31,8 @@ class Notification extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        // Add any attributes you want to hide when the model is converted to JSON
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -39,10 +40,11 @@ class Notification extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function notifiable()
     {
-        return $this->belongsTo(User::class, 'notifiable_id', 'id');
+        return $this->morphTo();
     }
+
 
     /**
      * Accessor for the 'data' field to decode JSON.
@@ -53,16 +55,6 @@ class Notification extends Model
     public function getDataAttribute($value)
     {
         return json_decode($value, true);
-    }
-
-    /**
-     * Mutator for the 'data' field to encode the data as JSON.
-     *
-     * @param array $value
-     */
-    public function setDataAttribute($value)
-    {
-        $this->attributes['data'] = json_encode($value);
     }
 
     /**
@@ -83,4 +75,5 @@ class Notification extends Model
     {
         $this->update(['read_at' => now()]);
     }
+
 }

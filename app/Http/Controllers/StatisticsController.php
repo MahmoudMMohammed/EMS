@@ -424,7 +424,7 @@ class StatisticsController extends Controller
     }
     //////////////////////////////////////////////////////////
 
-    private function getUserFavoritesCount()
+    private function getUserFavoritesCount(): array
     {
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
@@ -470,7 +470,7 @@ class StatisticsController extends Controller
         ];
     }
     //////////////////////////////////////////////////////////
-    private function getUserFinishedAndConfirmedReservations()
+    private function getUserFinishedAndConfirmedReservations(): array
     {
         $user = Auth::user();
         // Fetch all finished events
@@ -490,15 +490,20 @@ class StatisticsController extends Controller
             });
         $combined = $finishedEvents->merge($confirmedEvents)->sortByDesc('created_at');
         $latest = $combined->first();
-        $latestDate = Carbon::parse($latest->created_at);
+
+        $latestDate = "";
+        if ($latest){
+            $date = Carbon::parse($latest->created_at);
+            $latestDate = $date->diffForHumans();
+        }
 
         return [
             'message' => 'You have '. count($combined) . ' reservations inside the app.',
-            'date' => $latestDate->diffForHumans(),
+            'date' => $latestDate,
         ];
     }
     //////////////////////////////////////////////////////////
-    private function getUserBlockedReservations()
+    private function getUserBlockedReservations(): array
     {
         $user = Auth::user();
 
