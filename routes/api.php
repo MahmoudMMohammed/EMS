@@ -295,6 +295,21 @@ Route::middleware([UserMiddleware::class])->group(function () {
         Route::get('/{accessory_id}', [AccessoryController::class, 'getAccessoryById']);
     });
 
+    Route::prefix("notifications")->group(function (){
+
+        //get number of unread notifications
+        Route::get('/count', [NotificationController::class, 'countUnreadNotifications']);
+
+        //mark notification as read
+        Route::get('/mark-read/{notification_id}', [NotificationController::class, 'markNotificationAsRead']);
+
+        //get notifications
+        Route::get('/user', [NotificationController::class, 'getUserNotifications']);
+
+    });
+
+
+
 });
 
 
@@ -336,7 +351,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         Route::get('/notifications', [NotificationController::class, 'getAdminNotifications']);
 
         //create a notification
-        Route::post('/notifications', [NotificationController::class, 'createNotification']);
+        Route::post('/notifications', [NotificationController::class, 'create']);
 
     });
 
