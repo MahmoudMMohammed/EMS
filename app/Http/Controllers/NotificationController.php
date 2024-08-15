@@ -65,6 +65,8 @@ class NotificationController extends Controller
         }
 
         $notification = $this->createNotification($request->user_id, $request->message, $request->title, $request->admin_id);
+        $notification->notifiable()->associate($notification);
+
         if (!$notification){
             return response()->json([
                 "message" => TranslateTextHelper::translate("Failed to created a notification!"),
@@ -104,8 +106,13 @@ class NotificationController extends Controller
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
 
-        $userNotifications = Notification::select('id', 'data', 'created_at')
+        $userNotifications = Notification::select('id', 'data', 'created_at', 'read_at')
             ->whereNotifiableId($user->id)->get();
+
+        collect($userNotifications)->map(function ($notification){
+            $notification->read_at = now();
+            $notification->save();
+        });
 
         $notifications = collect($userNotifications)->map(function ($notification) {
             $date = Carbon::parse($notification->created_at);
@@ -114,6 +121,7 @@ class NotificationController extends Controller
             $notification['time'] = $date->diffForHumans();
             $notification['admin_picture'] = $notification->data['admin_picture'];
             unset($notification['data']);
+            unset($notification['read_at']);
             return $notification;
         });
 

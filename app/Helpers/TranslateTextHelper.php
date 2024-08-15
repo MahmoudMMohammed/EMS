@@ -146,20 +146,44 @@ class TranslateTextHelper
 
     public static function translateToEnglishOnly(string $text): string
     {
-        $cacheKey = 'translation_auto_en_' . $text;
+        // Initialize GoogleTranslate instance
+        $translator = new GoogleTranslate();
+
+        // Set target language to English
+        $translator->setTarget('en');
+
+        $translator->setSource('auto');
+
+        // Translate the text to English
+        $translatedText = $translator->translate($text);
+
+        // Detect the language of the text
+        $detectedLanguage = $translator->getLastDetectedSource();
+
+        // If the detected language is English, return the original text
+        if ($detectedLanguage === 'en') {
+            return $text;
+        }
+
+        // Otherwise, translate the text to English
+        $cacheKey = 'translation_' . $detectedLanguage . '_en_' . $text;
 
         // Check if translation exists in cache
         if (Cache::has($cacheKey)) {
-            $translatedText = Cache::get($cacheKey);
+            return Cache::get($cacheKey);
         }
+        try {
 
-        TranslateTextHelper::setSource('auto')->setTarget('en');
+            // Cache the translated text for future use
+            Cache::put($cacheKey, $translatedText, now()->addHours(72));
 
-        $translatedText = TranslateTextHelper::translate($text);
-        Cache::put($cacheKey, $translatedText, now()->addHours(72));
-
-        return $translatedText;
-
+            return $translatedText;
+        } catch (\Exception $e) {
+            Log::error('TranslateTextHelperException', [
+                'message' => $e->getMessage(),
+            ]);
+            return 'Translation error';
+        }
     }
     /////////////////////////////////////////////////////////////////////
 
