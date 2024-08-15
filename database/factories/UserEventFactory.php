@@ -38,20 +38,22 @@ class UserEventFactory extends Factory
     public function definition(): array
     {
 
-        $startTime = $this->faker->time('H:i:s');
+        $startTime = $this->faker->time();
         $endTime = Carbon::createFromFormat('H:i:s', $startTime)->addHours(2)->format('H:i:s'); // Converting to 24-hour format and adding 2 hours
         $mainEventIds = MainEvent::query()->pluck('id')->toArray();
+        $uniqueDates = $this->faker->dateTimeBetween(now(), now()->subWeek());
 
         return [
             'user_id' => $this->faker->numberBetween(29, 38),
             'location_id' => $this->faker->numberBetween(1, 26),
             'main_event_id'=> $this->faker->randomElement($mainEventIds),
-            'date' => $this->faker->date,
+            'date' => $uniqueDates,
             'invitation_type' => $this->faker->randomElement(['Public', 'Private']),
             'description' => $this->faker->paragraph,
             'start_time' => $startTime,
             'end_time' => $endTime,
             'num_people_invited' => $this->faker->numberBetween(10, 50),
+            'verified' => $this->faker->randomElement(['Pending', 'Confirmed', 'Rejected', 'Finished'])
         ];
     }
 
