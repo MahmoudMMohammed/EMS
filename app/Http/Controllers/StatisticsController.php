@@ -180,7 +180,7 @@ class StatisticsController extends Controller
         }
 
         $userInfo = [
-            "message" => 'You have logged '. $user->number_of_logins . ' to the app',
+            "message" => $user->number_of_logins,
             'date' => $lastLogin,
         ];
 
@@ -503,7 +503,7 @@ class StatisticsController extends Controller
         }
 
         return [
-            'message' => 'You have '. count($combined) . ' reservations inside the app.',
+            'message' => count($combined) ,
             'date' => $latestDate,
         ];
     }
@@ -527,7 +527,7 @@ class StatisticsController extends Controller
 
 
         return [
-            "message" => 'You have '. count($rejectedEvents) . ' blocked events.',
+            "message" => count($rejectedEvents),
             "date" => $eventCreationDate,
         ];
     }
@@ -541,15 +541,16 @@ class StatisticsController extends Controller
             ->whereNotNull('deleted_at') // Check that 'deleted_at' is not null
             ->get();
 
+        $comment = $blockedComments->sortByDesc('created_at')->first();
         $latestComment = "";
-        if (!$blockedComments){
-            $comment = $blockedComments->sortByDesc('created_at')->first();
-            $latestComment = $comment->date;
+        if ($comment){
+            $date = Carbon::parse($comment->date);
+            $latestComment = $date->diffForHumans();
         }
 
 
         return [
-            "message" => 'You have '. count($blockedComments) . ' blocked comments.',
+            "message" => count($blockedComments),
             "date" => $latestComment,
         ];
     }
