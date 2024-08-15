@@ -75,7 +75,9 @@ class LocationController extends Controller
                                  'status_code' => 200] , 200);
         }
 
-        $count = CartItem::query()->where('cart_id' , $cart->id)->count();
+        $count = CartItem::query()
+            ->where('cart_id' , $cart->id)
+            ->where('itemable_type' ,'!=' , 'App\Models\Accessory')->count();
 
         return response()->json(['location_count' => $location ,
                                  'food_count' => $Food ,

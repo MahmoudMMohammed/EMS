@@ -217,7 +217,7 @@ class ProfileController extends Controller
         $profile = $this->getUserProfile();
 
         $validator = Validator::make($request->all(),[
-            'preferred_currency' => 'required | in:USD,EUR,TRY,EGP,SAR,JOD,AED,LYD,KWD,GBP,QAR,BHD,SEK,CAD,OMR,NOK,DKK'
+            'preferred_currency' => 'required | in:SYP,USD,EUR,TRY,EGP,SAR,JOD,AED,LYD,KWD,GBP,QAR,BHD,SEK,CAD,OMR,NOK,DKK'
         ]);
         if ($validator->fails()) {
             TranslateTextHelper::setTarget($profile->preferred_language);

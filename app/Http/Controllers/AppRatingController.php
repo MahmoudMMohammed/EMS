@@ -43,7 +43,7 @@ class AppRatingController extends Controller
         }
 
         $validator = Validator::make($request->all() , [
-            'rate' => 'required|integer|between:1,5' ,
+            'rate' => 'required|numeric|between:1,5' ,
         ]);
 
         if($validator->fails())
