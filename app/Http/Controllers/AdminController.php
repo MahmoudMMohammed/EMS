@@ -327,7 +327,7 @@ class AdminController extends Controller
                 'status_code' => 404
             ], 404);
         }
-
+        
         return response()->json($Admins , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////

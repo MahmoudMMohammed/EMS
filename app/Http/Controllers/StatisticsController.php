@@ -160,9 +160,6 @@ class StatisticsController extends Controller
             $items['total'] = $items['accessories'] + $items['drinks'] + $items['food'];
         }
 
-        foreach ($items as $key => $value) {
-            $items[$key] = $value . ' Purchases';
-        }
 
         return response()->json($items);
     }

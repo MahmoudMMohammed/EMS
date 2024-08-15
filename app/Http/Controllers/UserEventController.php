@@ -621,7 +621,7 @@ class UserEventController extends Controller
             ], 422);
         }
 
-        $exist = UserEvent::query()->find($event_id)->first();
+        $exist = UserEvent::query()->find($event_id);
         if(!$exist)
         {
             return response()->json([
@@ -632,7 +632,9 @@ class UserEventController extends Controller
 
         $foods = EventSupplement::query()
             ->where('user_event_id' , $exist->id)
-            ->pluck('food_details');
+            ->pluck('food_details')
+            ->filter();
+
 
         $foodTotalPrice = 0;
         foreach ($foods as $foodDetails) {
@@ -646,7 +648,8 @@ class UserEventController extends Controller
 
         $drinks = EventSupplement::query()
             ->where('user_event_id' , $exist->id)
-            ->pluck('drinks_details');
+            ->pluck('drinks_details')
+            ->filter();
 
         $drinksTotalPrice = 0;
         foreach ($drinks as $drinksDetails) {
@@ -660,7 +663,8 @@ class UserEventController extends Controller
 
         $accessories = EventSupplement::query()
             ->where('user_event_id' , $exist->id)
-            ->pluck('accessories_details');
+            ->pluck('accessories_details')
+            ->filter();
 
         $accessoriesTotalPrice = 0;
         foreach ($accessories as $accessoriesDetails) {
