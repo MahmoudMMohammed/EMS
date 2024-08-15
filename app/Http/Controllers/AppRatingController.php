@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TranslateTextHelper;
 use App\Models\AppRating;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,8 @@ class AppRatingController extends Controller
             ], 422);
         }
 
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
+
         $rate = AppRating::query()->where('user_id' , $user->id)->first();
         if(!$rate)
         {
@@ -41,6 +44,8 @@ class AppRatingController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         $validator = Validator::make($request->all() , [
             'rate' => 'required|numeric|between:1,5' ,
@@ -64,7 +69,7 @@ class AppRatingController extends Controller
             ]);
 
             return response()->json([
-                "message" => "Dear user, your rating has been added successfully. Thank you",
+                "message" => TranslateTextHelper::translate("Dear user, your rating has been added successfully. Thank you"),
                 "status_code" => 201,
             ] , 201);
 
@@ -73,7 +78,7 @@ class AppRatingController extends Controller
         if($rate->rate == $request->input('rate'))
         {
             return response()->json([
-                "message" => "Dear user, you have not made any changes, your rating remains the same",
+                "message" => TranslateTextHelper::translate("Dear user, you have not made any changes, your rating remains the same"),
                 "status_code" => 200,
             ], 200);
         }
@@ -82,7 +87,7 @@ class AppRatingController extends Controller
         $rate->save();
 
         return response()->json([
-                "message" => "Dear user, your rating has been updated successfully",
+                "message" => TranslateTextHelper::translate("Dear user, your rating has been updated successfully"),
                 "status_code" => 200,
         ] , 200);
     }
@@ -110,7 +115,7 @@ class AppRatingController extends Controller
 
         $exist->delete();
         return response()->json([
-            "message" => "Dear user, your rating has been deleted successfully",
+            "message" => TranslateTextHelper::translate("Dear user, your rating has been deleted successfully"),
             "status_code" => 200,
         ] , 200);
     }

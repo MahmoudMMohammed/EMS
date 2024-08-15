@@ -344,9 +344,6 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         //get weekly statistics about food, drinks and accessories for web charts
         Route::get('/weekly-statistics', [StatisticsController::class, 'getWeeklyStatistics']);
 
-        //get weekly report as PDF
-        Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
-
         //get admin notifications
         Route::get('/notifications', [NotificationController::class, 'getAdminNotifications']);
 
@@ -357,6 +354,8 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
 });
 
+//get weekly report as PDF
+Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
 
@@ -537,7 +536,38 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //join the public event
     Route::get('/reservation/public/join/{event_id}' , [UserJoinedEventController::class , 'joinEvent']);
 
+    //get all location sorted by governorate in home interface
+    Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
 
+    //get all food in home interface
+    Route::post('/home/food' , [FoodController::class , 'getAllFood']);
+
+    //get all drinks in home interface
+    Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
+
+    //get all accessories in home interface
+    Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']);
+
+    //get cart in home interface
+    Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
+
+    //get most location reserved in home interface
+    Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheMostLocationReserved']);
+
+    //get user language
+    Route::get('/user/language' , [UserController::class , 'getUserLanguage']);
+
+    //get user currency
+    Route::get('/user/currency' , [UserController::class , 'getUserCurrency']);
+
+    //get user app rating
+    Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating']);
+
+    //add rate to application
+    Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
+
+    //delete rate
+    Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
 
 });
 
@@ -581,6 +611,118 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 
     //get all warehouses and sort it by governorate
     Route::post('/web/home/statistic/warehouse' , [WarehouseController::class , 'GetWarehouseByGovernorate']);
+
+    //get all reservation by date
+    Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);
+
+    //get all reservation by host
+    Route::post('/get/reservation/byHost' , [UserEventController::class , 'getReservationByHost']);
+
+    //get all reservation by governorate
+    Route::post('/get/reservation/byGovernorate' , [UserEventController::class , 'getReservationByGovernorate']);
+
+    //get all governorate by state
+    Route::post('/get/reservation/byState' , [UserEventController::class , 'getReservationByState']);
+
+    //get my reservation (owner - admin)
+    Route::get('/get/reservation/mine' , [UserEventController::class , 'getMineReservation']);
+
+    //get specific reservation general details
+    Route::get('/get/reservation/details/general/{event_id}' , [UserEventController::class , 'getUserGeneralEventDetails']);
+
+    // get specific reservation bill
+    Route::get('/get/reservation/details/bill/{event_id}' , [UserEventController::class , 'getBill']);
+
+    //get statistics of user experience
+    Route::get('/get/statistics/UserExperience' , [UserController::class , 'StatisticsUserExperience']);
+
+    //get statistics of reservation
+    Route::get('/get/statistics/reservation' , [UserEventController::class , 'StatisticsReservation']);
+
+    //get statistics of sales
+    Route::get('/get/statistics/sales' , [OwnerController::class , 'StatisticsSales']);
+
+    //get statistics of profits
+    Route::get('/get/statistics/profits' , [OwnerController::class , 'StatisticsProfits']);
+
+    //get statistics of masculinity
+    Route::get('/get/statistics/masculinity' , [UserController::class , 'StatisticsMasculinity']);
+
+    //get statistics of femininity
+    Route::get('/get/statistics/femininity' , [UserController::class , 'StatisticsFemininity']);
+
+    //get statistics of app rating
+    Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRating']);
+
+    //get locations by host (category : 0 -> 7)
+    Route::get('/get/location/by/host/{category_id}' , [LocationController::class , 'WebGetLocationByHost']);
+
+    //get locations counts
+    Route::get('/get/location/count' , [StatisticsController::class , 'WebGetLocationCount']);
+
+    //get specific location details (general)
+    Route::get('/get/location/general/{location_id}' , [LocationController::class , 'WebGetLocationGeneral']);
+
+    //get specific location details (details)
+    Route::get('/get/location/details/{location_id}' , [LocationController::class , 'WebGetLocationDetails']);
+
+    //get contact information for specific location
+    Route::get('/get/location/ContactInformation/{location_id}' , [LocationController::class , 'WebGetLocationAdmin']);
+
+    //get available admin for nwe location
+    Route::get('/get/location/available/admins' , [AdminController::class , 'GetAvailableAdmin']);
+
+    //get food by category
+    Route::get('/get/food/by/category/{category_id}' , [FoodController::class , 'WebGetFoodByCategory']);
+
+    //get food count
+    Route::get('/get/food/count' , [FoodController::class , 'WebGetFoodCount']);
+
+    //get specific food details (general)
+    Route::get('/get/food/general/{food_id}' , [FoodController::class , 'WebGetFoodGeneral']);
+
+    //get specific food details (details)
+    Route::get('/get/food/details/{food_id}' , [FoodController::class , 'WebGetFoodDetails']);
+
+    //get drinks by category
+    Route::get('/get/drinks/by/category/{drink_id}' , [DrinkController::class , 'WebGetDrinksByCategory']);
+
+    //get drinks count
+    Route::get('/get/drinks/count' , [DrinkController::class , 'WebGetDrinksCount']);
+
+    //get specific drink details (general)
+    Route::get('/get/drinks/general/{drink_id}' , [DrinkController::class , 'WebGetDrinksGeneral']);
+
+    //get specific drink details (details)
+    Route::get('/get/drinks/details/{drink_id}' , [DrinkController::class , 'WebGetDrinksDetails']);
+
+    //get all accessory by category and warehouse
+    Route::get('/get/accessories/by/category/{accessory_id}/{warehouse_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
+
+    //get accessories count
+    Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAccessoriesCount']);
+
+    //get specific drink details (general)
+    Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
+
+    //get specific drink details (details)
+    Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetAccessoryDetails']);
+
+    //get profile of admin or owner
+    Route::get('/admin_owner/get/profile' , [ProfileController::class , 'getAdminOwnerProfile']);
+
+    //edit profile of admin or owner
+    Route::post('/admin_owner/edit/profile' , [ProfileController::class , 'editAdminOwnerProfile']);
+
+    //get all old admin to replace it
+    Route::get('/profile/helper/select/old_admin' , [AdminController::class , 'getAllAdmin']);
+
+    //get all new admin to replace it
+    Route::get('/profile/helper/select/new_admin' , [AdminController::class , 'getAllNewAdmin']);
+
+    //get all location for replacing
+    Route::get('/profile/helper/select/location' , [LocationController::class , 'getAllLocationsSelect']);
+
 });
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
@@ -594,148 +736,49 @@ Route::middleware([OwnerMiddleware::class])->group(function () {
     //owner unblock user
     Route::get('/web/home/unBlockUser/{user_id}' , [OwnerController::class , 'unblockUser']);
 
+    //edit specific location details
+    Route::post('/edit/location/details/{location_id}' , [LocationController::class , 'WebEditLocationDetails']);
+
+    //delete specific location
+    Route::delete('/delete/location/{location_id}' , [LocationController::class , 'WebDeleteLocation']);
+
+    //put location in Maintenance
+    Route::get('/edit/location/Maintenance/{location_id}' , [LocationController::class , 'WebPutLocationInMaintenance']);
+
+    //put location in Service
+    Route::get('/edit/location/Service/{location_id}' , [LocationController::class , 'WebPutLocationInService']);
+
+    //add new location
+    Route::post('/add/location' , [LocationController::class , 'WebAddLocation']);
+
+    //edit specific food details
+    Route::post('/edit/food/details/{food_id}' , [FoodController::class , 'WebEditFoodDetails']);
+
+    //add new food
+    Route::post('/add/food' , [FoodController::class , 'WebAddFood']);
+
+    //get specific drink details
+    Route::post('/edit/drinks/details/{drink_id}' , [DrinkController::class , 'WebEditDrinksDetails']);
+
+    //add new location
+    Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
+
+    //edit specific drink details
+    Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEditAccessoriesDetails']);
+
+    //add new accessory
+    Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
+
+    //update admin location
+    Route::post('/update/admin/location' , [OwnerController::class , 'updateAdminLocation']);
+
+    //add new admin
+    Route::post('/add/admin' , [OwnerController::class , 'AddNewAdmin']);
+
+    //recharge user wallet
+    Route::post('/recharge/user/wallet' , [OwnerController::class , 'rechargeWallet']);
+
 });
-
-//done without translate
-
-//my reservation (git reservation - general of each reservation - bill of each reservation)
-
-
-
-
-
-//my reservation add food - drink - accessory (get category of each reservation)
-
-
-
-
-//public reservation (general , supplement(food-drink-accessory) , join event)
-
-
-
-
-//web
-//done without translate
-
-//get reservation sorted by (date - host - governorate - status - my reservation) and get each reservation details (general - bill)
-Route::post('/get/reservation/byDate' , [UserEventController::class , 'getReservationByDate']);
-Route::post('/get/reservation/byHost' , [UserEventController::class , 'getReservationByHost']);
-Route::post('/get/reservation/byGovernorate' , [UserEventController::class , 'getReservationByGovernorate']);
-Route::post('/get/reservation/byState' , [UserEventController::class , 'getReservationByState']);
-Route::get('/get/reservation/mine' , [UserEventController::class , 'getMineReservation']);
-Route::get('/get/reservation/details/general/{event_id}' , [UserEventController::class , 'getUserGeneralEventDetails']);
-Route::get('/get/reservation/details/bill/{event_id}' , [UserEventController::class , 'getBill']);
-
-
-//done without translate
-
-//get statistics of web (all cards and 3 chart)
-Route::get('/get/statistics/UserExperience' , [UserController::class , 'StatisticsUserExperience']);
-Route::get('/get/statistics/reservation' , [UserEventController::class , 'StatisticsReservation']);
-Route::get('/get/statistics/sales' , [OwnerController::class , 'StatisticsSales']);
-Route::get('/get/statistics/profits' , [OwnerController::class , 'StatisticsProfits']);
-Route::get('/get/statistics/masculinity' , [UserController::class , 'StatisticsMasculinity']);
-Route::get('/get/statistics/femininity' , [UserController::class , 'StatisticsFemininity']);
-Route::get('/get/statistics/Rating' , [OwnerController::class , 'StatisticsRating']);
-
-//web location
-
-//location - 1
-Route::get('/get/location/by/host/{category_id}' , [LocationController::class , 'WebGetLocationByHost']);
-Route::get('/get/location/count' , [StatisticsController::class , 'WebGetLocationCount']);
-
-//location - 2
-Route::get('/get/location/general/{location_id}' , [LocationController::class , 'WebGetLocationGeneral']);
-Route::get('/get/location/details/{location_id}' , [LocationController::class , 'WebGetLocationDetails']);
-Route::post('/edit/location/details/{location_id}' , [LocationController::class , 'WebEditLocationDetails']);
-Route::get('/get/location/ContactInformation/{location_id}' , [LocationController::class , 'WebGetLocationAdmin']);
-Route::delete('/delete/location/{location_id}' , [LocationController::class , 'WebDeleteLocation']);
-Route::get('/edit/location/Maintenance/{location_id}' , [LocationController::class , 'WebPutLocationInMaintenance']);
-Route::get('/edit/location/Service/{location_id}' , [LocationController::class , 'WebPutLocationInService']);
-
-//location - 3
-Route::post('/add/location' , [LocationController::class , 'WebAddLocation']);
-Route::get('/get/location/available/admins' , [AdminController::class , 'GetAvailableAdmin']);
-
-//web food
-
-//food - 1
-Route::get('/get/food/by/category/{category_id}' , [FoodController::class , 'WebGetFoodByCategory']);
-Route::get('/get/food/count' , [FoodController::class , 'WebGetFoodCount']);
-
-//food - 2
-Route::get('/get/food/general/{food_id}' , [FoodController::class , 'WebGetFoodGeneral']);
-Route::get('/get/food/details/{food_id}' , [FoodController::class , 'WebGetFoodDetails']);
-Route::post('/edit/food/details/{food_id}' , [FoodController::class , 'WebEditFoodDetails']);
-
-//food - 3
-Route::post('/add/food' , [FoodController::class , 'WebAddFood']);
-
-
-//web drink
-
-//drink - 1
-Route::get('/get/drinks/by/category/{drink_id}' , [DrinkController::class , 'WebGetDrinksByCategory']);
-Route::get('/get/drinks/count' , [DrinkController::class , 'WebGetDrinksCount']);
-
-//drink - 2
-Route::get('/get/drinks/general/{drink_id}' , [DrinkController::class , 'WebGetDrinksGeneral']);
-Route::get('/get/drinks/details/{drink_id}' , [DrinkController::class , 'WebGetDrinksDetails']);
-Route::post('/edit/drinks/details/{drink_id}' , [DrinkController::class , 'WebEditDrinksDetails']);
-
-//drink - 3
-Route::post('/add/drink' , [DrinkController::class , 'WebAddDrink']);
-
-
-//web accessory
-
-//accessory - 1
-Route::get('/get/accessories/by/category/{accessory_id}/{warehouse_id}' , [AccessoryController::class , 'WebGetAccessoriesByCategory']);
-Route::get('/get/accessories/count' , [AccessoryController::class , 'WebGetAccessoriesCount']);
-
-//accessory - 2
-Route::post('/get/accessories/general' , [AccessoryController::class , 'WebGetAccessoriesGeneral']);
-Route::post('/get/accessories/details' , [AccessoryController::class , 'WebGetAccessoryDetails']);
-Route::post('/edit/accessories/details' , [AccessoryController::class , 'WebEditAccessoriesDetails']);
-
-//accessory - 3
-Route::post('/add/accessory' , [AccessoryController::class , 'WebAddAccessory']);
-
-
-//profile
-Route::get('/admin_owner/get/profile' , [ProfileController::class , 'getAdminOwnerProfile']);
-Route::post('/admin_owner/edit/profile' , [ProfileController::class , 'editAdminOwnerProfile']);
-Route::post('/update/admin/location' , [OwnerController::class , 'updateAdminLocation']);
-Route::get('/profile/helper/select/old_admin' , [AdminController::class , 'getAllAdmin']);
-Route::get('/profile/helper/select/new_admin' , [AdminController::class , 'getAllNewAdmin']);
-Route::get('/profile/helper/select/location' , [LocationController::class , 'getAllLocationsSelect']);
-Route::post('/add/admin' , [OwnerController::class , 'AddNewAdmin']);
-Route::post('/recharge/user/wallet' , [OwnerController::class , 'rechargeWallet']);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-//four cart (location , food , drink , accessory , get cart item) and (get most location reservation)
-
-Route::post('/home/location' , [LocationController::class , 'getAllLocations']);
-
-Route::post('/home/food' , [FoodController::class , 'getAllFood']);
-Route::post('/home/drink' , [DrinkController::class , 'getAllDrinks']);
-Route::post('/home/accessory' , [AccessoryController::class , 'getAllAccessories']);
-
-
-Route::post('/home/myCart' , [CartController::class , 'getAllItemCart']);
-Route::get('/get/location/more/reserved' , [LocationController::class , 'getTheMostLocationReserved']);
-
-//setting language
-Route::get('/user/language' , [UserController::class , 'getUserLanguage']);
-
-//setting currency
-Route::get('/user/currency' , [UserController::class , 'getUserCurrency']);
-
-//setting rate
-Route::get('/user/app/rate' , [AppRatingController::class , 'getUserAppRating']);
-Route::post('/user/add/modify/app/rate' , [AppRatingController::class , 'addAppRate']);
-Route::delete('/user/delete/rate/{rate_id}' , [AppRatingController::class , 'deleteAppRate']);
 
 
 

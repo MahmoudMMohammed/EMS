@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Drink;
+use App\Models\Favorite;
 use App\Models\Food;
 use App\Models\Location;
 use App\Models\Search;
@@ -195,6 +196,13 @@ class SearchController extends Controller
                     ] , 404);
                 }
 
+                $foodsIds = $results->pluck('id')->toArray();
+                $favorites = Favorite::query()
+                    ->where('favoritable_type' , 'App\Models\Food')
+                    ->whereIn('favoritable_id' , $foodsIds)
+                    ->pluck('favoritable_id')
+                    ->toArray();
+
                 $names = $results->pluck('name')->toArray();
                 $names = TranslateTextHelper::batchTranslate($names);
 
@@ -213,6 +221,7 @@ class SearchController extends Controller
                         'picture' => $result->picture ,
                         'description' => $description[$result->description] ,
                         'country_of_origin' => $country_of_origin[$result->country_of_origin] ,
+                        'is_favorite' => in_array($result->id , $favorites),
                     ];
                 }
 
@@ -234,6 +243,13 @@ class SearchController extends Controller
                     ] , 404);
                 }
 
+                $drinksIds = $results->pluck('id')->toArray();
+                $favorites = Favorite::query()
+                    ->where('favoritable_type' , 'App\Models\Drink')
+                    ->whereIn('favoritable_id' , $drinksIds)
+                    ->pluck('favoritable_id')
+                    ->toArray();
+
                 $names = $results->pluck('name')->toArray();
                 $names = TranslateTextHelper::batchTranslate($names);
 
@@ -247,7 +263,8 @@ class SearchController extends Controller
                         'name' => $names[$result->name] ,
                         'price' => $result->price ,
                         'picture' => $result->picture ,
-                        'description' => $description[$result->description]
+                        'description' => $description[$result->description] ,
+                        'is_favorite' => in_array($result->id , $favorites),
                     ];
                 }
                     break;
@@ -268,6 +285,13 @@ class SearchController extends Controller
                     ] , 404);
                 }
 
+                $accessoriesIds = $results->pluck('id')->toArray();
+                $favorites = Favorite::query()
+                    ->where('favoritable_type' , 'App\Models\Accessory')
+                    ->whereIn('favoritable_id' , $accessoriesIds)
+                    ->pluck('favoritable_id')
+                    ->toArray();
+
                 $names = $results->pluck('name')->toArray();
                 $names = TranslateTextHelper::batchTranslate($names);
 
@@ -281,7 +305,8 @@ class SearchController extends Controller
                         'name' => $names[$result->name] ,
                         'picture' => $result->picture ,
                         'price' => $result->price ,
-                        'description' => $description[$result->description]
+                        'description' => $description[$result->description] ,
+                        'is_favorite' => in_array($result->id , $favorites),
                     ];
                 }
                     break;
@@ -302,6 +327,13 @@ class SearchController extends Controller
                     ] , 404);
                 }
 
+                $locationsIds = $results->pluck('id')->toArray();
+                $favorites = Favorite::query()
+                    ->where('favoritable_type' , 'App\Models\Location')
+                    ->whereIn('favoritable_id' , $locationsIds)
+                    ->pluck('favoritable_id')
+                    ->toArray();
+
                 $names = $results->pluck('name')->toArray();
                 $names = TranslateTextHelper::batchTranslate($names);
 
@@ -316,7 +348,8 @@ class SearchController extends Controller
                         'governorate' => $governorate[$result->governorate] ,
                         'open_time' => $result->open_time ,
                         'close_time' => $result->close_time ,
-                        'picture' => $result->logo
+                        'picture' => $result->logo ,
+                        'is_favorite' => in_array($result->id , $favorites),
                     ];
                 }
 

@@ -923,11 +923,14 @@ class LocationController extends Controller
             ->limit(3) // Limit the result to the top 3 locations
             ->get();
 
+        $name = $result->pluck('name')->toArray();
+        $name = TranslateTextHelper::batchTranslate($name);
+
         $response = [];
         foreach ($result as $res)
         {
             $response [] = [
-                "name" => $res->name,
+                "name" => $name[$res->name] ?? $res->name,
                 "picture" => env('APP_URL').'/'.$res->picture,
                 "reservations_count" => $res->reservations_count
             ];
