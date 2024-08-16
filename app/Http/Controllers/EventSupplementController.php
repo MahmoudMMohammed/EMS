@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\AccessoryCategory;
@@ -107,6 +108,7 @@ class EventSupplementController extends Controller
                         $item['category'] = $category->category;
                         unset($item['food_category_id']);
                         $item['quantity'] = $cartItem->quantity;
+                        $item['price'] = $cartItem->getRawOriginal('price');
                         $foodDetails[] = $item;
 
                         $approved = true;
@@ -120,6 +122,8 @@ class EventSupplementController extends Controller
                         $item['category'] = $category->category;
                         unset($item['drink_category_id']);
                         $item['quantity'] = $cartItem->quantity;
+                        $item['price'] = $cartItem->getRawOriginal('price');
+
                         $drinksDetails[] = $item;
                         $approved = true;
                     } else {
@@ -214,6 +218,7 @@ class EventSupplementController extends Controller
                         $item['category'] = $category->category;
                         unset($item['accessory_category_id']);
                         $item['quantity'] = $cartItem->quantity;
+                        $item['price'] = $cartItem->getRawOriginal('price');
                         $accessoriesDetails[] = $item;
                         $approved = true;
                     } else {
@@ -572,9 +577,10 @@ class EventSupplementController extends Controller
             ], 404);
         }
 
-        $supplementsWithTotal = collect($foodSupplements)->map(function ($supplement){
+        $supplementsWithTotal = collect($foodSupplements)->map(function ($supplement) use ($user) {
             $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
-            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            unset($supplement['deleted_at']);
+            $supplement['total_price'] = number_format(CurrencyConverterScraper::convert($totalPrice,$user->profile->preferred_currency),2,'.',',') . ' ' . $user->profile->preferred_currency;
             return $supplement;
         });
 
@@ -600,9 +606,11 @@ class EventSupplementController extends Controller
             ],404);
         }
 
-        $supplementsWithTotal = collect($drinksSupplements)->map(function ($supplement){
+        $supplementsWithTotal = collect($drinksSupplements)->map(function ($supplement) use ($user) {
             $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
-            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            unset($supplement['deleted_at']);
+            $supplement['total_price'] = number_format(CurrencyConverterScraper::convert($totalPrice,$user->profile->preferred_currency),2,'.',',') . ' ' . $user->profile->preferred_currency;
+
             return $supplement;
         });
 
@@ -629,9 +637,10 @@ class EventSupplementController extends Controller
             ],404);
         }
 
-        $supplementsWithTotal = collect($accessoriesSupplements)->map(function ($supplement){
+        $supplementsWithTotal = collect($accessoriesSupplements)->map(function ($supplement) use ($user) {
             $totalPrice = $this->parsePrice($supplement['price']) * $supplement['quantity'];
-            $supplement['total_price'] = number_format($totalPrice,2,'.',',') . " S.P";
+            unset($supplement['deleted_at']);
+            $supplement['total_price'] = number_format(CurrencyConverterScraper::convert($totalPrice,$user->profile->preferred_currency),2,'.',',') . ' ' . $user->profile->preferred_currency;
             return $supplement;
         });
 

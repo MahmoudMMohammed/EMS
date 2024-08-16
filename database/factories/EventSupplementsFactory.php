@@ -49,6 +49,11 @@ class EventSupplementsFactory extends Factory
                 ->where('id', $itemId)
                 ->first();
 
+            // Convert the object to an array if it's not already one
+            $item = (array) $item;
+
+            $item['quantity'] = $this->faker->numberBetween(1,10);
+
             // Manually create the item array with the raw price
             $items[] = $item;
         }

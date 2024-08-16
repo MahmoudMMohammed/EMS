@@ -157,7 +157,7 @@
 
     <div class="totals">
         <h2>Grand Total</h2>
-        <div class="total">Grand Total: {{ $grandTotal }}</div>
+        <div class="total">Grand Total: {{ $grandTotal }}  SYP</div>
     </div>
     <!-- QR Code section -->
     <div class="centered-content">

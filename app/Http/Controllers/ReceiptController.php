@@ -106,7 +106,7 @@ class ReceiptController extends Controller
             'totalAccessories' => $totalAccessories,
             'grandTotal' => $supplements->total_price,
             'qrCodeBase64' => $qrCodeBase64,
-            'reservationPrice' => $location->reservation_price * ( $eventTimeInMinutes / 60),
+            'reservationPrice' => $location->getRawOriginal('reservation_price') * ( $eventTimeInMinutes / 60),
         ];
 
         // Generate the PDF using the instance method

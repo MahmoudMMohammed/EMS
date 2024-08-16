@@ -357,7 +357,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 });
 
 //get weekly report as PDF
-Route::get('/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
+Route::get('/admin/weekly-report', [StatisticsController::class, 'getWeeklyReport']);
 
 Route::middleware([OwnerMiddleware::class])->group(function () {
 

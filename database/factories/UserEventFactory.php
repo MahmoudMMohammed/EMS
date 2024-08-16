@@ -53,7 +53,7 @@ class UserEventFactory extends Factory
             'start_time' => $startTime,
             'end_time' => $endTime,
             'num_people_invited' => $this->faker->numberBetween(10, 50),
-            'verified' => $this->faker->randomElement(['Pending', 'Confirmed', 'Rejected', 'Finished'])
+            'verified' => $this->faker->randomElement(['Confirmed', 'Rejected', 'Finished'])
         ];
     }
 

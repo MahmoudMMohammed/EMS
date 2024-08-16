@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\NotificationEvent;
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\EventSupplement;
 use App\Models\Host;
@@ -12,6 +13,7 @@ use App\Models\Receipt;
 use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
+use App\Traits\NotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,8 +22,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserEventController extends Controller
 {
+    use NotificationTrait;
     public function createEvent(Request $request): JsonResponse
     {
+
         $user = Auth::user();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
 
@@ -128,6 +132,7 @@ class UserEventController extends Controller
         $admin = User::find($location->user_id);
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         event(new NotificationEvent($location->user_id, TranslateTextHelper::translate("Event reservation has been requested by user $user->id"), TranslateTextHelper::translate("New reservation")));
+        $this->createNotificationForAdmin($user->id,TranslateTextHelper::translate("Event reservation has been requested by user $user->id"),TranslateTextHelper::translate("New reservation"),$admin->id);
 
         TranslateTextHelper::setTarget($user->profile->preferred_language);
         // Return the response
@@ -197,7 +202,7 @@ class UserEventController extends Controller
         return EventSupplement::create([
             'user_event_id' => $eventId,
             'warehouse_id' => $warehouse->id,
-            'total_price' => $location->reservation_price * ( $eventTimeInMinutes / 60), // add the reservation price for start,other supplements later
+            'total_price' => $location->getRawOriginal('reservation_price') * ( $eventTimeInMinutes / 60), // add the reservation price for start,other supplements later
         ]);
     }
 
@@ -701,7 +706,7 @@ class UserEventController extends Controller
 
         $reservation = UserEvent::query()->where('id' , $event_id)->pluck('location_id');
         $reservation_price = Location::query()->where('id' , $reservation)->first();
-        $reservation_price = $reservation_price->reservation_price ;
+        $reservation_price = $reservation_price->getRawOriginal('reservation_price') ;
         if(!$reservation_price)
         {
             return response()->json([
@@ -723,12 +728,12 @@ class UserEventController extends Controller
         $total_price = (float)str_replace(['S.P', ',', ' '], '',$total_price->total_price);
 
         $response = [
-            'Food' => number_format($foodTotalPrice , 2 ).' S.P' ,
-            'Drinks' => number_format($drinksTotalPrice , 2 ).' S.P' ,
-            'accessories' => number_format($accessoriesTotalPrice , 2 ).' S.P' ,
-            'Reservation price' => number_format($reservation_price , 2 ).' S.P' ,
-            'Reconstruction tax' =>number_format($tax , 2 ).' S.P' ,
-            'total_price' => number_format($total_price+$tax , 2).' S.P'];
+            'Food' => number_format(CurrencyConverterScraper::convert($foodTotalPrice,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
+            'Drinks' => number_format(CurrencyConverterScraper::convert($drinksTotalPrice,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
+            'accessories' => number_format(CurrencyConverterScraper::convert($accessoriesTotalPrice,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
+            'Reservation price' => number_format(CurrencyConverterScraper::convert($reservation_price,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
+            'Reconstruction tax' => number_format(CurrencyConverterScraper::convert($tax,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
+            'total_price' => number_format(CurrencyConverterScraper::convert($total_price+$tax,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,];
 
         return response()->json($response ,200);
     }

@@ -64,7 +64,7 @@ class NotificationController extends Controller
             ], 422);
         }
 
-        $notification = $this->createNotification($request->user_id, $request->message, $request->title, $request->admin_id);
+        $notification = $this->createNotificationForUser($request->user_id, $request->message, $request->title, $request->admin_id);
         $notification->notifiable()->associate($notification);
 
         if (!$notification){
@@ -85,7 +85,10 @@ class NotificationController extends Controller
 
         $count = Notification::whereNotifiableId($user->id)->whereNull('read_at')->count();
 
-        return response()->json(['count' => $count]);
+        return response()->json([
+            'count' => $count,
+            'status_code' => 200,
+        ],200);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////

@@ -13,6 +13,7 @@ use App\Models\MainEvent;
 use App\Models\User;
 use App\Models\UserEvent;
 use App\Models\Warehouse;
+use App\Traits\NotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
+    use NotificationTrait;
     public function WebSearchAdmin (Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -234,6 +236,7 @@ class AdminController extends Controller
 
         TranslateTextHelper::setTarget($user->profile->preferred_language);
         event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been approved."),TranslateTextHelper::translate("Reservation Approved")));
+        $this->createNotificationForUser($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been approved."),TranslateTextHelper::translate("Reservation Approved"),$admin->id);
 
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         return response()->json([
@@ -285,6 +288,7 @@ class AdminController extends Controller
 
         TranslateTextHelper::setTarget($user->profile->preferred_language);
         event(new NotificationEvent($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been rejected"),TranslateTextHelper::translate("Reservation Rejected")));
+        $this->createNotificationForUser($user->id,TranslateTextHelper::translate("Your reservation for event in $event->date has been rejected."),TranslateTextHelper::translate("Reservation Rejected"),$admin->id);
 
         TranslateTextHelper::setTarget($admin->profile->preferred_language);
         return response()->json([
@@ -327,7 +331,7 @@ class AdminController extends Controller
                 'status_code' => 404
             ], 404);
         }
-        
+
         return response()->json($Admins , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////

@@ -59,7 +59,7 @@
                 <tr>
                     <td>{{ $host['id'] }}</td>
                     <td>{{ $host['name'] }}</td>
-                    <td>{{ number_format($host['profit'], 2) }}</td>
+                    <td>{{ number_format($host['profit'], 2) }} SYP</td>
                 </tr>
             @endforeach
             </tbody>
@@ -82,7 +82,7 @@
                 <tr>
                     <td>{{ $location['id'] }}</td>
                     <td>{{ $location['name'] }}</td>
-                    <td>{{ number_format($location['profit'], 2) }}</td>
+                    <td>{{ number_format($location['profit'], 2) }} SYP</td>
                 </tr>
             @endforeach
             </tbody>
