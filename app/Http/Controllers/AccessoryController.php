@@ -477,7 +477,7 @@ class AccessoryController extends Controller
             'accessory_id' => 'required|integer|exists:accessories,id' ,
             'warehouse' => 'required|in:1,2,3,4,5,6,7' , //1:'Damascus' , 2:'Homs' , 3:'Tartus' , 4:'Aleppo' , 5:'Suwayda' , 6:'Daraa' , 7:'Raqqa'
             'name' => 'required|max:50' ,
-            'price' => 'required|ends_with:S.P' ,
+            'price' => 'required|regex:/^\d+(\.\d{1,2})?\s+SYP$/' ,
             'quantity' => 'required|integer|doesnt_start_with:0|max:1000000000|min:1',
             'description' => 'required|string' ,
         ]);
@@ -490,34 +490,7 @@ class AccessoryController extends Controller
             ], 422);
         }
 
-        // Initialize counters for "S" and "P"
-        $sCount = 0;
-        $pCount = 0;
-
-        // Check each character in the input
-        foreach (str_split($request->input('price')) as $char) {
-            if ($char === 'S') {
-                $sCount++;
-            } elseif ($char === 'P') {
-                $pCount++;
-            } elseif (!ctype_digit($char) && $char !== ' ' && $char !== '.' && $char !== ',') {
-                // Contains an invalid character
-                return response()->json([
-                    "error" => 'The format of the price is incorrect.',
-                    "status_code" => 422,
-                ], 422);
-            }
-        }
-
-        // Validate the count of "S" and "P"
-        if ($sCount > 1 || $pCount > 1) {
-            return response()->json([
-                "error" => 'The format of the price is incorrect.',
-                "status_code" => 422,
-            ], 422);
-        }
-
-        $format = (float)str_replace(['S.P', ',', ' '], '', $request->input('price'));
+        $format = (float)str_replace(['SYP', ',', ' '], '', $request->input('price'));
 
         $accessory = Accessory::query()->where('id' , $request->accessory_id)->first();
 

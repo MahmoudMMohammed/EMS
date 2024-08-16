@@ -421,7 +421,7 @@ class LocationController extends Controller
 
         $validator = Validator::make($request->all() , [
             'name' => 'required|max:50' ,
-            'price' => 'required|ends_with: S.P' ,
+            'price' => 'required|regex:/^\d+(\.\d{1,2})?\s+SYP$/' ,
             'open' => 'required|date_format:h:i A' ,
             'close' => 'required|date_format:h:i A' ,
             'capacity' => 'required|integer|doesnt_start_with:0|max:100000|min:1'
@@ -435,34 +435,7 @@ class LocationController extends Controller
             ], 422);
         }
 
-        // Initialize counters for "S" and "P"
-        $sCount = 0;
-        $pCount = 0;
-
-        // Check each character in the input
-        foreach (str_split($request->input('price')) as $char) {
-            if ($char === 'S') {
-                $sCount++;
-            } elseif ($char === 'P') {
-                $pCount++;
-            } elseif (!ctype_digit($char) && $char !== ' ' && $char !== '.' && $char !== ',') {
-                // Contains an invalid character
-                return response()->json([
-                    "error" => 'The format of the price is incorrect.',
-                    "status_code" => 422,
-                ], 422);
-            }
-        }
-
-        // Validate the count of "S" and "P"
-        if ($sCount > 1 || $pCount > 1) {
-            return response()->json([
-                "error" => 'The format of the price is incorrect.',
-                "status_code" => 422,
-            ], 422);
-        }
-
-        $format = (float)str_replace(['S.P', ',', ' '], '', $request->input('price'));
+        $format = (float)str_replace(['SYP', ',', ' '], '', $request->input('price'));
 
         $exist->update([
             'name' => $request->input('name'),
@@ -905,6 +878,8 @@ class LocationController extends Controller
                 "status_code" => 422,
             ], 422);
         }
+
+        TranslateTextHelper::setTarget($user -> profile -> preferred_language);
 
         // First, aggregate the reservation counts per location
         $locations = DB::table('user_events')
