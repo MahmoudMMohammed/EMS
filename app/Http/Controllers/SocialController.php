@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
+use App\Services\GenderService;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -179,6 +181,12 @@ class SocialController extends Controller
                 'email' => $googleUser->email,
                 'google_id' => $googleUser->id,
                 'password' => bcrypt(Str::random(16)),
+            ]);
+            $gender = GenderService::getGenderByName($googleUser->name);
+            $profilePicture = "ProfilePictures/Users/Defaults/$gender.png";
+            Profile::create([
+                'user_id' => $user->id,
+                'profile_picture' => $profilePicture,
             ]);
         }
 

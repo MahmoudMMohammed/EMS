@@ -107,7 +107,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'Verification code has expired!',
                 'status_code'=>422,
-                ], 422);
+            ], 422);
         }
 
         $user = User::whereEmail($emailVerification->email)->first();
@@ -220,7 +220,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'failed to login!',
                 'status_code' => 400,
-                ] , 400);
+            ] , 400);
         }
         $user->number_of_logins += 1;
         $user->last_login = now();
@@ -352,7 +352,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'Password code has expired!',
                 'status_code' => 422,
-                ], 422);
+            ], 422);
         }
 
         //find user's email
@@ -363,7 +363,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'New password cannot be the same as the old!',
                 'status_code' => 422,
-                ], 422);
+            ], 422);
         }
 
         //update user password
