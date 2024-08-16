@@ -316,7 +316,7 @@ class AdminController extends Controller
 
         $Admins = User::query()
             ->whereNotIn( 'id' , $Available)
-            ->where('role' , 'Admin')
+            ->whereRole('Admin')
             ->select('id' , 'name')
             ->get();
 
@@ -327,7 +327,7 @@ class AdminController extends Controller
                 'status_code' => 404
             ], 404);
         }
-        
+
         return response()->json($Admins , 200);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
