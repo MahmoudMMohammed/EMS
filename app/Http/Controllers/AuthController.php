@@ -78,7 +78,7 @@ class AuthController extends Controller
         } catch (Exception $e) {
             // Handle any other exceptions during email sending
             return response()->json([
-                "error" => "Registration failed: An error occurred while sending verification email.",
+                "error" => $e->getMessage(),
                 'status_code' => 500,
             ], 500);
         }
