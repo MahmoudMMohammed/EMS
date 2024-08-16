@@ -320,7 +320,7 @@ class AdminController extends Controller
 
         $Admins = User::query()
             ->whereNotIn( 'id' , $Available)
-            ->where('role' , 'Admin')
+            ->whereRole('Admin')
             ->select('id' , 'name')
             ->get();
 
