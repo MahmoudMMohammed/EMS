@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\Cart;
@@ -306,7 +307,7 @@ class CartController extends Controller
                 'id' => $item->itemable->id ,
                 'name' => $translate[$item->itemable->name] ,
                 'numOfItem' => $item->quantity ,
-                'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
+                'price' => number_format(CurrencyConverterScraper::convert($itemTotalPrice , $user->profile->preferred_currency) , 2 , '.' , ',') . ' ' . $user->profile->preferred_currency,
                 'picture' => $item->itemable->picture ,
                 'type' => $type
             ];
@@ -314,7 +315,7 @@ class CartController extends Controller
 
         return response()->json([
             'data' => $response ,
-            'total_price' => number_format($totalPrice , 2 , '.' , ',') . ' S.P' ,
+            'total_price' => number_format(CurrencyConverterScraper::convert($totalPrice,$user->profile->preferred_currency) , 2 , '.' , ',') . ' ' . $user->profile->preferred_currency ,
             'total_Items' => $totalItems ,
         ] , 200);
     }
@@ -459,7 +460,7 @@ class CartController extends Controller
                 'id' => $item->itemable->id ,
                 'name' => $translate[$item->itemable->name] ?? $item->itemable->name ,
                 'numOfItem' => $item->quantity ,
-                'price' => number_format($itemTotalPrice , 2 , '.' , ',') . ' S.P',
+                'price' => number_format(CurrencyConverterScraper::convert($itemTotalPrice , $user->profile->preferred_currency) , 2 , '.' , ',') . ' ' . $user->profile->preferred_currency,
                 'picture' => $item->itemable->picture ,
                 'type' => $type
             ];
@@ -467,7 +468,7 @@ class CartController extends Controller
 
         return response()->json([
             'data' => $response ,
-            'total_price' => number_format($totalPrice , 2 , '.' , ',') . ' S.P' ,
+            'total_price' => number_format(CurrencyConverterScraper::convert($totalPrice , $user->profile->preferred_currency) , 2 , '.' , ',') . ' ' . $user->profile->preferred_currency ,
             'total_Items' => $totalItems ,
         ] , 200);
     }
