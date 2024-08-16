@@ -146,6 +146,8 @@ class FeedbackController extends Controller
 
             $ratingPercentages['total_ratings'] = 0;
             $ratingPercentages['average_rating'] = 0.0;
+            $ratingPercentages['rating_message'] = TranslateTextHelper::translate("Not rated yet");
+            $ratingPercentages['value'] = 2;
 
             return response()->json($ratingPercentages , 200);
         }
@@ -171,8 +173,10 @@ class FeedbackController extends Controller
 
         if ($averageRating > 3.2) {
             $ratingPercentages['rating_message'] = TranslateTextHelper::translate("Suitable");
+            $ratingPercentages['value'] = 1;
         } else {
             $ratingPercentages['rating_message'] = TranslateTextHelper::translate("Discouraged");
+            $ratingPercentages['value'] = 0;
         }
 
         return response()->json($ratingPercentages , 200);

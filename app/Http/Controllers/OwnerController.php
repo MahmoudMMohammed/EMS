@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\UserEvent;
+use App\Models\WalletCharge;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -583,6 +584,19 @@ class OwnerController extends Controller
         {
             return response()->json([
                 "error" => "Something went wrong , try again later",
+                "status_code" => 422,
+            ], 422);
+        }
+
+        $done = WalletCharge::query()->create([
+            'user_id' => $user->id ,
+            'amount' => $request->input('value')
+        ]);
+
+        if(!$done)
+        {
+            return response()->json([
+                "error" => "Something went wrong , try again later.",
                 "status_code" => 422,
             ], 422);
         }
