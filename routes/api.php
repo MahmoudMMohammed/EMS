@@ -526,11 +526,9 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/get/reservation/public/supplement/food/{event_id}' , [EventSupplementController::class , 'getSupplementFood']);
 
     //get drinks supplement for specific public reservation
-
     Route::get('/get/reservation/public/supplement/drinks/{event_id}' , [EventSupplementController::class , 'getSupplementDrinks']);
 
     //get accessories supplement for specific public reservation
-
     Route::get('/get/reservation/public/supplement/accessories/{event_id}' , [EventSupplementController::class , 'getSupplementAccessories']);
 
     //join the public event

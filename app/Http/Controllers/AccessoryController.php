@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Accessory;
 use App\Models\AccessoryCategory;
@@ -186,8 +187,8 @@ class AccessoryController extends Controller
             $response[] = [
                 'id' => $item->id,
                 'name' => $name[$item->name],
-                'price' => $item->RawPrice,
-                'currency' => 'S.P' ,
+                'price' => (float)number_format(CurrencyConverterScraper::convert($item->RawPrice) , 2),
+                'currency' => $user->profile->preferred_currency ,
                 'description' => $description[$item->description],
                 'picture' => $item->picture,
                 'numOfItem' => $quantity ,
@@ -651,8 +652,8 @@ class AccessoryController extends Controller
             $response [] = [
                 'id' => $accessory->id,
                 'name' => $name[$accessory->name] ?? $accessory->name,
-                'price' => $accessory->RawPrice,
-                'currency' => 'S.P',
+                'price' => (float)number_format(CurrencyConverterScraper::convert($accessory->RawPrice)),
+                'currency' => $user->profile->preferred_currency,
                 'description' => $description[$accessory->description] ?? $accessory->description,
                 'picture' => $accessory->picture,
                 'category' => $category[$accessory->category->category] ?? $accessory->category->category ,

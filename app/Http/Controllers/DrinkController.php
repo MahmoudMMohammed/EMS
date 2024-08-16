@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Drink;
 use App\Models\DrinkCategory;
@@ -177,8 +178,8 @@ class DrinkController extends Controller
             $response [] = [
                 'id' => $drink->id ,
                 'name' => $name[$drink->name] ,
-                'price' => $drink->RawPrice ,
-                'currency' => 'S.P' ,
+                'price' => (float)number_format(CurrencyConverterScraper::convert($drink->RawPrice) , 2) ,
+                'currency' =>  $user->profile->preferred_currency ,
                 'description' => $description[$drink->description] ,
                 'picture' => $drink->picture ,
                 'is_favorite' => in_array($drink->id , $favorites)
@@ -566,8 +567,8 @@ class DrinkController extends Controller
                 $response [] = [
                     'id' => $drink->id,
                     'name' => $name[$drink->name] ?? $drink->name,
-                    'price' => $drink->RawPrice,
-                    'currency' => 'S.P',
+                    'price' => (float)number_format(CurrencyConverterScraper::convert($drink->RawPrice) , 2),
+                    'currency' =>  $user->profile->preferred_currency,
                     'description' => $description[$drink->description] ?? $drink->description,
                     'picture' => $drink->picture,
                     'is_favorite' => in_array($drink->id, $favorites),

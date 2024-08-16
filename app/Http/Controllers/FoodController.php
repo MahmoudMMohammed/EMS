@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyConverterScraper;
 use App\Helpers\TranslateTextHelper;
 use App\Models\Favorite;
 use App\Models\Food;
@@ -184,8 +185,8 @@ class FoodController extends Controller
             $response [] = [
                 'id' => $food -> id ,
                 'name' => $name[$food-> name] ,
-                'price' => $food->RawPrice ,
-                'currency' => 'S.P' ,
+                'price' => (float)number_format(CurrencyConverterScraper::convert($food->RawPrice) , 2) ,
+                'currency' => $user->profile->preferred_currency ,
                 'description' => $description[$food -> description] ,
                 'country_of_origin' => $country_of_origin[$food -> country_of_origin] ,
                 'picture' => $food -> picture,
@@ -578,8 +579,8 @@ class FoodController extends Controller
                 $response [] = [
                     'id' => $food->id,
                     'name' => $name[$food->name] ?? $food->name,
-                    'price' => $food->RawPrice,
-                    'currency' => 'S.P',
+                    'price' => (float) number_format(CurrencyConverterScraper::convert($food->RawPrice) , 2),
+                    'currency' => $user->profile->preferred_currency,
                     'description' => $description[$food->description] ?? $food->description,
                     'country_of_origin' => $country_of_origin[$food->country_of_origin] ?? $food->country_of_origin,
                     'picture' => $food->picture,
