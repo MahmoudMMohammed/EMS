@@ -173,10 +173,15 @@ class StatisticsController extends Controller
         $userBlockedReservations = $this->getUserBlockedReservations();
         $blockedComments = $this->getUserBlockedComments();
 
-        $lastLogin = Carbon::parse($user->last_login);
+        $lastLogin = "";
+        if ($user->last_login){
+            $date = Carbon::parse($user->last_login);
+            $lastLogin = $date->diffForHumans();
+        }
+
         $userInfo = [
-            "message" => 'You have logged '. $user->number_of_logins . ' to the app',
-            'date' => $lastLogin->diffForHumans(),
+            "message" => $user->number_of_logins,
+            'date' => $lastLogin,
         ];
 
         return response()->json([
@@ -498,7 +503,7 @@ class StatisticsController extends Controller
         }
 
         return [
-            'message' => 'You have '. count($combined) . ' reservations inside the app.',
+            'message' => count($combined) ,
             'date' => $latestDate,
         ];
     }
@@ -513,12 +518,17 @@ class StatisticsController extends Controller
             ->get();
 
         $latestEvent = $rejectedEvents->sortByDesc('created_at')->first();
-        $eventCreationDate = Carbon::parse($latestEvent->created_at);
+        $eventCreationDate = "";
+        if ($latestEvent){
+            $date = Carbon::parse($latestEvent->created_at);
+            $eventCreationDate = $date->diffForHumans();
+        }
+
 
 
         return [
-            "message" => 'You have '. count($rejectedEvents) . ' blocked events.',
-            "date" => $eventCreationDate->diffForHumans(now()),
+            "message" => count($rejectedEvents),
+            "date" => $eventCreationDate,
         ];
     }
     //////////////////////////////////////////////////////////
@@ -530,11 +540,18 @@ class StatisticsController extends Controller
             ->whereUserId($user->id)
             ->whereNotNull('deleted_at') // Check that 'deleted_at' is not null
             ->get();
-        $latestComment = $blockedComments->sortByDesc('created_at')->first();
+
+        $comment = $blockedComments->sortByDesc('created_at')->first();
+        $latestComment = "";
+        if ($comment){
+            $date = Carbon::parse($comment->date);
+            $latestComment = $date->diffForHumans();
+        }
+
 
         return [
-            "message" => 'You have '. count($blockedComments) . ' blocked comments.',
-            "date" => $latestComment->date,
+            "message" => count($blockedComments),
+            "date" => $latestComment,
         ];
     }
     //////////////////////////////////////////////////////////
