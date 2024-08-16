@@ -589,7 +589,7 @@ class OwnerController extends Controller
         }
 
         $done = WalletCharge::query()->create([
-            'user_id' => $user->id ,
+            'user_id' => $user_wallet->id ,
             'amount' => $request->input('value')
         ]);
 
