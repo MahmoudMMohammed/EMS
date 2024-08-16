@@ -33,6 +33,7 @@ use App\Http\Controllers\TestsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserEventController;
 use App\Http\Controllers\UserJoinedEventController;
+use App\Http\Controllers\WalletChargeController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
@@ -308,6 +309,7 @@ Route::middleware([UserMiddleware::class])->group(function () {
 
     });
 
+    Route::get('/user/wallet', [WalletChargeController::class, 'getUserBalanceWithHistory']);
 
 
 });
