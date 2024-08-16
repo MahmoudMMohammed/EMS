@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\CurrencyConverterScraper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -74,5 +75,13 @@ class Location extends Model
     public function getLogoAttribute($value)
     {
         return env('APP_URL') . '/' . $value;
+    }
+    public function getReservationPriceAttribute($value)
+    {
+        $userPreferredCurrency = auth()->user()->profile->preferred_currency;
+
+        $convertedPrice = CurrencyConverterScraper::convert($value, $userPreferredCurrency);
+
+        return number_format($convertedPrice, 2) . ' ' . $userPreferredCurrency;
     }
 }

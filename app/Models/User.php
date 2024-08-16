@@ -104,4 +104,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return $this->hasOne(AppRating::class , 'user_id' , 'id');
     }
+    public function charges()
+    {
+        return $this->hasMany(WalletCharge::class , 'user_id' , 'id');
+    }
 }

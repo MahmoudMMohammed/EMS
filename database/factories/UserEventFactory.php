@@ -38,10 +38,10 @@ class UserEventFactory extends Factory
     public function definition(): array
     {
 
-        $startTime = $this->faker->time();
+        $startTime = $this->faker->time('H:i:s');
         $endTime = Carbon::createFromFormat('H:i:s', $startTime)->addHours(2)->format('H:i:s'); // Converting to 24-hour format and adding 2 hours
         $mainEventIds = MainEvent::query()->pluck('id')->toArray();
-        $uniqueDates = $this->faker->dateTimeBetween(now(), now()->subWeek());
+        $uniqueDates = $this->faker->dateTimeBetween(now()->subWeek(), now());
 
         return [
             'user_id' => $this->faker->numberBetween(29, 38),

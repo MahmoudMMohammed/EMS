@@ -30,7 +30,7 @@ class AuthController extends Controller
             "name" => 'required | min:2 | max:30 | regex:/^[A-Za-z\s]+$/ ',
             "email" => 'required | email | unique:users,email',
             "password" => ['required' , 'confirmed' , password_rule::min(6)->numbers()->letters()->mixedCase() ] ,
-            "fcm_token" => 'required',
+            "fcm_token" => 'required|sometimes|nullable',
         ]);
 
         if ($validator->fails()) {
@@ -40,58 +40,50 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user = User::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "fcm_token" => $request->fcm_token,
-        ]);
-
-        $gender = GenderService::getGenderByName($user->name);
-        $profilePicture = "ProfilePictures/Users/Defaults/$gender.png";
-
-        Profile::create([
-            'user_id' => $user->id,
-            'profile_picture' => $profilePicture,
-        ]);
-
         // Generate and store verification code
         $code = mt_rand(100000, 999999);
         $codeData = EmailVerification::create([
             'email' => $request->email,
             'code' => $code,
         ]);
-        if($user){
-            try {
-                // Send email and check for success
-                if (Mail::to($request['email'])->send(new SendEmailVerificationCode($codeData['code']))) {
-                    // Email sent successfully
-                    return response()->json([
-                        "message" => "Registration succeeded, Please verify your email to continue",
-                        'status_code' => 201
-                    ], 201);
-                } else {
-                    // Email sending failed
-                    return response()->json([
-                        "error" => "Registration failed: Unable to send verification email.",
-                        'status_code' => 400,
-                    ], 400);
-                }
-            } catch (Exception $e) {
-                // Handle any other exceptions during email sending
-                return response()->json([
-                    "error" => "Registration failed: An error occurred while sending verification email.",
-                    'status_code' => 500,
-                ], 500);
-            }
-        }else{
-            return response()->json([
-                "error" => "Registration failed!",
-                'status_code' => 400,
-            ], 400);
-        }
-    }
 
+        try {
+            // Send email and check for success
+            if (Mail::to($request['email'])->send(new SendEmailVerificationCode($codeData['code']))) {
+                // Email sent successfully
+                $user = User::create([
+                    "name" => $request->name,
+                    "email" => $request->email,
+                    "password" => Hash::make($request->password),
+                    "fcm_token" => $request->fcm_token,
+                ]);
+                $gender = GenderService::getGenderByName($user->name);
+                $profilePicture = "ProfilePictures/Users/Defaults/$gender.png";
+                Profile::create([
+                    'user_id' => $user->id,
+                    'profile_picture' => $profilePicture,
+                ]);
+
+                return response()->json([
+                    "message" => "Registration succeeded, Please verify your email to continue",
+                    'status_code' => 201
+                ], 201);
+            } else {
+                // Email sending failed
+                return response()->json([
+                    "error" => "Registration failed: Unable to send verification email.",
+                    'status_code' => 400,
+                ], 400);
+            }
+        } catch (Exception $e) {
+            // Handle any other exceptions during email sending
+            return response()->json([
+                "error" => "Registration failed: An error occurred while sending verification email.",
+                'status_code' => 500,
+            ], 500);
+        }
+
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function verifyEmail(Request $request): JsonResponse
@@ -142,7 +134,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required | email | exists:users,email',
+            'email' => 'required | exists:users,email',
             'password' => 'required',
             'fcm_token' => 'required|sometimes',
         ]);
@@ -156,9 +148,9 @@ class AuthController extends Controller
 
         $user = User::withTrashed()->where('email', $request->email)->first();
 
-        if (!$user->verified){
+        if (!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
-                'error' => 'Please verify your account first to continue.',
+                'error' => 'Invalid email or password.',
                 'status_code' => 422
             ], 422);
         }
@@ -179,6 +171,13 @@ class AuthController extends Controller
             }
         }
 
+        if (!$user->verified){
+            return response()->json([
+                'error' => 'Please verify your account first to continue.',
+                'status_code' => 422
+            ], 422);
+        }
+
         // Check if the user is banned
         if ($user->is_blocked) {
             if ($user->blocked_until && Carbon::now() < $user->blocked_until) {
@@ -195,12 +194,6 @@ class AuthController extends Controller
             }
         }
 
-        if (!$user || !Hash::check($request->password, $user->password)){
-            return response()->json([
-                'error' => 'Invalid email or password.',
-                'status_code' => 422
-            ], 422);
-        }
         // Check if admin or owner is trying to access user app
         if ($user->role != "User" && $request->path() === 'api/login'){
             return response()->json([

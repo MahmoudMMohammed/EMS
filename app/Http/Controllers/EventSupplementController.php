@@ -78,9 +78,9 @@ class EventSupplementController extends Controller
         TranslateTextHelper::setTarget($user->profile->preferred_language);
         if (!$cart || $cart->items()->count() == 0) {
             return response()->json([
-                "error" => TranslateTextHelper::translate("Cart is empty"),
-                "status_code" => 400,
-            ], 400);
+                "error" => TranslateTextHelper::translate("Cart not found!"),
+                "status_code" => 404,
+            ], 404);
         }
 
         $location = Location::find($event->location_id);
@@ -155,15 +155,8 @@ class EventSupplementController extends Controller
             ], 202);
         }
 
-        if (empty($foodDetails) && empty($drinksDetails)){
-            return response()->json([
-                "message" => TranslateTextHelper::translate("No food or drinks found in cart to add them!"),
-                "status_code" => 404,
-            ], 404);
-        }
-
         return response()->json([
-            "message" => TranslateTextHelper::translate("Items added to event's supplements successfully"),
+            "message" => TranslateTextHelper::translate("Processed successfully."),
             "status_code" => 200,
         ], 200);
     }
@@ -182,11 +175,11 @@ class EventSupplementController extends Controller
         $user = Auth::user();
         $cart = Cart::whereUserId($user->id)->first();
         TranslateTextHelper::setTarget($user->profile->preferred_language);
-        if (!$cart || $cart->items()->count() == 0) {
+        if (!$cart) {
             return response()->json([
-                "error" => TranslateTextHelper::translate("Cart is empty"),
-                "status_code" => 400,
-            ], 400);
+                "error" => TranslateTextHelper::translate("Cart not found"),
+                "status_code" => 404,
+            ], 404);
         }
 
         $location = Location::find($event->location_id);
@@ -248,15 +241,8 @@ class EventSupplementController extends Controller
             ], 202);
         }
 
-        if (empty($accessoriesDetails)){
-            return response()->json([
-                "message" => TranslateTextHelper::translate("No accessories found in cart to add them!"),
-                "status_code" => 404,
-            ], 404);
-        }
-
         return response()->json([
-            "message" => TranslateTextHelper::translate("Items added to event's supplements successfully"),
+            "message" => TranslateTextHelper::translate("Event reserved successfully."),
             "status_code" => 200,
         ], 200);
     }

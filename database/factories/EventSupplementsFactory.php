@@ -7,6 +7,7 @@ use App\Models\Drink;
 use App\Models\EventSupplement;
 use App\Models\Food;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
@@ -41,8 +42,14 @@ class EventSupplementsFactory extends Factory
     {
         $items = [];
         for ($i = 0; $i < 3; $i++) {
-            $item = $modelClass::find($this->faker->numberBetween(1, $maxId));
-            $item['quantity'] = $this->faker->numberBetween(1, 10); // Add the quantity attribute
+            // Retrieve the model without triggering accessors
+            $itemId = $this->faker->numberBetween(1, $maxId);
+
+            $item = DB::table((new $modelClass)->getTable())
+                ->where('id', $itemId)
+                ->first();
+
+            // Manually create the item array with the raw price
             $items[] = $item;
         }
         return $items;

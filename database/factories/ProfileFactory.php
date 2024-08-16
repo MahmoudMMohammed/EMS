@@ -29,8 +29,7 @@ class ProfileFactory extends Factory
             'balance' => $this->faker->randomFloat(2,10000,100000),
             'birth_date' => $this->faker->dateTimeThisCentury("2000-01-01"),
             'profile_picture' => "ProfilePictures/Users/Defaults/$gender.png",
-            'preferred_language' => "en",
-            'about_me' => $this->faker->paragraph,
+            'about_me' => $this->faker->sentence(),
             'place_of_residence' => $this->faker->address,
             'gender' => $gender,
         ];
