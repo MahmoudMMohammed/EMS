@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wallet_charges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->restrictOnDelete()->restrictOnUpdate();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedDouble('amount');
             $table->timestamps();
         });
