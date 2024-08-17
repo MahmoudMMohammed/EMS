@@ -85,4 +85,14 @@ trait SalesData
     }
     ///////////////////////////////////////////////////////////
 
+    public function getFinishedEvents()
+    {
+        return UserEvent::whereVerified("Confirmed")
+            ->get()
+            ->filter(function ($event)  {
+                $now = Carbon::parse(now());
+                $endTime = Carbon::createFromFormat('Y-m-d h:i A', $event->date . ' ' . $event->end_time);
+                return $now->greaterThanOrEqualTo($endTime);
+            });
+    }
 }

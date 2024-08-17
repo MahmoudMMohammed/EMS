@@ -53,6 +53,7 @@ class EventSupplementsFactory extends Factory
             $item = (array) $item;
 
             $item['quantity'] = $this->faker->numberBetween(1,10);
+            $item['picture'] =  env('APP_URL') .'/'. $item['picture'];
 
             // Manually create the item array with the raw price
             $items[] = $item;

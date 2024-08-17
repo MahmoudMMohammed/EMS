@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        User::factory()->count(10)
+        User::factory()->count(70)
             ->has(Cart::factory(), 'cart')
             ->has(Profile::factory(), 'profile')
             ->create();

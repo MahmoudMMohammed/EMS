@@ -23,10 +23,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $uniqueDates = $this->faker->dateTimeBetween(now()->subMonths(2), now());
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
+            'created_at' => $uniqueDates,
         ];
     }
 

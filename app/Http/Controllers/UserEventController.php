@@ -733,7 +733,7 @@ class UserEventController extends Controller
             'accessories' => number_format(CurrencyConverterScraper::convert($accessoriesTotalPrice,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
             'Reservation price' => number_format(CurrencyConverterScraper::convert($reservation_price,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
             'Reconstruction tax' => number_format(CurrencyConverterScraper::convert($tax,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,
-            'total_price' => number_format(CurrencyConverterScraper::convert($total_price+$tax,$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,];
+            'total_price' => number_format(CurrencyConverterScraper::convert(($total_price+$tax),$user->profile->preferred_currency) , 2 ).' '. $user->profile->preferred_currency ,];
 
         return response()->json($response ,200);
     }
