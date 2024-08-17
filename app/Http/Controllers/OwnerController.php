@@ -618,7 +618,7 @@ class OwnerController extends Controller
         $format = number_format($request->value , 2);
 
         return response()->json([
-            "message" => "The user's wallet with Dome: $format S.P has been charged successfully",
+            "message" => "The user's wallet with Dome: $format SYP has been charged successfully",
             "status_code" => 200,
         ], 200);
     }

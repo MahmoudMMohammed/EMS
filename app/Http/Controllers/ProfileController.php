@@ -376,7 +376,7 @@ class ProfileController extends Controller
         ]);
 
         return response()->json([
-            "message" => "accessory details updated successfully",
+            "message" => "Profile details updated successfully",
             "status_code" => 200,
         ], 200);
 

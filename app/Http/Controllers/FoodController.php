@@ -185,7 +185,7 @@ class FoodController extends Controller
             $response [] = [
                 'id' => $food -> id ,
                 'name' => $name[$food-> name] ,
-                'price' => (float)number_format(CurrencyConverterScraper::convert($food->RawPrice) , 2) ,
+                'price' => (float)number_format(CurrencyConverterScraper::convert($food->RawPrice , $user -> profile -> preferred_currency) , 2) ,
                 'currency' => $user->profile->preferred_currency ,
                 'description' => $description[$food -> description] ,
                 'country_of_origin' => $country_of_origin[$food -> country_of_origin] ,
