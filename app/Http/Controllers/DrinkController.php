@@ -178,7 +178,7 @@ class DrinkController extends Controller
             $response [] = [
                 'id' => $drink->id ,
                 'name' => $name[$drink->name] ,
-                'price' => (float)number_format(CurrencyConverterScraper::convert($drink->RawPrice) , 2) ,
+                'price' => (float)number_format(CurrencyConverterScraper::convert($drink->RawPrice , $user -> profile -> preferred_currency) , 2) ,
                 'currency' =>  $user->profile->preferred_currency ,
                 'description' => $description[$drink->description] ,
                 'picture' => $drink->picture ,

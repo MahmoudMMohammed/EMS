@@ -187,7 +187,7 @@ class AccessoryController extends Controller
             $response[] = [
                 'id' => $item->id,
                 'name' => $name[$item->name],
-                'price' => (float)number_format(CurrencyConverterScraper::convert($item->RawPrice) , 2),
+                'price' => (float)number_format(CurrencyConverterScraper::convert($item->RawPrice , $user -> profile -> preferred_currency) , 2),
                 'currency' => $user->profile->preferred_currency ,
                 'description' => $description[$item->description],
                 'picture' => $item->picture,
